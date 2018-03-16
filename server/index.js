@@ -1,3 +1,4 @@
+const path = require('path');
 const express = require('express');
 const app = express();
 const http = require('http').Server(app);
@@ -10,14 +11,15 @@ const port = 3000;
 const session = require('express-session');
 const bodyParser = require('body-parser');
 const MongoStore = require('connect-mongo')(session);
-const webpackDevMiddleware = require('webpack-dev-middleware');
 const webpack = require('webpack');
-const webpackConfig = require('./webpack/webpack.dev');
+const webpackConfig = require('../webpack/webpack.dev.js');
 const compiler = webpack(webpackConfig);
+// const routes = require('./routes');
 
-app.use(webpackDevMiddleware(complier, {
-    publicPath: webpackConfig.output.path
+app.use(require('webpack-dev-middleware')(compiler, {
+    publicPath: webpackConfig.output.publicPath
 }));
+app.use(require("webpack-hot-middleware")(compiler));
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -39,14 +41,14 @@ MongoClient.connect(dbUrl, (err, database) => {
         unset: 'destroy'
     }));
 
-    require('./server/routes')(app, database);
+    // routes(app, database);
 
     app.get('/user', (req, res) => {
         res.send(req.user);
     });
 
     app.get('*', (req, res) => {
-        res.sendFile(__dirname + '/build/index.html')
+        res.sendFile(path.resolve(__dirname, '../build/index.html'))
     });
 
     http.listen(port);

@@ -1,6 +1,13 @@
 import React from 'react';
-import { withRouter, Switch, Route } from 'react-router-dom';
+import {
+    BrowserRouter as Router,
+    Switch,
+    Route
+} from 'react-router-dom';
 import PropTypes from 'prop-types';
+import {
+    AuthContainer 
+} from './components';
 
 class App extends React.Component {
     constructor() {
@@ -10,10 +17,13 @@ class App extends React.Component {
     render() {
         const { } = this.props;
         return (
-            <div>Welcome! This is a Pinterest clone.</div>
+            <Router>
+                <Switch>
+                    <Route exact path='/' component={AuthContainer} />
+                </Switch>
+            </Router>
         );
     }
 }
 
-
-export default withRouter(App);
+export default App;

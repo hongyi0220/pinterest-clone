@@ -4,7 +4,7 @@ const common = require('../webpack.common.js');
 module.exports = merge(common, {
     devtool: 'eval',
     devServer: {
-        contentBase: './build',
+        contentBase: '../build',
         port: 3000
     }
 });

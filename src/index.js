@@ -1,11 +1,20 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { BrowserRouter } from 'react-router-dom';
+import ReactDOMServer from 'react-dom/server';
+// import { BrowserRouter as Router } from 'react-router-dom';
 import App from './App';
+import { Provider } from 'react-redux';
+import { createStore } from 'redux';
+import reducer from './reducer';
+
+// const store = createStore(reducer);
 
 ReactDOM.render(
-    <BrowserRouter>
+    // <Provider store={store}>
         <App />
-    </BrowserRouter>,
+    // </Provider>
+    ,
     document.getElementById('root')
 );
+
+ReactDOMServer.renderToString(<App />);

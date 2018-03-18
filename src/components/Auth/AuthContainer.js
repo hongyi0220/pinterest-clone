@@ -1,13 +1,21 @@
 import { connect } from 'react-redux';
-import Authpage from './Authpage';
+import AuthPage from './AuthPage';
+import {
+    addUserInput
+} from '../../actions';
 
-const mapStateToProps = state => ({...state})
+const mapStateToProps = state => {
+    console.log(state);
+    return {
+        userInput: state.account.userInput
+    }
+};
 
 const AuthContainer = connect(
     mapStateToProps,
     {
-        //...actions
+        addUserInput
     }
-)(Authpage);
+)(AuthPage);
 
 export default AuthContainer;

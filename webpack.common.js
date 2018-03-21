@@ -1,6 +1,5 @@
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const extractSass = new ExtractTextPlugin({ filename: 'app.css' });
-// const HtmlWebpackPlugin = require('html-webpack-plugin');
 const webpack = require('webpack');
 
 module.exports = {
@@ -28,9 +27,6 @@ module.exports = {
     },
     plugins: [
         extractSass,
-        // new HtmlWebpackPlugin({
-        // template: __dirname + '/src/index.html'
-        // }),
         new webpack.HotModuleReplacementPlugin(),
         new webpack.NoEmitOnErrorsPlugin()
     ]

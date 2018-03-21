@@ -1,0 +1,77 @@
+.auth-container {
+    display: grid;
+    grid-template-columns: repeat(11, 1fr);
+    grid-auto-rows: 1fr;
+    grid-gap: 1em;
+    grid-template-areas:
+        ". . . . . . . . . . ."
+        ". . . . f f f . . . ."
+        ". . . . f f f . . . ."
+        ". . . . f f f . . . ."
+        ". . . . f f f . . . ."
+        ". . . . f f f b b . ."
+        ". . . . f f f b b . ."
+        ". . . . . . . . . . .";
+    height: 100vh;
+    border: 1px solid black;
+    .auth-form {
+        padding: 1em;
+        text-align: center;
+        grid-area: f;
+        border: 1px solid #000;
+        border-radius: 10px;
+        img {
+            height: 50px;
+        }
+        h1 {
+            color: #555;
+        }
+        p {
+            color: #ccc;
+        }
+        .input-container {
+            display: flex;
+            flex-direction: column;
+            input {
+                flex-grow: 1;
+                margin: .5em 2.5em;
+                border-radius: 5px;
+                height: 40px;
+                border: 1px solid #ccc;
+                padding-left: 1em;
+                outline: none;
+                color: #555;
+                &:focus {
+                    border: 5px solid #8BC3FD;
+                    padding: 12px;
+                }
+                &::placeholder {
+                    color: #ccc;
+                }
+            }
+            button {
+                flex-grow: 1;
+                border: none;
+                background-color: #D3132A;
+                border-radius: 5px;
+                margin: .5em 2.5em;
+                height: 40px;
+                color: white;
+                &:focus {
+                    outline: none;
+                }
+            }
+        }
+
+    }
+    .baloon {
+        grid-area: b;
+        border-radius: 50% 50% 50% 20px;
+        background-color: #D3132A;
+        p {
+            margin: 2em;
+            color: white;
+            font-size: 1.5em;
+        }
+    }
+}

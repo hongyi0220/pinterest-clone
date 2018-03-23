@@ -14,7 +14,6 @@ const MongoStore = require('connect-mongo')(session);
 const webpack = require('webpack');
 const webpackConfig = require('../webpack/webpack.dev.js');
 const compiler = webpack(webpackConfig);
-// const routes = require('./routes');
 
 app.use(require('webpack-dev-middleware')(compiler, {
     publicPath: webpackConfig.output.publicPath
@@ -41,7 +40,7 @@ MongoClient.connect(dbUrl, (err, database) => {
         unset: 'destroy'
     }));
 
-    // routes(app, database);
+    require('./routes')(app, database);
 
     app.get('/user', (req, res) => {
         res.send(req.user);

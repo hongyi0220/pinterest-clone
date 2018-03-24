@@ -1,15 +1,13 @@
 .auth-container {
   display: grid;
-  grid-template-columns: repeat(11, 1fr);
-  grid-auto-rows: 1fr;
-  grid-gap: 1em;
-  grid-template-areas: ". . . . . . . . . . ." ". . . . f f f . . . ." ". . . . f f f . . . ." ". . . . f f f . . . ." ". . . . f f f . . . ." ". . . . f f f b b . ." ". . . . f f f b b . ." ". . . . . . . . . . .";
+  grid-template-columns: repeat(4, 1fr) repeat(3, minmax(100px, 1fr)) repeat(2, minmax(100px, 1fr)) repeat(2, 1fr);
+  grid-template-rows: repeat(8, 1fr);
   height: 100vh;
   border: 1px solid black; }
   .auth-container .auth-form {
     padding: 1em;
     text-align: center;
-    grid-area: f;
+    grid-area: 2/5/8/8;
     border: 1px solid #000;
     border-radius: 10px; }
     .auth-container .auth-form img {
@@ -46,11 +44,13 @@
         .auth-container .auth-form .input-container button:focus {
           outline: none; }
   .auth-container .baloon {
-    grid-area: b;
+    grid-area: 6/8/8/10;
     border-radius: 50% 50% 50% 20px;
-    background-color: #D3132A; }
+    background-color: #D3132A;
+    margin-left: 1em; }
     .auth-container .baloon p {
       margin: 2em;
+      margin-top: 2.35em;
       color: white;
       font-size: 1.5em; }
 

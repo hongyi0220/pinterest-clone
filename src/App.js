@@ -6,7 +6,8 @@ import {
 } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import {
-    AuthContainer 
+    AuthContainer,
+    WallContainer
 } from './components';
 
 class App extends React.Component {
@@ -18,9 +19,10 @@ class App extends React.Component {
         const { } = this.props;
         return (
             <Router>
-                <Switch>
+                <div className="app-container">
                     <Route exact path='/' component={AuthContainer} />
-                </Switch>
+                    <Route exact path='/' component={WallContainer} />
+                </div>
             </Router>
         );
     }

@@ -7,8 +7,7 @@ class AuthPage extends React.Component {
         password: ''
     }
     static propTypes = {
-        addUserInput: PropTypes.func.isRequired,
-        userInput: PropTypes.string.isRequired
+        logInUser: PropTypes.func.isRequired,
     }
 
     handleEmailInput = e => this.setState({ email: e.target.value });
@@ -17,7 +16,7 @@ class AuthPage extends React.Component {
         e.preventDefault();
         let { email, password } = this.state;
 
-        fetch('http://localhost:3000/signup', {
+        fetch('http://localhost:3000/auth', {
             method: 'post',
             headers: {
                 'content-type': 'application/json'
@@ -27,15 +26,21 @@ class AuthPage extends React.Component {
                 password
             })
         })
-        .then(() => this.setState({
-            email: '',
-            password: ''
-        }))
+        .then(res => res.json())
+        .then(user => {
+            console.log('res:', user);
+            console.log('clearing input fields');
+            this.setState({
+                email: '',
+                password: ''
+            });
+            this.props.logInUser(user);
+        })
         .catch(err => console.log(err));
     }
 
     render() {
-        const { addUserInput, userInput } = this.props;
+        const { } = this.props;
         const { email, password } = this.state;
         return (
             <div className='auth-container'>

@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
 import AuthPage from './AuthPage';
 import {
-    addUserInput
+    logInUser
 } from '../../actions';
 
 const mapStateToProps = state => {
@@ -14,7 +14,7 @@ const mapStateToProps = state => {
 const AuthContainer = connect(
     mapStateToProps,
     {
-        addUserInput
+        logInUser
     }
 )(AuthPage);
 

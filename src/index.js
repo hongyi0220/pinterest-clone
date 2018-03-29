@@ -1,15 +1,27 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
-import { Provider } from 'react-redux';
+import { Provider, connect } from 'react-redux';
 import { createStore } from 'redux';
 import reducer from './reducers';
+import {
+    logInUser
+} from './actions';
 
 let store = createStore(reducer);
 
+const mapStateToProps = state => ({...state});
+
+const AppContainer = connect(
+    mapStateToProps,
+    {
+        logInUser
+    }
+)(App);
+
 ReactDOM.render(
     <Provider store={store}>
-        <App />
+        <AppContainer />
     </Provider>
     ,
     document.getElementById('root')

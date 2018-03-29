@@ -1,23 +1,16 @@
 import { combineReducers } from 'redux';
-const GET_USER_INFO = 'GET_USER_INFO';
-const HANDLE_USER_INPUT ='HANDLE_USER_INPUT';
+const LOG_IN_USER = 'LOG_IN_USER';
 
 const initState = {
-    userInput: ''
+    user: null
 };
 
 const account = (state = initState, action) => {
     switch(action.type) {
-        case GET_USER_INFO:
+        case LOG_IN_USER:
             return {
                 ...state,
-                userInfo: action.userInfo
-            }
-            break;
-        case HANDLE_USER_INPUT:
-            return {
-                ...state,
-                userInput: action.userInput
+                user: action.user
             }
             break;
         default:

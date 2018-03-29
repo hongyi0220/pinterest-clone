@@ -9,11 +9,37 @@ import {
     AuthContainer,
     WallContainer
 } from './components';
+import {
+    logInUser
+} from './actions';
 
 class App extends React.Component {
-    constructor() {
-        super()
-        this.state = {}
+    state = {
+
+    }
+
+    static propTypes = {
+
+    }
+
+    getSession = () => {
+        return fetch('http://localhost:3000/user_session', {credentials: 'include'})
+                .then(res => res.json())
+                .then(user => {
+                    console.log('user at getSession:', user);
+                    return user;
+                })
+                .catch(err => console.log(err));
+    }
+
+    componentWillMount() {
+        console.log('cmpWlMnt');
+        this.getSession()
+            .then(user => {
+                if (user) this.props.logInUser(user);
+            })
+            .catch(err => console.log(err));
+
     }
     render() {
         const { } = this.props;

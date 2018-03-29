@@ -14,16 +14,15 @@ const MongoStore = require('connect-mongo')(session);
 const webpack = require('webpack');
 const webpackConfig = require('../webpack/webpack.dev.js');
 const compiler = webpack(webpackConfig);
-
+console.log('server loaded');
 app.use(require('webpack-dev-middleware')(compiler, {
     publicPath: webpackConfig.output.publicPath
 }));
 app.use(require("webpack-hot-middleware")(compiler));
 
+app.use(express.static('build'));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-
-app.use(express.static('build'));
 
 app.get('/apikey', (req, res) => {
     res.send({apiKey: googleApiKey});
@@ -42,7 +41,11 @@ MongoClient.connect(dbUrl, (err, database) => {
 
     require('./routes')(app, database);
 
-    app.get('/user', (req, res) => {
+    app.get('/user_session', (req, res) => {
+        console.log('req._passport.session:',req._passport.session);
+        console.log('/user_session route');
+        console.log('req.user:',req.user);
+        console.log('req.isAuthenticated():',req.isAuthenticated());
         res.send(req.user);
     });
 
@@ -50,5 +53,5 @@ MongoClient.connect(dbUrl, (err, database) => {
         res.sendFile(path.resolve(__dirname, '../build/index.html'))
     });
 
-    http.listen(port);
+    http.listen(port, () => console.log('Connected to port 3000'));
 });

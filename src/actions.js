@@ -1,4 +1,4 @@
-export const addUserInput = e => ({
-    type: 'HANDLE_USER_INPUT',
-    userInput: e.target.value
+export const logInUser = user => ({
+    type: 'LOG_IN_USER',
+    user: user
 });

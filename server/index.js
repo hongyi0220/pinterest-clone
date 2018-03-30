@@ -1,20 +1,22 @@
-const path = require('path');
-const express = require('express');
-const app = express();
-const http = require('http').Server(app);
-const mongo = require('mongodb');
-const MongoClient = mongo.MongoClient;
-require('dotenv').config();
-const dbUrl = process.env.MONGOLAB_URI;
-const googleApiKey = process.env.GOOGLEAPIKEY;
-const port = 3000;
-const session = require('express-session');
-const bodyParser = require('body-parser');
-const MongoStore = require('connect-mongo')(session);
-const webpack = require('webpack');
-const webpackConfig = require('../webpack/webpack.dev.js');
-const compiler = webpack(webpackConfig);
+const path = require('path')
+    ,express = require('express')
+    ,app = express()
+    ,http = require('http').Server(app)
+    ,mongo = require('mongodb')
+    ,MongoClient = mongo.MongoClient
+    require('dotenv').config()
+    ,dbUrl = process.env.MONGOLAB_URI
+    ,googleApiKey = process.env.GOOGLE_API_KEY
+    ,cseId = process.env.CSE_ID
+    ,port = 3000
+    ,session = require('express-session')
+    ,bodyParser = require('body-parser')
+    ,MongoStore = require('connect-mongo')(session)
+    ,webpack = require('webpack')
+    ,webpackConfig = require('../webpack/webpack.dev.js')
+    ,compiler = webpack(webpackConfig)
 console.log('server loaded');
+
 app.use(require('webpack-dev-middleware')(compiler, {
     publicPath: webpackConfig.output.publicPath
 }));
@@ -25,8 +27,11 @@ app.use(bodyParser.json());
 
 app.use(express.static('build'));
 
-app.get('/apikey', (req, res) => {
-    res.send({apiKey: googleApiKey});
+app.get('/env_keys', (req, res) => {
+    res.send({
+        googleApiKey,
+        cseId
+    });
 });
 
 MongoClient.connect(dbUrl, (err, database) => {

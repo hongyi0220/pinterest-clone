@@ -11,7 +11,7 @@ const account = (state = initState, action) => {
             return {
                 ...state,
                 user: action.user
-            }
+            };
             break;
         default:
             return state;

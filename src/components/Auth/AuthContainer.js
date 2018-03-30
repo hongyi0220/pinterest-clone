@@ -7,7 +7,7 @@ import {
 const mapStateToProps = state => {
     console.log(state);
     return {
-        userInput: state.account.userInput
+        
     }
 };
 

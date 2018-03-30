@@ -1,5 +1,37 @@
 .wall-container {
+    display: grid;
+    grid-template-columns: repeat(11, 1fr);
+    grid-template-rows: repeat(8, 1fr);
     .header {
+        display: flex;
+        flex-direction: row;
+        grid-area: 1/1/2/-1;
+        border: 1px solid black;
+        img {
+            height: 30px;
+            margin: auto;
+        }
+        input {
+            margin: .5em;
+            border-radius: 5px;
+            height: 40px;
+            width: 60%;
+            border: 1px solid #ccc;
+            padding-left: 1em;
+            outline: none;
+            color: #555;
+            &:focus {
+                border: 5px solid #8BC3FD;
+                padding: 12px;
+            }
+            &::placeholder {
+                color: #757575;
+                font-weight: 700;
+            }
+        }
+    }
+    .wall {
+
 
     }
 }

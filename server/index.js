@@ -20,9 +20,10 @@ app.use(require('webpack-dev-middleware')(compiler, {
 }));
 app.use(require("webpack-hot-middleware")(compiler));
 
-app.use(express.static('build'));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+
+app.use(express.static('build'));
 
 app.get('/apikey', (req, res) => {
     res.send({apiKey: googleApiKey});
@@ -53,5 +54,5 @@ MongoClient.connect(dbUrl, (err, database) => {
         res.sendFile(path.resolve(__dirname, '../build/index.html'))
     });
 
-    http.listen(port, () => console.log('Connected to port 3000'));
+    http.listen(port, () => console.log(`Connected to port ${port}`));
 });

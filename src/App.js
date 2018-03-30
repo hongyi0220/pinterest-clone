@@ -19,10 +19,12 @@ class App extends React.Component {
     }
 
     static propTypes = {
-
+        logInUser: PropTypes.func.isRequired,
+        account: PropTypes.object
     }
 
     getSession = () => {
+        console.log('getSession called');
         return fetch('http://localhost:3000/user_session', {credentials: 'include'})
                 .then(res => res.json())
                 .then(user => {
@@ -35,19 +37,22 @@ class App extends React.Component {
     componentWillMount() {
         console.log('cmpWlMnt');
         this.getSession()
-            .then(user => {
-                if (user) this.props.logInUser(user);
-            })
-            .catch(err => console.log(err));
+                .then(user => {
+                    if (user) this.props.logInUser(user);
+                })
+                .catch(err => console.log(err));
 
     }
+
     render() {
-        const { } = this.props;
+        const { account } = this.props;
         return (
             <Router>
                 <div className="app-container">
-                    <Route exact path='/' component={AuthContainer} />
-                    <Route exact path='/' component={WallContainer} />
+                    {account.user ?
+                        <Route exact path='/' component={WallContainer} /> :
+                        <Route exact path='/' component={AuthContainer} />
+                    }
                 </div>
             </Router>
         );

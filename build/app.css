@@ -64,8 +64,8 @@
     grid-area: 1/1/2/-1;
     border: 1px solid black; }
     .wall-container .header img {
-      height: 30px;
-      margin: auto; }
+      height: 40px;
+      margin: .5em; }
     .wall-container .header input {
       margin: .5em;
       border-radius: 5px;
@@ -74,13 +74,53 @@
       border: 1px solid #ccc;
       padding-left: 1em;
       outline: none;
-      color: #555; }
+      color: #555;
+      background-color: #EFEFEF; }
       .wall-container .header input:focus {
         border: 5px solid #8BC3FD;
         padding: 12px; }
       .wall-container .header input::placeholder {
         color: #757575;
-        font-weight: 700; }
+        font-weight: 600; }
+    .wall-container .header .home {
+      line-height: 40px;
+      border-radius: 20px;
+      padding: 0 1em;
+      margin: .5em;
+      color: #757575;
+      height: 40px;
+      cursor: pointer;
+      font-weight: 600; }
+      .wall-container .header .home:hover {
+        background-color: #EFEFEF; }
+    .wall-container .header .user {
+      line-height: 40px;
+      border-radius: 20px;
+      padding: 0 1em;
+      margin: .5em;
+      color: #757575;
+      height: 40px;
+      cursor: pointer;
+      font-weight: 600; }
+      .wall-container .header .user:hover {
+        background-color: #EFEFEF; }
+    .wall-container .header .options {
+      margin: .5em;
+      color: #757575;
+      height: 40px;
+      cursor: pointer;
+      font-weight: 600;
+      width: 40px;
+      border-radius: 50%; }
+      .wall-container .header .options:hover {
+        background-color: #EFEFEF; }
+      .wall-container .header .options svg {
+        height: 40px;
+        width: 40px; }
+        .wall-container .header .options svg circle {
+          cy: 20px;
+          r: 2.5px;
+          fill: #757575; }
 
 * {
   box-sizing: border-box; }

@@ -1,3 +1,17 @@
+@mixin header-item {
+    margin: .5em;
+    color: #757575;
+    height: 40px;
+    cursor: pointer;
+    font-weight: 600;
+    &:hover {
+        background-color: #EFEFEF;
+    }
+}
+@mixin b {
+    border: 1px solid red;
+}
+
 .wall-container {
     display: grid;
     grid-template-columns: repeat(11, 1fr);
@@ -8,8 +22,9 @@
         grid-area: 1/1/2/-1;
         border: 1px solid black;
         img {
-            height: 30px;
-            margin: auto;
+            height: 40px;
+            margin: .5em;
+
         }
         input {
             margin: .5em;
@@ -20,13 +35,42 @@
             padding-left: 1em;
             outline: none;
             color: #555;
+            background-color: #EFEFEF;
             &:focus {
                 border: 5px solid #8BC3FD;
                 padding: 12px;
             }
             &::placeholder {
                 color: #757575;
-                font-weight: 700;
+                font-weight: 600;
+            }
+        }
+        .home {
+            line-height: 40px;
+            border-radius: 20px;
+            padding: 0 1em;
+            @include header-item;
+        }
+        .user {
+            line-height: 40px;
+            border-radius: 20px;
+            padding: 0 1em;
+            @include header-item;
+        }
+        .options {
+            // @include b;
+            @include header-item;
+            width: 40px;
+            border-radius: 50%;
+            svg {
+                // @include b;
+                height: 40px;
+                width: 40px;
+                circle {
+                    cy: 20px;
+                    r: 2.5px;
+                    fill: #757575;
+                }
             }
         }
     }

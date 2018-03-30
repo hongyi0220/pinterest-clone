@@ -11,7 +11,7 @@ module.exports = (app, db) => {
         },
         (username, password, done) => {
             Users.findOne({ 'email': username })
-            .then(() => {
+            .then(user => {
                 if (!user || user.password !== password) {
                     console.log('!user');
                     return done(null, false);
@@ -54,7 +54,7 @@ module.exports = (app, db) => {
                                     error: info
                                 });
                             }
-                            return res.end();
+                            return res.redirect('/');
                         });
                     })
                     .catch(err => console.log(err))
@@ -66,7 +66,7 @@ module.exports = (app, db) => {
                            error: info
                        });
                    }
-                   return res.end();
+                   return res.redirect('/');
                });
            }
          })(req, res);

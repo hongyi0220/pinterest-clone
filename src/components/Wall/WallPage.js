@@ -14,7 +14,11 @@ class WallPage extends React.Component {
                     <div className="user">
                         {account.user.email.split('@')[0]}
                     </div>
-                    <div className="options">...</div>
+                    <div className="options">
+                        <svg>
+                            {[...'ccc'].map((c, i) => <circle key={i} cx={12 + (i * 8)}/>)}
+                        </svg>
+                    </div>
                 </div>
                 <div className="wall">
 

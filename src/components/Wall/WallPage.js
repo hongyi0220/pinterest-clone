@@ -9,13 +9,15 @@ class WallPage extends React.Component {
     }
 
     searchImage = e => {
-        console.log('keyDown:',e.key);
         const { googleApiKey, cseId } = this.state.keys;
+        console.log('keyDown:',e.key);
+
         const query = this.state.input;
         if (e.key === 'Enter') {
-            fetch(`https://www.googleapis.com/customsearch/v1?key=${googleApiKey}&cx=${cseId}&searchType=image&q=${query}`)
+            fetch(`https://www.googleapis.com/customsearch/v1?key=${googleApiKey}&cx=${cseId}&q=${query}`)
             .then(res => res.json())
-            .then(images => console.log('images:',images))
+            .then(resJson => resJson.items.map(item => item.pagemap['cse_image'][0].src))
+            .then(images => this.setState({ images }))
             .catch(err => console.log(err));
         }
     }
@@ -32,14 +34,14 @@ class WallPage extends React.Component {
     }
     render() {
         const { account } = this.props;
-        const { input } = this.state;
+        const { input, images } = this.state;
 
         return (
             <div className='wall-container'>
                 <div className="header">
                     <img src="./images/pinterest_logo.png"/>
                     <input type="text" placeholder='Search' onKeyDown={this.searchImage} onChange={this.handleInput} value={input}/>
-                    <div className="home">home</div>
+                    <div className="home">Home</div>
                     <div className="user">
                         {account.user.email.split('@')[0]}
                     </div>
@@ -50,7 +52,9 @@ class WallPage extends React.Component {
                     </div>
                 </div>
                 <div className="wall">
-
+                    {images ?
+                        images.map((src, i) => <div className='img-wrapper'><img key={i} src={src} /></div>) : ''
+                    }
                 </div>
             </div>
         );

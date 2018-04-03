@@ -25,6 +25,7 @@
     "express-session": "^1.15.6",
     "google-images": "^2.1.0",
     "mongodb": "^2.2.33",
+    "node-fetch": "^2.1.2",
     "normalize.css": "^8.0.0",
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",

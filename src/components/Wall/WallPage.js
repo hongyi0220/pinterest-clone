@@ -3,39 +3,41 @@ import PropTypes from 'prop-types';
 
 class WallPage extends React.Component {
     state = {
-        keys: null,
+        apiKey: null,
         input: '',
-        images: null
+        images: null,
+        page: 1
     }
 
     searchImage = e => {
-        const { googleApiKey, cseId } = this.state.keys;
+        const { input, page, iamges } = this.state;
         console.log('keyDown:',e.key);
 
-        const query = this.state.input;
+        const q = input.trim().replace(/\s/g, '%20');
         if (e.key === 'Enter') {
-            fetch(`https://www.googleapis.com/customsearch/v1?key=${googleApiKey}&cx=${cseId}&q=${query}`)
+            fetch(`http://localhost:3000/images?q=${q}&page=${page}`)
             .then(res => res.json())
-            .then(resJson => resJson.items.map(item => item.pagemap['cse_image'][0].src))
-            .then(images => this.setState({ images }))
+            .then(resJson => {
+                this.setState({ images: resJson }, () => console.log(this.state))
+            })
             .catch(err => console.log(err));
         }
     }
     getKeys = () => {
-        return fetch('http://localhost:3000/env_keys')
+        return fetch('http://localhost:3000/api_key')
                .then(res => res.json())
                .catch(err => console.log(err));
     }
     handleInput = e => this.setState({ input: e.target.value });
     componentWillMount() {
         this.getKeys()
-            .then(keys => this.setState({ keys: keys }, () => console.log(this.state)))
+            .then(apiKey => this.setState({ apiKey }, () => console.log(this.state)))
             .catch(err => console.log(err));
     }
     render() {
         const { account } = this.props;
         const { input, images } = this.state;
-
+        console.log('images:', images);
         return (
             <div className='wall-container'>
                 <div className="header">
@@ -53,7 +55,7 @@ class WallPage extends React.Component {
                 </div>
                 <div className="wall">
                     {images ?
-                        images.map((src, i) => <div className='img-wrapper'><img key={i} src={src} /></div>) : ''
+                        images.map((img, i) => <div className='img-wrapper'><img key={i} src={img.src} /></div>) : ''
                     }
                 </div>
             </div>

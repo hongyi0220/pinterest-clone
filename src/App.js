@@ -52,14 +52,14 @@ class App extends React.Component {
             <Router>
                 <div className="app-container">
                     {account.user ?
-                        <Route exact path='/' component={HeaderContainer} /> :
+                        <Route path='/' component={HeaderContainer} /> :
                         <Route exact path='/' component={AuthPageContainer} />
                     }
                     {account.user ?
                             <Route exact path='/user' component={UserPageContainer} /> :
                             ''
                     }
-                    <Route exact path='/' component={WallPageContainer} />
+                    <Route exact path='/search' component={WallPageContainer} />
                 </div>
             </Router>
         );

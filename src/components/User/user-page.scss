@@ -1,0 +1,24 @@
+.user-page-container {
+    .user-info-container {
+        position: relative;
+        margin: 1.5em auto;
+        width: 60%;
+        .username-wrapper, .profile-image-wrapepr {
+            display: inline-block;
+        }
+        .username-wrapper {
+            color: #555555;
+            font-size: 2em;
+            font-weight: 600;
+            width: 70%;
+            vertical-align: top;
+        }
+        .profile-image-wrapepr {
+            width: 30%;
+            img {
+                width: 100%;
+            }
+        }
+    }
+
+}

@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 
 class Header extends React.Component {
     state = {
@@ -16,6 +17,7 @@ class Header extends React.Component {
 
         const q = input.trim().replace(/\s/g, '%20');
         if (e.key === 'Enter') {
+            this.props.history.push(`/search?term=${q}`)
             fetch(`http://localhost:3000/images?q=${q}&page=${page}`)
             .then(res => res.json())
             .then(resJson => {
@@ -43,12 +45,20 @@ class Header extends React.Component {
         const { account } = this.props;
         return (
             <div className="header">
-                <img src="./images/pinterest_logo.png"/>
+                <Link className="link" to='/'>
+                    <img src="./images/pinterest_logo.png"/>
+                </Link>
                 <input type="text" placeholder='Search' onKeyDown={this.searchImage} onChange={this.handleInput} value={input}/>
-                <div className="home">Home</div>
-                <div className="user">
-                    {account.user.email.split('@')[0]}
-                </div>
+                <Link className="link" to='/'>
+                    <div className="home">Home</div>
+                </Link>
+
+                <Link className='link' to='/user'>
+                    <div className="user">
+                        {account.user.email.split('@')[0]}
+                    </div>
+                </Link>
+
                 <div className="options">
                     <svg>
                         {[...'ccc'].map((c, i) => <circle key={i} cx={12 + (i * 8)}/>)}

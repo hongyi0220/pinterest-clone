@@ -19,6 +19,10 @@
     grid-column: 1/-1;
     box-shadow: 0 1px 1px #EFEFEF;
     // @include b;
+    .link {
+        text-decoration: none;
+
+    }
     img {
         height: 40px;
         margin: .5em;

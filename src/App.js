@@ -6,8 +6,10 @@ import {
 } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import {
-    AuthContainer,
-    WallContainer
+    AuthPageContainer,
+    WallPageContainer,
+    HeaderContainer,
+    UserPageContainer
 } from './components';
 import {
     logInUser
@@ -50,9 +52,14 @@ class App extends React.Component {
             <Router>
                 <div className="app-container">
                     {account.user ?
-                        <Route exact path='/' component={WallContainer} /> :
-                        <Route exact path='/' component={AuthContainer} />
+                        <Route exact path='/' component={HeaderContainer} /> :
+                        <Route exact path='/' component={AuthPageContainer} />
                     }
+                    {account.user ?
+                            <Route exact path='/user' component={UserPageContainer} /> :
+                            ''
+                    }
+                    <Route exact path='/' component={WallPageContainer} />
                 </div>
             </Router>
         );

@@ -12,12 +12,12 @@ class AuthPage extends React.Component {
 
     handleEmailInput = e => this.setState({ email: e.target.value });
     handlePasswordInput = e => this.setState({ password: e.target.value });
-    
+
     render() {
         const { } = this.props;
         const { email, password } = this.state;
         return (
-            <div className='auth-container'>
+            <div className='auth-page-container'>
                 <form className='auth-form' method='post' action='/auth'>
                     <img src='./images/pinterest_logo.png'/>
                     <h1>Welcome to Pinterest</h1>

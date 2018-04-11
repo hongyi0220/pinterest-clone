@@ -7,15 +7,15 @@ import {
 const mapStateToProps = state => {
     console.log(state);
     return {
-        
+
     }
 };
 
-const AuthContainer = connect(
+const AuthPageContainer = connect(
     mapStateToProps,
     {
         logInUser
     }
 )(AuthPage);
 
-export default AuthContainer;
+export default AuthPageContainer;

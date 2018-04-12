@@ -86,9 +86,23 @@
         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
         grid-auto-rows: 400px;
         grid-column: 2/11;
-        .img-wrapper {
-            // @include b(black, 2px);
-            border-radius: 10px;
+        .img-container {
+            position: relative;
+            @include b(black, 2px);
+            // border-radius: 10px;
+            .img-overlay {
+                border: 3px solid red;
+                z-index: 2;
+                position: absolute;
+
+                border-radius: 10px;
+                height: 92%;
+                width: 94%;
+                margin: 3% 3% 5% 3%;
+            }
+            .img-overlay.on {
+                background-color: rgba(198,198,198,.5);
+            }
             &:hover {
                 background-color: #F2F2F2;
                 cursor: pointer;

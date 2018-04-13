@@ -12,9 +12,9 @@ class WallPage extends React.Component {
     }
 
     savePin = () => {
-        const { pin } = this.state;
-        console.log(`/save-pin/${pin.split('-')[1]}`);
-        fetch(`/save-pin?pin=${pin.split('-')[1]}`, {credentials: 'include'})
+        const { pindex } = this.state;
+        console.log(`/save-pindex/${pindex.split('-')[1]}`);
+        fetch(`/save-pin?pindex=${pindex.split('-')[1]}`, {credentials: 'include'})
         .catch(err => console.log(err));
     }
     render() {

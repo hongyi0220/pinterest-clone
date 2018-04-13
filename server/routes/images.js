@@ -30,8 +30,8 @@ module.exports = (app, db) => {
         console.log('req.user:',req.user);
         console.log('req.isAuthenticated():',req.isAuthenticated());
         console.log('req.session:', req.session);
-        const pindex = req.query.pin;
-        console.log(pinIndex);
+        const pindex = req.query.pindex;
+        console.log(pindex);
         console.log('req.user:',req.user);
         Users.updateOne(
             { email: req.user.email },
@@ -40,5 +40,22 @@ module.exports = (app, db) => {
             }
         );
         res.end();
-    })
+    });
+
+    app.get('/delete-pin', (req, res) => {
+        console.log('/delete-pin reached!');
+
+        const pindex = req.query.pindex;
+        console.log(`pindex: ${pindex}`);
+
+        Users.updateOne(
+            { email: req.user.email },
+            {
+                $unset: { [`pins.${pindex}`]: 1 }
+            }
+        )
+        .then(() => Users.updateOne({ email: req.user.email }, { $pull: {pins: null}}))
+        .catch(err => console.log(err));
+        res.end();
+    });
 };

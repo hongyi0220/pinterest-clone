@@ -24,12 +24,15 @@ module.exports = (app, db) => {
 
     // This stores user in session after authentication
     passport.serializeUser((user, done) => {
+        console.log('SERIALIZING USER');
         done(null, user._id);
     });
 
     // This retrieves user info from database using user._id set in session
     //and store it in req.user because it is more secure
     passport.deserializeUser((id, done) => {
+        console.log('DESERIALIZING USER');
+
         Users.findOne({'_id': new ObjectId(id)}, (err, user) => {
             delete user._id;
             done(err, user);
@@ -44,7 +47,7 @@ module.exports = (app, db) => {
         passport.authenticate('local', (err, user, info) => {
            if (err) { return console.log(err); }
            if (!user) {
-               Users.insertOne({ email, password })
+               Users.insertOne({ email, password, pins: [] })
                .then(() => { //Sign user in
                     Users.findOne({ email })
                     .then(user => {

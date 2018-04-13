@@ -68,21 +68,54 @@
     grid-column: 2/11; }
     .wall-page-container .wall .img-container {
       position: relative;
-      border: 2px solid black; }
+      border-radius: 10px;
+      transition: all .3s ease; }
       .wall-page-container .wall .img-container .img-overlay {
-        border: 3px solid red;
         z-index: 2;
         position: absolute;
         border-radius: 10px;
         height: 92%;
         width: 94%;
         margin: 3% 3% 5% 3%; }
+        .wall-page-container .wall .img-container .img-overlay .action-button {
+          display: none; }
       .wall-page-container .wall .img-container .img-overlay.on {
-        background-color: rgba(198, 198, 198, 0.5); }
+        background-color: rgba(255, 255, 255, 0.3); }
+        .wall-page-container .wall .img-container .img-overlay.on:hover {
+          cursor: -moz-zoom-in;
+          cursor: -webkit-zoom-in; }
+        .wall-page-container .wall .img-container .img-overlay.on .action-button {
+          color: white;
+          background-color: #C9232D;
+          width: 4em;
+          height: 2em;
+          display: inline-block;
+          position: relative;
+          float: right;
+          margin-right: .75em;
+          top: .75em;
+          border-radius: 5px; }
+          .wall-page-container .wall .img-container .img-overlay.on .action-button:hover {
+            background-color: #ad1d26;
+            cursor: pointer; }
+          .wall-page-container .wall .img-container .img-overlay.on .action-button img {
+            display: inline-block;
+            vertical-align: middle;
+            height: 1.5em;
+            position: relative;
+            left: 15%;
+            top: 15%; }
+          .wall-page-container .wall .img-container .img-overlay.on .action-button .action-button-text {
+            height: 1.5em;
+            display: inline-block;
+            vertical-align: middle;
+            position: relative;
+            left: 20%;
+            top: 25%; }
       .wall-page-container .wall .img-container:hover {
         background-color: #F2F2F2;
         cursor: pointer; }
-      .wall-page-container .wall .img-container img {
+      .wall-page-container .wall .img-container img.wall-img {
         border-radius: 10px;
         height: 92%;
         width: 94%;
@@ -173,6 +206,76 @@
     width: 30%; }
     .user-page-container .user-info-container .profile-image-wrapepr img {
       width: 100%; }
+
+.user-page-container .saved-images-container {
+  position: relative;
+  margin: 1.5em auto;
+  width: 60%; }
+  .user-page-container .saved-images-container h2 {
+    text-align: left;
+    color: #555555; }
+  .user-page-container .saved-images-container .wall {
+    margin-top: 1em;
+    display: grid;
+    grid-gap: .5em;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-auto-rows: 400px; }
+    .user-page-container .saved-images-container .wall .img-container {
+      position: relative;
+      border-radius: 10px;
+      transition: all .3s ease; }
+      .user-page-container .saved-images-container .wall .img-container .img-overlay {
+        z-index: 2;
+        position: absolute;
+        border-radius: 10px;
+        height: 92%;
+        width: 94%;
+        margin: 3% 3% 5% 3%; }
+        .user-page-container .saved-images-container .wall .img-container .img-overlay .action-button {
+          display: none; }
+      .user-page-container .saved-images-container .wall .img-container .img-overlay.on {
+        background-color: rgba(255, 255, 255, 0.3); }
+        .user-page-container .saved-images-container .wall .img-container .img-overlay.on:hover {
+          cursor: -moz-zoom-in;
+          cursor: -webkit-zoom-in; }
+        .user-page-container .saved-images-container .wall .img-container .img-overlay.on .action-button {
+          color: white;
+          background-color: #C9232D;
+          width: 4em;
+          height: 2em;
+          display: inline-block;
+          position: relative;
+          float: right;
+          margin-right: .75em;
+          top: .75em;
+          border-radius: 5px; }
+          .user-page-container .saved-images-container .wall .img-container .img-overlay.on .action-button:hover {
+            background-color: #ad1d26;
+            cursor: pointer; }
+          .user-page-container .saved-images-container .wall .img-container .img-overlay.on .action-button img {
+            display: inline-block;
+            vertical-align: middle;
+            height: 1.5em;
+            position: relative;
+            left: 15%;
+            top: 15%; }
+          .user-page-container .saved-images-container .wall .img-container .img-overlay.on .action-button .action-button-text {
+            height: 1.5em;
+            display: inline-block;
+            vertical-align: middle;
+            position: relative;
+            left: 20%;
+            top: 25%; }
+      .user-page-container .saved-images-container .wall .img-container:hover {
+        background-color: #F2F2F2;
+        cursor: pointer; }
+      .user-page-container .saved-images-container .wall .img-container img.wall-img {
+        border-radius: 10px;
+        height: 92%;
+        width: 94%;
+        object-fit: cover;
+        position: relative;
+        margin: 3% 3% 5% 3%; }
 
 * {
   box-sizing: border-box;

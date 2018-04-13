@@ -3,8 +3,10 @@ const http = require('https');
 const fetch = require('node-fetch');
 
 module.exports = (app, db) => {
+    const Users = db.collection('users');
     app.get('/images', (req, res) => {
         console.log('/images route reached!');
+        console.log('session.id:', req.session.id);
         let { page, q } = req.query;
         const url = `https://pixabay.com/api?key=${apiKey}&q=${q}&safesearch=true&page=${page}`;
         console.log(url);
@@ -19,5 +21,24 @@ module.exports = (app, db) => {
             res.send(result)
         })
         .catch(err => console.log(err));
+    });
+
+    app.get('/save-pin', (req, res) => {
+        console.log('/save-pin reached!');
+        console.log('session.id:', req.session.id);
+        console.log('req._passport.session:',req._passport.session);
+        console.log('req.user:',req.user);
+        console.log('req.isAuthenticated():',req.isAuthenticated());
+        console.log('req.session:', req.session);
+        const pindex = req.query.pin;
+        console.log(pinIndex);
+        console.log('req.user:',req.user);
+        Users.updateOne(
+            { email: req.user.email },
+            {
+                $push: { pins: req.session.images[pindex] }
+            }
+        );
+        res.end();
     })
 };

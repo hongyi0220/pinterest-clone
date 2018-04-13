@@ -20,5 +20,88 @@
             }
         }
     }
+    .saved-images-container {
+        position: relative;
+        margin: 1.5em auto;
+        width: 60%;
+        h2 {
+            text-align: left;
+            color: #555555;
+        }
+        .wall {
+            margin-top: 1em;
+            display: grid;
+            grid-gap: .5em;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-auto-rows: 400px;
+            .img-container {
+                position: relative;
+                border-radius: 10px;
+                .img-overlay {
+                    z-index: 2;
+                    position: absolute;
+                    border-radius: 10px;
+                    height: 92%;
+                    width: 94%;
+                    margin: 3% 3% 5% 3%;
+                    .action-button {
+                        display: none;
+                    }
+                }
+                .img-overlay.on {
+                    background-color: rgba(255,255,255,.3);
+                    &:hover {
+                         cursor: -moz-zoom-in;
+                         cursor:-webkit-zoom-in;
+                    }
+                    .action-button {
+                        color: white;
+                        background-color: #C9232D;
+                        width: 4em;
+                        height: 2em;
+                        display: inline-block;
+                        position: relative;
+                        float: right;
+                        margin-right: .75em;
+                        top: .75em;
+                        border-radius: 5px;
+                        &:hover {
+                            background-color: #ad1d26;
+                            cursor: pointer;
+                        }
+                        img {
+                            display: inline-block;
+                            vertical-align: middle;
+                            height: 1.5em;
+                            position: relative;
+                            left: 15%;
+                            top: 15%;
+                        }
+                        .action-button-text {
+                            height: 1.5em;
+                            display: inline-block;
+                            vertical-align: middle;
+                            position: relative;
+                            left: 20%;
+                            top: 25%;
+                        }
+                    }
+                }
+                transition: all .3s ease;
+                &:hover {
+                    background-color: #F2F2F2;
+                    cursor: pointer;
+                }
+                img.wall-img {
+                    border-radius: 10px;
+                    height: 92%;
+                    width: 94%;
+                    object-fit: cover;
+                    position: relative;
+                    margin: 3% 3% 5% 3%;
+                }
+            }
+        }
+    }
 
 }

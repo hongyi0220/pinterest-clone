@@ -26,15 +26,11 @@ app.use(bodyParser.json());
 
 app.use(express.static('build'));
 
-// app.get('/api_key', (req, res) => {
-//     res.send(apiKey);
-// });
-
 MongoClient.connect(dbUrl, (err, database) => {
     if (err) return console.log(err);
 
     app.use(session({
-        store: new MongoStore({db: database}),
+        store: new MongoStore({ db: database }),
         secret: 'old-dudes-walker',
         resave: false,
         saveUninitialized: false,
@@ -44,16 +40,18 @@ MongoClient.connect(dbUrl, (err, database) => {
     require('./routes')(app, database);
 
     app.get('/user_session', (req, res) => {
-        console.log('req._passport.session:',req._passport.session);
         console.log('/user_session route');
+        console.log('session.id:', req.session.id);
+        console.log('req._passport.session:',req._passport.session);
         console.log('req.user:',req.user);
         console.log('req.isAuthenticated():',req.isAuthenticated());
         console.log('req.session:', req.session);
+
         res.send(req.user);
     });
 
     app.get('*', (req, res) => {
-        res.sendFile(path.resolve(__dirname, '../build/index.html'))
+        res.sendFile(path.resolve(__dirname, '../build/index.html'));
     });
 
     http.listen(port, () => console.log(`Connected to port ${port}`));

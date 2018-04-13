@@ -5,7 +5,8 @@ import { Provider, connect } from 'react-redux';
 import { createStore } from 'redux';
 import reducer from './reducers';
 import {
-    logInUser
+    logInUser,
+    storeImages
 } from './actions';
 
 let store = createStore(reducer);
@@ -15,7 +16,8 @@ const mapStateToProps = state => ({...state});
 const AppContainer = connect(
     mapStateToProps,
     {
-        logInUser
+        logInUser,
+        storeImages
     }
 )(App);
 

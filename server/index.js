@@ -39,15 +39,20 @@ MongoClient.connect(dbUrl, (err, database) => {
 
     require('./routes')(app, database);
 
-    app.get('/user_session', (req, res) => {
-        console.log('/user_session route');
+    app.get('/session', (req, res) => {
+        console.log('/session route');
         console.log('session.id:', req.session.id);
         console.log('req._passport.session:',req._passport.session);
         console.log('req.user:',req.user);
         console.log('req.isAuthenticated():',req.isAuthenticated());
         console.log('req.session:', req.session);
 
-        res.send(req.user);
+        res.send(
+            {
+                user: req.user,
+                images: req.session.images
+            }
+        );
     });
 
     app.get('*', (req, res) => {

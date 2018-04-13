@@ -14,11 +14,11 @@ module.exports = (app, db) => {
         fetch(url)
         .then(res => res.json())
         .then(resJson => resJson.hits.map(hit => ({src: hit.webformatURL, tags: hit.tags})))
-        .then(result => {
+        .then(images => {
             console.log('req.session:', req.session);
-            req.session.images = result;
+            req.session.images = images;
             console.log('req.session2:', req.session);
-            res.send(result)
+            res.send(images)
         })
         .catch(err => console.log(err));
     });

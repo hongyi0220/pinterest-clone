@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 
 class Header extends React.Component {
     state = {
-        apiKey: null,
+        // apiKey: null,
         input: '',
         page: 1,
         // images: null
@@ -18,26 +18,26 @@ class Header extends React.Component {
         const q = input.trim().replace(/\s/g, '%20');
         if (e.key === 'Enter') {
             this.props.history.push(`/search?term=${q}`)
-            fetch(`http://localhost:3000/images?q=${q}&page=${page}`, {credentials: 'include'})
+            fetch(`/images?q=${q}&page=${page}`, {credentials: 'include'})
             .then(res => res.json())
-            .then(resJson => {
-                storeImages(resJson);
+            .then(images => {
+                storeImages(images);
                 console.log();
             })
             .catch(err => console.log(err));
         }
     }
-    getKeys = () => {
-        return fetch('http://localhost:3000/api_key')
-               .then(res => res.json())
-               .catch(err => console.log(err));
-    }
+    // getKeys = () => {
+    //     return fetch('/api-key')
+    //            .then(res => res.json())
+    //            .catch(err => console.log(err));
+    // }
     handleInput = e => this.setState({ input: e.target.value });
 
     componentWillMount() {
-        this.getKeys()
-            .then(apiKey => this.setState({ apiKey }, () => console.log(this.state)))
-            .catch(err => console.log(err));
+        // this.getKeys()
+        //     .then(apiKey => this.setState({ apiKey }, () => console.log(this.state)))
+        //     .catch(err => console.log(err));
     }
 
     render() {

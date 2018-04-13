@@ -11,9 +11,6 @@ import {
     HeaderContainer,
     UserPageContainer
 } from './components';
-import {
-    logInUser
-} from './actions';
 
 class App extends React.Component {
     state = {
@@ -27,20 +24,22 @@ class App extends React.Component {
 
     getSession = () => {
         console.log('getSession called');
-        return fetch('http://localhost:3000/user_session', {credentials: 'include'})
+        return fetch('/session', {credentials: 'include'})
                 .then(res => res.json())
-                .then(user => {
-                    console.log('user at getSession:', user);
-                    return user;
+                .then(resJson => {
+                    console.log('session obj at getSession:', resJson);
+                    return resJson;
                 })
                 .catch(err => console.log(err));
     }
 
     componentWillMount() {
         console.log('cmpWlMnt');
+        const { logInUser, storeImages } = this.props;
         this.getSession()
-                .then(user => {
-                    if (user) this.props.logInUser(user);
+                .then(sessionObj => {
+                    if (sessionObj.user) logInUser(sessionObj.user);
+                    if (sessionObj.images) storeImages(sessionObj.images);
                 })
                 .catch(err => console.log(err));
 

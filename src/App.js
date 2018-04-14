@@ -9,7 +9,8 @@ import {
     AuthPageContainer,
     WallPageContainer,
     HeaderContainer,
-    UserPageContainer
+    UserPageContainer,
+    HeaderMenu
 } from './components';
 
 class App extends React.Component {
@@ -46,7 +47,7 @@ class App extends React.Component {
     }
 
     render() {
-        const { account } = this.props;
+        const { account, ui } = this.props;
         return (
             <Router>
                 <div className="app-container">
@@ -57,6 +58,9 @@ class App extends React.Component {
                     {account.user ?
                             <Route exact path='/user' component={UserPageContainer} /> :
                             ''
+                    }
+                    {
+                        ui.headerMenu ? <HeaderMenu /> : ''
                     }
                     <Route exact path='/search' component={WallPageContainer} />
                 </div>

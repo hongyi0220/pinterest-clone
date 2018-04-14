@@ -14,12 +14,6 @@ const account = (state = initState, action) => {
                 user: action.user
             };
             break;
-        case STORE_IMAGES:
-            return {
-                ...state,
-                images: action.images
-            };
-            break;
         default:
             return state;
     }

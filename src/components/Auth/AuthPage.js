@@ -26,6 +26,8 @@ class AuthPage extends React.Component {
                         <input type='email' name='email' placeholder='Email' onChange={this.handleEmailInput} value={email}/>
                         <input type='password' name='password' placeholder='Create a password' onChange={this.handlePasswordInput} value={password}/>
                         <button type='submit'>Continue</button>
+                        <span>OR</span>
+                        <a href="/auth/twitter">Sign in with Twitter</a>
                     </div>
                     {`You typed: Email: ${email} Password:${password}`}
                 </form>

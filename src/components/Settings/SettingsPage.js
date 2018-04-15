@@ -1,8 +1,18 @@
 import React from 'react';
 
 class SettingsPage extends React.Component {
+    state ={
+        uploadedImage: './images/default-profile-image.png'
+    }
+    handleImageUpload = e => {
+        console.log('handling ImageUplaod');
+        console.log('e.target.files:', e.target.files);
+        const uploadedImage = window.URL.createObjectURL(e.target.files[0]);
+        this.setState({ uploadedImage });
+    }
     render() {
         const { account } = this.props;
+        const { uploadedImage } = this.state;
         return (
             <div className="settings-page-container">
                 <div className="settings-list-container">
@@ -35,11 +45,11 @@ class SettingsPage extends React.Component {
                             <label className='label'>Picture</label>
                             <div className="picture-container">
                                 <div className="profile-img-wrapper">
-                                    <img src={account.user ? account.user["profile-img"] : ''} alt="profile image" className="profile-img"/>
+                                    <img src={uploadedImage} alt="profile image" className="profile-img"/>
                                 </div>
                                 <div className='input-field-container file'>
                                     <label htmlFor="profile-image" className='change-picture-button'>Change picture</label>
-                                    <input type="file" id='profile-image' accept='image/*' name='profile-image'/>
+                                    <input type="file" id='profile-image' accept='image/*' name='profile-image' onChange={this.handleImageUpload}/>
                                 </div>
                             </div>
                         </div>

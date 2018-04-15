@@ -134,7 +134,7 @@ module.exports = (app, db) => {
 
     app.get('/logout', (req, res) => {
         req.logout();
-        res.end();
+        res.redirect('/');
     });
 
     app.post('/profile', (req, res) => {

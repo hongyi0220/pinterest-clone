@@ -27,10 +27,10 @@ class UserPage extends React.Component {
             <div className="user-page-container">
                 <div className="user-info-container">
                     <div className="username-wrapper">
-                        {account.user.email.split('@')[0]}
+                        {account.user.username}
                     </div>
                     <div className="profile-image-wrapepr">
-                        <img src="./images/default-profile-image.png" alt=""/>
+                        <img src={account.user["profile-img"]} alt="profile image"/>
                     </div>
                 </div>
                 <div className="saved-images-container">

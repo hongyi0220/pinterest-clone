@@ -5,7 +5,7 @@ import {
     toggleHeaderMenu
 } from '../../actions';
 
-const mapStateToProps = state => ({...state});
+const mapStateToProps = state => state;
 
 const HeaderContainer = connect(
     mapStateToProps,

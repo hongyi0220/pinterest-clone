@@ -10,7 +10,8 @@ import {
     WallPageContainer,
     HeaderContainer,
     UserPageContainer,
-    HeaderMenu
+    HeaderMenu,
+    SettingsPageContainer
 } from './components';
 
 class App extends React.Component {
@@ -62,6 +63,8 @@ class App extends React.Component {
                     {
                         ui.headerMenu ? <HeaderMenu /> : ''
                     }
+
+                    <Route exact path='/settings' component={SettingsPageContainer}/>
                     <Route exact path='/search' component={WallPageContainer} />
                 </div>
             </Router>

@@ -19,7 +19,13 @@ module.exports = (app, db) => {
             Users.findOne({ email: profile.username })
             .then(user => {
                 if (!user) {
-                    const newUser = { email: profile.username, passpord: 'n/a', pins: [] };
+                    const newUser = {
+                        email: 'n/a',
+                        username: profile.username,
+                        passpord: 'n/a',
+                        "profile-img": "./images/default-profile-image.png",
+                        pins: []
+                    };
                     Users.insertOne(newUser);
                     return done(null, newUser);
                 }
@@ -91,7 +97,14 @@ module.exports = (app, db) => {
         passport.authenticate('local', (err, user, info) => {
            if (err) { return console.log(err); }
            if (!user) {
-               Users.insertOne({ email, password, pins: [] })
+               Users.insertOne({
+                   email,
+                   username: email.split('@')[0],
+                   password,
+                   "profile-img": "./images/default-profile-image.png",
+                   pins: [],
+
+               })
                .then(() => { //Sign user in
                     Users.findOne({ email })
                     .then(user => {
@@ -125,16 +138,16 @@ module.exports = (app, db) => {
     });
 
     app.post('/profile', (req, res) => {
-        const { username, password, location, id } = req.body;
+        const { username, email, password } = req.body;
 
         Users.updateOne(
-            { _id: ObjectId(id) },
+            { email: req.user.email },
             { $set: {
-                username: username,
-                password: password,
-                location: location
+                email,
+                password
             }}
-        );
-        res.redirect('/profile/updated');
+        )
+        .then(() => res.redirect('/profile/updated'))
+        .catch(() => res.redirect('/profile/error'));
     });
 }

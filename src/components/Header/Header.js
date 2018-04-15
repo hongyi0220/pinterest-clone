@@ -44,7 +44,7 @@ class Header extends React.Component {
 
                 <Link className='link' to='/user'>
                     <div className="user">
-                        {account.user.email.split('@')[0]}
+                        {account.user.username}
                     </div>
                 </Link>
 

@@ -4,7 +4,7 @@ import {
 
 } from '../../actions';
 
-const mapStateToProps = state => ({...state});
+const mapStateToProps = state => state;
 
 const UserPageContainer = connect(
     mapStateToProps,

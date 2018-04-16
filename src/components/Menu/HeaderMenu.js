@@ -1,18 +1,17 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
-class HeaderMenu extends React.Component {
-    render() {
-        return (
-            <div className="header-menu-container">
-                <div className="settings-button">
-                    <a href="/settings" className="settings-button">Edit settings</a>
-                </div>
-                <div className="logout-button">
-                    <a href="/logout" className="logout-link">Log out</a>
-                </div>
+const HeaderMenu = ({ history }) => {
+    return (
+        <div className="header-menu-container">
+            <div className="menu-item-wrapper-settings">
+                <div className='link' onClick={() => history.push('/settings')}>Edit settings</div>
             </div>
-        );
-    }
+            <div className="menu-item-wrapper-logout">
+                <Link to='/logout'>Log out</Link>
+            </div>
+        </div>
+    );
 }
 
 export default HeaderMenu;

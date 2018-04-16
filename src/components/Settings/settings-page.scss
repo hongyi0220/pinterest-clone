@@ -118,6 +118,11 @@
                 }
             }
         }
+        button.invisible {
+            opacity: 0;
+            height: 0;
+            width: 0;
+        }
     }
     .settings-footer {
         grid-area: 10/1/11/-1;

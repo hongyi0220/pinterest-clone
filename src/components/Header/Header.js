@@ -4,10 +4,8 @@ import { Link } from 'react-router-dom';
 
 class Header extends React.Component {
     state = {
-        // apiKey: null,
         input: '',
-        page: 1,
-        // images: null
+        page: 1
     }
 
     searchImage = e => {

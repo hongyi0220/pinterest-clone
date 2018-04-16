@@ -1,15 +1,38 @@
 import React from 'react';
 
 class SettingsPage extends React.Component {
-    state ={
-        uploadedImage: './images/default-profile-image.png'
-    }
+    state = {
+        uploadedImage: this.props.account.user.profileImg
+    };
+
+    formSubmitButton = null;
+
     handleImageUpload = e => {
         console.log('handling ImageUplaod');
-        console.log('e.target.files:', e.target.files);
-        const uploadedImage = window.URL.createObjectURL(e.target.files[0]);
-        this.setState({ uploadedImage });
+        console.log('e.target.files[0]:', e.target.files[0]);
+        const imageFile = e.target.files[0];
+        const uploadedImageSrc = window.URL.createObjectURL(imageFile);
+        this.setState({ uploadedImage: uploadedImageSrc });
+
+        let formData = new FormData();
+        formData.append('imageFile', imageFile);
+
+        console.log('formData after appending data:', formData);
+        fetch('/profile-img', {
+            method: 'post',
+            credentials: 'include',
+            body: formData
+        })
+        .catch(err => console.log(err));
     }
+    submitForm = () => {
+        console.log('submitForm clicked');
+        console.log('this.formSubmitButton:', this.formSubmitButton);
+        console.log('this.formSubmitButton.current:', this.formSubmitButton.current);
+        this.formSubmitButton.click();
+    }
+
+
     render() {
         const { account } = this.props;
         const { uploadedImage } = this.state;
@@ -48,15 +71,16 @@ class SettingsPage extends React.Component {
                                     <img src={uploadedImage} alt="profile image" className="profile-img"/>
                                 </div>
                                 <div className='input-field-container file'>
-                                    <label htmlFor="profile-image" className='change-picture-button'>Change picture</label>
-                                    <input type="file" id='profile-image' accept='image/*' name='profile-image' onChange={this.handleImageUpload}/>
+                                    <label htmlFor="profile-img" className='change-picture-button'>Change picture</label>
+                                    <input type="file" id='profile-img' accept='image/*' name='profileImg' onChange={this.handleImageUpload}/>
                                 </div>
                             </div>
                         </div>
+                        <button className='invisible' ref={el => this.formSubmitButton = el} type='submit'></button>
                     </form>
                 </div>
                 <div className="settings-footer">
-                    <div className="settings-footer-button save">Save settings</div>
+                    <div className="settings-footer-button save" onClick={this.submitForm}>Save settings</div>
                     <div className="settings-footer-button cancel">Cancel</div>
                 </div>
             </div>

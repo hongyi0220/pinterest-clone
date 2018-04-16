@@ -4,6 +4,19 @@ const ObjectId = require('mongodb').ObjectId;
 const TwitterStrategy = require('passport-twitter').Strategy;
 const consumerKey = process.env.TWITTER_CONSUMER_KEY;
 const consumerSecret = process.env.TWITTER_CONSUMER_SECRET;
+const multer = require('multer');
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
+const cloudinary = require('cloudinary');
+// const cloudinaryApiKey = process.env.CLOUDINARY_API_KEY;
+// const cloudinaryApiSecret = process.env.CLOUDINARY_API_SECRET;
+console.log('api_key:', process.env.CLOUDINARY_API_KEY);
+console.log('api_secret:', process.env.CLOUDINARY_API_SECRET);
+cloudinary.config({
+    cloud_name: 'fluffycloud',
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
+});
 
 module.exports = (app, db) => {
     const Users = db.collection('users');
@@ -23,7 +36,7 @@ module.exports = (app, db) => {
                         email: 'n/a',
                         username: profile.username,
                         passpord: 'n/a',
-                        "profile-img": "./images/default-profile-image.png",
+                        "profileImg": "./images/default-profile-image.png",
                         pins: []
                     };
                     Users.insertOne(newUser);
@@ -101,7 +114,7 @@ module.exports = (app, db) => {
                    email,
                    username: email.split('@')[0],
                    password,
-                   "profile-img": "./images/default-profile-image.png",
+                   "profileImg": "./images/default-profile-image.png",
                    pins: [],
 
                })
@@ -138,16 +151,26 @@ module.exports = (app, db) => {
     });
 
     app.post('/profile', (req, res) => {
-        const { username, email, password } = req.body;
+        console.log('/profile reached!');
+        const { email, username, profileImg } = req.body;
+        console.log('profileImg:', profileImg);
 
         Users.updateOne(
-            { email: req.user.email },
+            { username: req.user.username },
             { $set: {
                 email,
-                password
+                username,
+                profileImg
             }}
         )
         .then(() => res.redirect('/profile/updated'))
         .catch(() => res.redirect('/profile/error'));
+    });
+
+    app.post('/profile-img', upload.single('imageFile'), (req, res) => {
+        cloudinary.v2.uploader.upload_stream({resource_type: 'raw'}, (err, result) => {
+            if (err) console.log(err);
+            console.log('result:', result);
+        }).end(req.file.buffer);
     });
 }

@@ -60,8 +60,9 @@ class App extends React.Component {
                             <Route exact path='/user' component={UserPageContainer} /> :
                             ''
                     }
-                    {
-                        ui.headerMenu ? <HeaderMenu /> : ''
+                    {ui.headerMenu ?
+                        <Route path='/' component={HeaderMenu} /> :
+                        ''
                     }
 
                     <Route exact path='/settings' component={SettingsPageContainer}/>

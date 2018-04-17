@@ -8,10 +8,7 @@ const multer = require('multer');
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 const cloudinary = require('cloudinary');
-// const cloudinaryApiKey = process.env.CLOUDINARY_API_KEY;
-// const cloudinaryApiSecret = process.env.CLOUDINARY_API_SECRET;
-console.log('api_key:', process.env.CLOUDINARY_API_KEY);
-console.log('api_secret:', process.env.CLOUDINARY_API_SECRET);
+
 cloudinary.config({
     cloud_name: 'fluffycloud',
     api_key: process.env.CLOUDINARY_API_KEY,
@@ -152,25 +149,28 @@ module.exports = (app, db) => {
 
     app.post('/profile', (req, res) => {
         console.log('/profile reached!');
-        const { email, username, profileImg } = req.body;
-        console.log('profileImg:', profileImg);
+        const { email, username, uploadedImg } = req.body;
+        console.log('req.body:',req.body);
+        console.log('email, username, uploadedImg:',email, username, uploadedImg);
+
 
         Users.updateOne(
             { username: req.user.username },
             { $set: {
                 email,
                 username,
-                profileImg
+                profileImg: uploadedImg
             }}
         )
-        .then(() => res.redirect('/profile/updated'))
-        .catch(() => res.redirect('/profile/error'));
+        .catch(err => console.log(err));
     });
 
-    app.post('/profile-img', upload.single('imageFile'), (req, res) => {
-        cloudinary.v2.uploader.upload_stream({resource_type: 'raw'}, (err, result) => {
+    app.post('/profile-img', upload.single('imgFile'), (req, res) => {
+        cloudinary.v2.uploader.upload_stream({ resource_type: 'raw' }, (err, result) => {
             if (err) console.log(err);
             console.log('result:', result);
+            console.log('result.secure_url:',result.secure_url);
+            res.status(201).json({url:result.secure_url});
         }).end(req.file.buffer);
     });
 }

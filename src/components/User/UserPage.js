@@ -30,7 +30,7 @@ class UserPage extends React.Component {
                         {account.user.username}
                     </div>
                     <div className="profile-image-wrapepr">
-                        <img src={account.user["profile-img"]} alt="profile image"/>
+                        <img src={account.user.profileImg} alt="profile image"/>
                     </div>
                 </div>
                 <div className="saved-images-container">

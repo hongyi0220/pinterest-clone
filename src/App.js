@@ -11,7 +11,8 @@ import {
     HeaderContainer,
     UserPageContainer,
     HeaderMenu,
-    SettingsPageContainer
+    SettingsPageContainer,
+    PasswordWindow
 } from './components';
 
 class App extends React.Component {
@@ -56,15 +57,18 @@ class App extends React.Component {
                         <Route path='/' component={HeaderContainer} /> :
                         <Route exact path='/' component={AuthPageContainer} />
                     }
-                    {account.user ?
-                            <Route exact path='/user' component={UserPageContainer} /> :
-                            ''
-                    }
                     {ui.headerMenu ?
                         <Route path='/' component={HeaderMenu} /> :
                         ''
                     }
+                    {account.user ?
+                            <Route exact path='/user' component={UserPageContainer} /> :
+                            ''
+                    }
 
+                    {
+                        ui.passwordWindow ? <PasswordWindow /> : ''
+                    }
                     <Route exact path='/settings' component={SettingsPageContainer}/>
                     <Route exact path='/search' component={WallPageContainer} />
                 </div>

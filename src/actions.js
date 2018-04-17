@@ -14,3 +14,10 @@ export const toggleHeaderMenu = () => {
     return { type: 'TOGGLE_HEADER_MENU' };
 
 };
+
+export const openPasswordWindow = () => {
+    console.log('openPasswordWindow triggered');
+    return {
+        type: 'OPEN_PASSWORD_WINDOW'
+    };
+}

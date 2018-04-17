@@ -65,7 +65,7 @@ class SettingsPage extends React.Component {
     }
 
     render() {
-        const { account } = this.props;
+        const { account, openPasswordWindow} = this.props;
         const { uploadedImg, email, username } = this.state;
         return (
             <div className="settings-page-container">
@@ -86,7 +86,7 @@ class SettingsPage extends React.Component {
                                 <input type="email" id='email' name='email' value={email} onChange={this.handleEmailInputChange}/>
                             </div>
                             <label className='label'>Password</label>
-                            <div className="change-password-button">
+                            <div className="change-password-button" onClick={openPasswordWindow}>
                                 Change your password
                             </div>
                         </div>

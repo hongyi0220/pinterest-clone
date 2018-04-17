@@ -126,7 +126,11 @@
 .header {
   display: flex;
   flex-direction: row;
-  box-shadow: 0 1px 1px #EFEFEF; }
+  position: fixed;
+  width: 100%;
+  z-index: 2;
+  box-shadow: 0 1px 1px #EFEFEF;
+  background-color: white; }
   .header .link {
     text-decoration: none; }
   .header img {
@@ -188,112 +192,123 @@
         r: 2.5px;
         fill: #757575; }
 
-.user-page-container .user-info-container {
+.user-page-container {
   position: relative;
-  margin: 1.5em auto;
-  width: 60%; }
-  .user-page-container .user-info-container .username-wrapper, .user-page-container .user-info-container .profile-image-wrapepr {
-    display: inline-block; }
-  .user-page-container .user-info-container .username-wrapper {
-    color: #555555;
-    font-size: 2em;
-    font-weight: 600;
-    width: 70%;
-    vertical-align: top; }
-  .user-page-container .user-info-container .profile-image-wrapepr {
-    width: 30%; }
-    .user-page-container .user-info-container .profile-image-wrapepr img {
-      width: 100%; }
-
-.user-page-container .saved-images-container {
-  position: relative;
-  margin: 1.5em auto;
-  width: 60%; }
-  .user-page-container .saved-images-container h2 {
-    text-align: left;
-    color: #555555; }
-  .user-page-container .saved-images-container .wall {
-    margin-top: 1em;
-    display: grid;
-    grid-gap: .5em;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    grid-auto-rows: 400px; }
-    .user-page-container .saved-images-container .wall .img-container {
-      position: relative;
-      border-radius: 10px;
-      transition: all .3s ease; }
-      .user-page-container .saved-images-container .wall .img-container .img-overlay {
-        z-index: 2;
-        position: absolute;
-        border-radius: 10px;
-        height: 92%;
-        width: 94%;
-        margin: 3% 3% 5% 3%; }
-        .user-page-container .saved-images-container .wall .img-container .img-overlay .action-button {
-          display: none; }
-      .user-page-container .saved-images-container .wall .img-container .img-overlay.on {
-        background-color: rgba(255, 255, 255, 0.3); }
-        .user-page-container .saved-images-container .wall .img-container .img-overlay.on:hover {
-          cursor: -moz-zoom-in;
-          cursor: -webkit-zoom-in; }
-        .user-page-container .saved-images-container .wall .img-container .img-overlay.on .action-button {
-          color: white;
-          background-color: #C9232D;
-          width: 4em;
-          height: 2em;
-          display: inline-block;
-          position: relative;
-          float: right;
-          margin-right: .75em;
-          top: .75em;
-          border-radius: 5px; }
-          .user-page-container .saved-images-container .wall .img-container .img-overlay.on .action-button:hover {
-            background-color: #ad1d26;
-            cursor: pointer; }
-          .user-page-container .saved-images-container .wall .img-container .img-overlay.on .action-button img {
-            display: inline-block;
-            vertical-align: middle;
-            height: 1.5em;
-            position: relative;
-            left: 15%;
-            top: 15%; }
-          .user-page-container .saved-images-container .wall .img-container .img-overlay.on .action-button .action-button-text {
-            height: 1.5em;
-            display: inline-block;
-            vertical-align: middle;
-            position: relative;
-            left: 20%;
-            top: 25%; }
-      .user-page-container .saved-images-container .wall .img-container:hover {
-        background-color: #F2F2F2;
-        cursor: pointer; }
-      .user-page-container .saved-images-container .wall .img-container img.wall-img {
-        border-radius: 10px;
-        height: 92%;
-        width: 94%;
-        object-fit: cover;
+  top: 60px;
+  padding-top: 2em;
+  width: 60%;
+  margin: auto; }
+  .user-page-container .user-info-container {
+    position: relative;
+    margin: 1.5em auto;
+    width: 100%; }
+    .user-page-container .user-info-container .username-wrapper, .user-page-container .user-info-container .profile-image-wrapepr {
+      display: inline-block; }
+    .user-page-container .user-info-container .username-wrapper {
+      color: #555555;
+      font-size: 2em;
+      font-weight: 600;
+      width: 70%;
+      vertical-align: top; }
+    .user-page-container .user-info-container .profile-image-wrapepr {
+      width: 30%; }
+      .user-page-container .user-info-container .profile-image-wrapepr img {
+        width: 100%; }
+  .user-page-container .saved-images-container {
+    position: relative;
+    margin-top: 1.5em;
+    width: 100%; }
+    .user-page-container .saved-images-container h2 {
+      text-align: left;
+      color: #555555; }
+    .user-page-container .saved-images-container .wall {
+      margin-top: 1em;
+      display: grid;
+      grid-gap: .5em;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      grid-auto-rows: 400px; }
+      .user-page-container .saved-images-container .wall .img-container {
         position: relative;
-        margin: 3% 3% 5% 3%; }
+        border-radius: 10px;
+        transition: all .3s ease; }
+        .user-page-container .saved-images-container .wall .img-container .img-overlay {
+          z-index: 2;
+          position: absolute;
+          border-radius: 10px;
+          height: 92%;
+          width: 94%;
+          margin: 3% 3% 5% 3%; }
+          .user-page-container .saved-images-container .wall .img-container .img-overlay .action-button {
+            display: none; }
+        .user-page-container .saved-images-container .wall .img-container .img-overlay.on {
+          background-color: rgba(255, 255, 255, 0.3); }
+          .user-page-container .saved-images-container .wall .img-container .img-overlay.on:hover {
+            cursor: -moz-zoom-in;
+            cursor: -webkit-zoom-in; }
+          .user-page-container .saved-images-container .wall .img-container .img-overlay.on .action-button {
+            color: white;
+            background-color: #C9232D;
+            width: 4em;
+            height: 2em;
+            display: inline-block;
+            position: relative;
+            float: right;
+            margin-right: .75em;
+            top: .75em;
+            border-radius: 5px; }
+            .user-page-container .saved-images-container .wall .img-container .img-overlay.on .action-button:hover {
+              background-color: #ad1d26;
+              cursor: pointer; }
+            .user-page-container .saved-images-container .wall .img-container .img-overlay.on .action-button img {
+              display: inline-block;
+              vertical-align: middle;
+              height: 1.5em;
+              position: relative;
+              left: 15%;
+              top: 15%; }
+            .user-page-container .saved-images-container .wall .img-container .img-overlay.on .action-button .action-button-text {
+              height: 1.5em;
+              display: inline-block;
+              vertical-align: middle;
+              position: relative;
+              left: 20%;
+              top: 25%; }
+        .user-page-container .saved-images-container .wall .img-container:hover {
+          background-color: #F2F2F2;
+          cursor: pointer; }
+        .user-page-container .saved-images-container .wall .img-container img.wall-img {
+          border-radius: 10px;
+          height: 92%;
+          width: 94%;
+          object-fit: cover;
+          position: relative;
+          margin: 3% 3% 5% 3%; }
 
 .header-menu-container {
   box-shadow: 1px 0 5px gray;
   width: 20%;
-  float: right; }
+  float: right;
+  position: relative;
+  top: 60px; }
+
+html {
+  overflow: scroll; }
 
 .settings-page-container {
   padding-top: 2em;
   width: 60%;
-  height: 92.5vh;
   margin: auto;
-  display: grid;
-  grid-template-columns: repeat(10, minmax(50px, 1fr));
-  grid-template-rows: repeat(10, minmax(40px, 1fr)); }
+  position: relative;
+  top: 60px; }
   .settings-page-container .list-title-wrapper {
     font-size: 2em;
     font-weight: 600;
-    color: #555555; }
+    color: #555; }
   .settings-page-container .settings-list-container {
-    grid-area: 1/1/10/3; }
+    position: fixed;
+    vertical-align: top;
+    width: 12%;
+    display: inline-block; }
     .settings-page-container .settings-list-container .list-text-wrapper {
       font-size: 1.1em;
       font-weight: 600;
@@ -304,7 +319,9 @@
       .settings-page-container .settings-list-container .list-text-wrapper:hover {
         text-decoration: underline; }
   .settings-page-container .settings-form-wrapper {
-    grid-area: 1/3/10/-1; }
+    margin-left: 20%;
+    display: inline-block;
+    width: 80%; }
     .settings-page-container .settings-form-wrapper .list-title-wrapper:not(:first-child) {
       margin-top: 2em; }
     .settings-page-container .settings-form-wrapper .label {
@@ -328,18 +345,23 @@
         color: #757575;
         font-weight: 600; }
     .settings-page-container .settings-form-wrapper .account-settings-container .change-password-button {
-      border-radius: 5px;
-      height: 35px;
-      background-color: #EFEFEF;
+      background-color: #efefef;
+      color: #555;
       width: 35%;
-      min-width: 180px;
+      border-radius: 5px;
       text-align: center;
-      color: #555555;
-      line-height: 35px;
-      font-weight: 600; }
+      line-height: 40px;
+      height: 40px;
+      font-weight: 600;
+      border: none;
+      outline: none;
+      min-width: 180px; }
       .settings-page-container .settings-form-wrapper .account-settings-container .change-password-button:hover {
-        cursor: pointer;
-        background-color: #E2E2E2; }
+        background-color: #E2E2E2;
+        cursor: pointer; }
+      .settings-page-container .settings-form-wrapper .account-settings-container .change-password-button:active {
+        border: 5px solid #8BC3FD;
+        padding: 0; }
     .settings-page-container .settings-form-wrapper .profile-settings-container input[type='file'] {
       opacity: 0; }
     .settings-page-container .settings-form-wrapper .profile-settings-container .picture-container {
@@ -359,20 +381,27 @@
         height: inherit;
         min-width: 120px; }
         .settings-page-container .settings-form-wrapper .profile-settings-container .picture-container .input-field-container.file label.change-picture-button {
-          border-radius: 5px;
-          height: 35px;
-          background-color: #EFEFEF;
+          background-color: #efefef;
+          color: #555;
           width: 35%;
-          min-width: inherit;
+          border-radius: 5px;
           text-align: center;
+          line-height: 40px;
+          height: 40px;
+          font-weight: 600;
+          border: none;
+          outline: none;
+          min-width: inherit;
           vertical-align: bottom;
           position: relative;
-          top: 50%;
-          transform: translateY(-17.5px);
-          z-index: 2;
-          color: #555555;
-          line-height: 35px;
-          font-weight: 600; }
+          top: calc(50% - 17.5px);
+          z-index: 2; }
+          .settings-page-container .settings-form-wrapper .profile-settings-container .picture-container .input-field-container.file label.change-picture-button:hover {
+            background-color: #E2E2E2;
+            cursor: pointer; }
+          .settings-page-container .settings-form-wrapper .profile-settings-container .picture-container .input-field-container.file label.change-picture-button:active {
+            border: 5px solid #8BC3FD;
+            padding: 0; }
           .settings-page-container .settings-form-wrapper .profile-settings-container .picture-container .input-field-container.file label.change-picture-button:hover {
             cursor: pointer;
             background-color: #E2E2E2; }
@@ -381,12 +410,13 @@
       height: 0;
       width: 0; }
   .settings-page-container .settings-footer {
-    grid-area: 10/1/11/-1; }
+    width: 60%;
+    position: fixed;
+    bottom: 0;
+    height: 50px; }
     .settings-page-container .settings-footer .settings-footer-button {
       position: relative;
-      top: 50%;
-      transform: translateY(-20px);
-      border-radius: 5px;
+      top: calc(50% - 20px);
       height: 40px;
       text-align: center;
       line-height: 40px;
@@ -394,21 +424,142 @@
       vertical-align: top;
       float: right; }
     .settings-page-container .settings-footer .settings-footer-button.save {
+      background-color: #efefef;
+      color: #555;
+      width: 15%;
+      border-radius: 5px;
+      text-align: center;
+      line-height: 40px;
+      height: 40px;
+      font-weight: 600;
+      border: none;
+      outline: none;
       background-color: #bb0f24;
       color: white;
-      width: 15%;
       min-width: 100px; }
+      .settings-page-container .settings-footer .settings-footer-button.save:hover {
+        background-color: #E2E2E2;
+        cursor: pointer; }
+      .settings-page-container .settings-footer .settings-footer-button.save:active {
+        border: 5px solid #8BC3FD;
+        padding: 0; }
       .settings-page-container .settings-footer .settings-footer-button.save:hover {
         background-color: #ab0e21;
         cursor: pointer; }
     .settings-page-container .settings-footer .settings-footer-button.cancel {
+      margin-right: .55em;
       background-color: #efefef;
       color: #555;
       width: 10%;
-      margin-right: .55em; }
+      border-radius: 5px;
+      text-align: center;
+      line-height: 40px;
+      height: 40px;
+      font-weight: 600;
+      border: none;
+      outline: none; }
       .settings-page-container .settings-footer .settings-footer-button.cancel:hover {
         background-color: #E2E2E2;
         cursor: pointer; }
+      .settings-page-container .settings-footer .settings-footer-button.cancel:active {
+        border: 5px solid #8BC3FD;
+        padding: 0; }
+
+.password-window-background {
+  position: absolute;
+  top: 60px;
+  z-index: 3;
+  height: calc(100% - 60px);
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.7); }
+  .password-window-background .password-window-container {
+    border-radius: 5px;
+    background-color: white;
+    width: 25%;
+    min-width: 300px;
+    position: relative;
+    margin: auto;
+    top: calc(50% - 160px); }
+    .password-window-background .password-window-container h2 {
+      text-align: center;
+      border-bottom: 1px solid #EFEFEF;
+      padding: 1em;
+      color: #555; }
+    .password-window-background .password-window-container .input-field-container {
+      border-bottom: 1px solid #EFEFEF;
+      padding: 1em; }
+      .password-window-background .password-window-container .input-field-container .label-wrapper {
+        display: inline-block;
+        width: 35%;
+        height: 45Px;
+        vertical-align: top;
+        position: relative;
+        top: 5px; }
+        .password-window-background .password-window-container .input-field-container .label-wrapper label {
+          color: #555; }
+      .password-window-background .password-window-container .input-field-container .input-wrapper {
+        width: 65%;
+        display: inline-block; }
+        .password-window-background .password-window-container .input-field-container .input-wrapper input {
+          margin: .5em;
+          border-radius: 5px;
+          height: 40px;
+          width: 60%;
+          border: 1px solid #ccc;
+          padding-left: 1em;
+          outline: none;
+          color: #555;
+          background-color: #EFEFEF;
+          width: calc(100% - 1em); }
+          .password-window-background .password-window-container .input-field-container .input-wrapper input:focus {
+            border: 5px solid #8BC3FD;
+            padding: 12px; }
+          .password-window-background .password-window-container .input-field-container .input-wrapper input::placeholder {
+            color: #757575;
+            font-weight: 600; }
+    .password-window-background .password-window-container .buttons-container-wrapper {
+      height: 70px;
+      padding: 1em; }
+      .password-window-background .password-window-container .buttons-container-wrapper .buttons-container button {
+        float: right;
+        display: inline-block;
+        position: relative;
+        top: calc(50% - 40px); }
+      .password-window-background .password-window-container .buttons-container-wrapper .buttons-container .cancel-button {
+        background-color: #efefef;
+        color: #555;
+        width: 80px;
+        border-radius: 5px;
+        text-align: center;
+        line-height: 40px;
+        height: 40px;
+        font-weight: 600;
+        border: none;
+        outline: none;
+        margin-right: .35em; }
+        .password-window-background .password-window-container .buttons-container-wrapper .buttons-container .cancel-button:hover {
+          background-color: #E2E2E2;
+          cursor: pointer; }
+        .password-window-background .password-window-container .buttons-container-wrapper .buttons-container .cancel-button:active {
+          border: 5px solid #8BC3FD;
+          padding: 0; }
+      .password-window-background .password-window-container .buttons-container-wrapper .buttons-container .change-password-button {
+        background-color: #efefef;
+        color: #555;
+        width: 170px;
+        border-radius: 5px;
+        text-align: center;
+        line-height: 40px;
+        height: 40px;
+        font-weight: 600;
+        border: none;
+        outline: none; }
+        .password-window-background .password-window-container .buttons-container-wrapper .buttons-container .change-password-button:hover {
+          background-color: #E2E2E2;
+          cursor: pointer; }
+        .password-window-background .password-window-container .buttons-container-wrapper .buttons-container .change-password-button:active {
+          border: 5px solid #8BC3FD;
+          padding: 0; }
 
 * {
   box-sizing: border-box;

@@ -1,8 +1,13 @@
 .user-page-container {
+    position: relative;
+    top: 60px;
+    padding-top: 2em;
+    width: 60%;
+    margin: auto;
     .user-info-container {
         position: relative;
         margin: 1.5em auto;
-        width: 60%;
+        width: 100%;
         .username-wrapper, .profile-image-wrapepr {
             display: inline-block;
         }
@@ -22,8 +27,8 @@
     }
     .saved-images-container {
         position: relative;
-        margin: 1.5em auto;
-        width: 60%;
+        margin-top: 1.5em;
+        width: 100%;
         h2 {
             text-align: left;
             color: #555555;

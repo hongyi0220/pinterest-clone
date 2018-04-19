@@ -3,7 +3,8 @@ import PropTypes from 'prop-types';
 
 class UserPage extends React.Component {
     state = {
-        pindex: null
+        pindex: null,
+        isCreatePinButtonHiglighted: false
     }
     static propTypes = {
 
@@ -13,7 +14,7 @@ class UserPage extends React.Component {
         if (e) console.log(e.target.id);
         this.setState({ pindex: e ? e.target.id : null });
     }
-
+    highlightCreatePinButton = () => this.setState(prevState => ({ isCreatePinButtonHiglighted: !prevState.isCreatePinButtonHiglighted }));
     deletePin = () => {
         const { pindex } = this.state;
         console.log(`/delete-pin?${pindex.split('-')[1]}`);
@@ -22,7 +23,7 @@ class UserPage extends React.Component {
     }
     render() {
         const { account } = this.props;
-        const { pindex } = this.state;
+        const { pindex, isCreatePinButtonHiglighted } = this.state;
         return (
             <div className="user-page-container">
                 <div className="user-info-container">
@@ -36,6 +37,14 @@ class UserPage extends React.Component {
                 <div className="saved-images-container">
                     <h2>Saved Pins</h2>
                     <div className="wall">
+                        <div className='create-pin-button' onMouseEnter={this.highlightCreatePinButton} onMouseLeave={this.highlightCreatePinButton}>
+                            <div className={isCreatePinButtonHiglighted ? 'img-overlay on': 'img-overlay'}>
+                                <div className="action-button">
+                                    <img src="./images/create-pin.png"/>
+                                </div>
+                            </div>
+                            <div className='wall-img'></div>
+                        </div>
                         {account.user.pins ?
                             account.user.pins.map((pin, i) => <div id={`pin-${i}`} key={i} className='img-container' onMouseEnter={e=>{console.log('entering'); this.highlightPin(e)}} onMouseLeave={e=>{console.log('leaving'); this.highlightPin(null)}}>
                                 <div id={`pin-${i}`} className={pindex === `pin-${i}` ? 'img-overlay on': 'img-overlay'}>

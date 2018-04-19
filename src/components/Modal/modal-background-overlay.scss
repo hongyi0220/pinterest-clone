@@ -1,0 +1,11 @@
+@import '../../styles-assets/mixins';
+@import '../../styles-assets/variables';
+
+.password-modal-background {
+    position: absolute;
+    top: 60px;
+    z-index: 3;
+    height: calc(100% - 60px);
+    width: 100%;
+    background-color: rgba(0,0,0,.7);
+}

@@ -6,6 +6,7 @@ import HeaderMenu from './Menu/HeaderMenu';
 import SettingsPageContainer from './Settings/SettingsPageContainer';
 import PasswordModalContainer from './Modal/PasswordModalContainer';
 import MsgModalContainer from './Modal/MsgModal';
+import ModalBackgroundOverlay from './Modal/ModalBackgroundOverlay'
 
 export {
     AuthPageContainer,
@@ -15,5 +16,6 @@ export {
     HeaderMenu,
     SettingsPageContainer,
     PasswordModalContainer,
-    MsgModalContainer
+    MsgModalContainer,
+    ModalBackgroundOverlay
 }

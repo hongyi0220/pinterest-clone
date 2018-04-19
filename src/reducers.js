@@ -26,7 +26,7 @@ const images = (state = null, action) => {
             return state;
     }
 }
-const ui = (state = { headerMenu: false, passwordModal: false }, action) => {
+const ui = (state = { headerMenu: false, modalBackgroundOverlay: false, passwordModal: false }, action) => {
     console.log(action);
     switch(action.type) {
         case TOGGLE_HEADER_MENU:

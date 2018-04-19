@@ -8,16 +8,11 @@ export const storeImages = images => ({
     images
 });
 
-export const toggleHeaderMenu = () => {
-    console.log('toggling headerMenu');
+export const toggleHeaderMenu = () => ({type: 'TOGGLE_HEADER_MENU'});
 
-    return { type: 'TOGGLE_HEADER_MENU' };
+export const togglePasswordModal = open => ({
+    type: 'TOGGLE_PASSWORD_WINDOW',
+    open
+});
 
-};
-
-export const openPasswordWindow = () => {
-    console.log('openPasswordWindow triggered');
-    return {
-        type: 'OPEN_PASSWORD_WINDOW'
-    };
-}
+// export const closePasswordModal = () => ({type: 'CLOSE_PASSWORD_WINDOW'})

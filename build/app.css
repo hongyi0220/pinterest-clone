@@ -465,14 +465,14 @@ html {
         border: 5px solid #8BC3FD;
         padding: 0; }
 
-.password-window-background {
+.password-modal-background {
   position: absolute;
   top: 60px;
   z-index: 3;
   height: calc(100% - 60px);
   width: 100%;
   background-color: rgba(0, 0, 0, 0.7); }
-  .password-window-background .password-window-container {
+  .password-modal-background .password-modal-container {
     border-radius: 5px;
     background-color: white;
     width: 25%;
@@ -480,27 +480,28 @@ html {
     position: relative;
     margin: auto;
     top: calc(50% - 160px); }
-    .password-window-background .password-window-container h2 {
+    .password-modal-background .password-modal-container h2 {
       text-align: center;
       border-bottom: 1px solid #EFEFEF;
       padding: 1em;
       color: #555; }
-    .password-window-background .password-window-container .input-field-container {
+    .password-modal-background .password-modal-container .input-field-container {
       border-bottom: 1px solid #EFEFEF;
       padding: 1em; }
-      .password-window-background .password-window-container .input-field-container .label-wrapper {
+      .password-modal-background .password-modal-container .input-field-container .label-wrapper {
         display: inline-block;
         width: 35%;
         height: 45Px;
         vertical-align: top;
         position: relative;
         top: 5px; }
-        .password-window-background .password-window-container .input-field-container .label-wrapper label {
-          color: #555; }
-      .password-window-background .password-window-container .input-field-container .input-wrapper {
+        .password-modal-background .password-modal-container .input-field-container .label-wrapper label {
+          color: #555;
+          font-weight: 600; }
+      .password-modal-background .password-modal-container .input-field-container .input-wrapper {
         width: 65%;
         display: inline-block; }
-        .password-window-background .password-window-container .input-field-container .input-wrapper input {
+        .password-modal-background .password-modal-container .input-field-container .input-wrapper input {
           margin: .5em;
           border-radius: 5px;
           height: 40px;
@@ -511,21 +512,23 @@ html {
           color: #555;
           background-color: #EFEFEF;
           width: calc(100% - 1em); }
-          .password-window-background .password-window-container .input-field-container .input-wrapper input:focus {
+          .password-modal-background .password-modal-container .input-field-container .input-wrapper input:focus {
             border: 5px solid #8BC3FD;
             padding: 12px; }
-          .password-window-background .password-window-container .input-field-container .input-wrapper input::placeholder {
+          .password-modal-background .password-modal-container .input-field-container .input-wrapper input::placeholder {
             color: #757575;
             font-weight: 600; }
-    .password-window-background .password-window-container .buttons-container-wrapper {
+    .password-modal-background .password-modal-container .input-field-container.old-password input.wrong-password {
+      border: 2px solid orange; }
+    .password-modal-background .password-modal-container .buttons-container-wrapper {
       height: 70px;
       padding: 1em; }
-      .password-window-background .password-window-container .buttons-container-wrapper .buttons-container button {
+      .password-modal-background .password-modal-container .buttons-container-wrapper .buttons-container .button {
         float: right;
         display: inline-block;
         position: relative;
         top: calc(50% - 40px); }
-      .password-window-background .password-window-container .buttons-container-wrapper .buttons-container .cancel-button {
+      .password-modal-background .password-modal-container .buttons-container-wrapper .buttons-container .button.cancel {
         background-color: #efefef;
         color: #555;
         width: 80px;
@@ -537,13 +540,13 @@ html {
         border: none;
         outline: none;
         margin-right: .35em; }
-        .password-window-background .password-window-container .buttons-container-wrapper .buttons-container .cancel-button:hover {
+        .password-modal-background .password-modal-container .buttons-container-wrapper .buttons-container .button.cancel:hover {
           background-color: #E2E2E2;
           cursor: pointer; }
-        .password-window-background .password-window-container .buttons-container-wrapper .buttons-container .cancel-button:active {
+        .password-modal-background .password-modal-container .buttons-container-wrapper .buttons-container .button.cancel:active {
           border: 5px solid #8BC3FD;
           padding: 0; }
-      .password-window-background .password-window-container .buttons-container-wrapper .buttons-container .change-password-button {
+      .password-modal-background .password-modal-container .buttons-container-wrapper .buttons-container .button.change-password {
         background-color: #efefef;
         color: #555;
         width: 170px;
@@ -553,13 +556,69 @@ html {
         height: 40px;
         font-weight: 600;
         border: none;
-        outline: none; }
-        .password-window-background .password-window-container .buttons-container-wrapper .buttons-container .change-password-button:hover {
+        outline: none;
+        background-color: #bb0f24;
+        color: white; }
+        .password-modal-background .password-modal-container .buttons-container-wrapper .buttons-container .button.change-password:hover {
           background-color: #E2E2E2;
           cursor: pointer; }
-        .password-window-background .password-window-container .buttons-container-wrapper .buttons-container .change-password-button:active {
+        .password-modal-background .password-modal-container .buttons-container-wrapper .buttons-container .button.change-password:active {
           border: 5px solid #8BC3FD;
           padding: 0; }
+        .password-modal-background .password-modal-container .buttons-container-wrapper .buttons-container .button.change-password:hover {
+          background-color: #ab0e21; }
+      .password-modal-background .password-modal-container .buttons-container-wrapper .buttons-container .button.change-password.disabled {
+        background-color: rgba(239, 239, 239, 0.5);
+        color: rgba(85, 85, 85, 0.5); }
+        .password-modal-background .password-modal-container .buttons-container-wrapper .buttons-container .button.change-password.disabled:hover {
+          cursor: not-allowed; }
+
+.msg-modal-container {
+  border-radius: 5px;
+  background-color: white;
+  width: 25%;
+  min-width: 300px;
+  position: relative;
+  margin: auto;
+  top: calc(50% - 160px); }
+  .msg-modal-container h2 {
+    text-align: center;
+    border-bottom: 1px solid #EFEFEF;
+    padding: 1em;
+    color: #555; }
+  .msg-modal-container .msg-text-wrapper {
+    border-bottom: 1px solid #EFEFEF;
+    padding: 1em;
+    text-align: center; }
+  .msg-modal-container .button-wrapper {
+    height: 70px;
+    padding: 1em; }
+    .msg-modal-container .button-wrapper .button {
+      float: right;
+      display: inline-block;
+      position: relative;
+      top: calc(50% - 1em); }
+    .msg-modal-container .button-wrapper .okay.button {
+      background-color: #efefef;
+      color: #555;
+      width: 80px;
+      border-radius: 5px;
+      text-align: center;
+      line-height: 40px;
+      height: 40px;
+      font-weight: 600;
+      border: none;
+      outline: none;
+      background-color: #bb0f24;
+      color: white; }
+      .msg-modal-container .button-wrapper .okay.button:hover {
+        background-color: #E2E2E2;
+        cursor: pointer; }
+      .msg-modal-container .button-wrapper .okay.button:active {
+        border: 5px solid #8BC3FD;
+        padding: 0; }
+      .msg-modal-container .button-wrapper .okay.button:hover {
+        background-color: #ab0e21; }
 
 * {
   box-sizing: border-box;

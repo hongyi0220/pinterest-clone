@@ -11,7 +11,7 @@
 @mixin b($color: red, $weight: 1px) {
     border: $weight solid $color;
 }
-@import '../styles-assets/mixins';
+@import '../../styles-assets/mixins';
 // @mixin input-pinterest-style($width: 60%) {
 //     margin: .5em;
 //     border-radius: 5px;

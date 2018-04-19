@@ -1,0 +1,40 @@
+@import './variables';
+@mixin input-pinterest-style($width: 60%) {
+    margin: .5em;
+    border-radius: 5px;
+    height: 40px;
+    width: $width;
+    border: 1px solid #ccc;
+    padding-left: 1em;
+    outline: none;
+    color: $pin-font-gray;
+    background-color: #EFEFEF;
+    &:focus {
+        border: 5px solid $pin-highlight-blue;
+        padding: 12px;
+    }
+    &::placeholder {
+        color: #757575;
+        font-weight: 600;
+    }
+}
+@mixin pinterest-gray-button($width: 10%) {
+    background-color: rgb(239,239,239);
+    color: $pin-font-gray;
+    width: $width;
+    border-radius: 5px;
+    text-align: center;
+    line-height: 40px;
+    height: 40px;
+    font-weight: 600;
+    border: none;
+    outline: none;
+    &:hover {
+        background-color: #E2E2E2;
+        cursor: pointer;
+    }
+    &:active {
+        border: 5px solid $pin-highlight-blue;
+        padding: 0;
+    }
+}

@@ -173,4 +173,29 @@ module.exports = (app, db) => {
             res.status(201).json({url:result.secure_url});
         }).end(req.file.buffer);
     });
+
+    app.post('/password', (req, res) => {
+        const { oldPassword, newPassword } = req.body;
+        console.log('oldPassword, newPassword:', oldPassword, newPassword);
+        console.log('req.user.username:',req.user.username);
+        Users.updateOne(
+            {
+                username: req.user.username,
+                password: req.body.oldPassword
+            },
+            {
+                $set: {
+                    password: req.body.newPassword
+                }
+            }
+        )
+        .then(response => {
+            const { matchedCount, modifiedCount } = response;
+            res.send({
+                matchedCount,
+                modifiedCount
+            });
+        })
+        .catch(err => console.log(err));
+    });
 }

@@ -4,7 +4,8 @@ import UserPageContainer from './User/UserPageContainer';
 import HeaderContainer from './Header/HeaderContainer';
 import HeaderMenu from './Menu/HeaderMenu';
 import SettingsPageContainer from './Settings/SettingsPageContainer';
-import PasswordWindow from './Window/PasswordWindow';
+import PasswordModalContainer from './Modal/PasswordModalContainer';
+import MsgModalContainer from './Modal/MsgModal';
 
 export {
     AuthPageContainer,
@@ -13,5 +14,6 @@ export {
     HeaderContainer,
     HeaderMenu,
     SettingsPageContainer,
-    PasswordWindow
+    PasswordModalContainer,
+    MsgModalContainer
 }

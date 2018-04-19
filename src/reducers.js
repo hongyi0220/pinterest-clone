@@ -2,13 +2,10 @@ import { combineReducers } from 'redux';
 const LOG_IN_USER = 'LOG_IN_USER';
 const STORE_IMAGES = 'STORE_IMAGES';
 const TOGGLE_HEADER_MENU = 'TOGGLE_HEADER_MENU';
-const OPEN_PASSWORD_WINDOW = 'OPEN_PASSWORD_WINDOW';
+const TOGGLE_PASSWORD_WINDOW = 'TOGGLE_PASSWORD_WINDOW';
+// const CLOSE_PASSWORD_WINDOW = 'CLOSE_PASSWORD_WINDOW';
 
-const initState = {
-    user: null
-};
-
-const account = (state = initState, action) => {
+const account = (state = { user: null }, action) => {
     switch(action.type) {
         case LOG_IN_USER:
             return {
@@ -29,7 +26,8 @@ const images = (state = null, action) => {
             return state;
     }
 }
-const ui = (state = { headerMenu: false, passwordWindow: false }, action) => {
+const ui = (state = { headerMenu: false, passwordModal: false }, action) => {
+    console.log(action);
     switch(action.type) {
         case TOGGLE_HEADER_MENU:
             return {
@@ -37,12 +35,18 @@ const ui = (state = { headerMenu: false, passwordWindow: false }, action) => {
                 headerMenu: !state.headerMenu
             };
             break;
-        case OPEN_PASSWORD_WINDOW:
+        case TOGGLE_PASSWORD_WINDOW:
             return {
                 ...state,
-                passwordWindow: true
+                passwordModal: action.open
             }
             break;
+        // case OPEN_PASSWORD_WINDOW:
+        //     return {
+        //         ...state,
+        //         passwordModal: false
+        //     }
+        //     break;
         default:
             return state;
     }

@@ -1,0 +1,41 @@
+@import '../../styles-assets/mixins';
+
+.msg-modal-container {
+    h2 {
+        text-align: center;
+        border-bottom: 1px solid #EFEFEF;
+        padding: 1em;
+        color: $pin-font-gray;
+    }
+    border-radius: 5px;
+    // border: 3px solid blue;
+    background-color: white;
+    width: 25%;
+    min-width: 300px;
+    position: relative;
+    margin: auto;
+    top: calc(50% - 160px);
+    .msg-text-wrapper {
+        border-bottom: 1px solid #EFEFEF;
+        padding: 1em;
+        text-align: center;
+    }
+    .button-wrapper {
+        height: 70px;
+        padding: 1em;
+        .button {
+            float: right;
+            display: inline-block;
+            position: relative;
+            top: calc(50% - 1em);
+        }
+        .okay.button {
+            @include pinterest-gray-button(80px);
+            background-color: $pin-red;
+            color: white;
+            &:hover {
+                background-color: $pin-red-hover;
+            }
+        }
+    }
+}

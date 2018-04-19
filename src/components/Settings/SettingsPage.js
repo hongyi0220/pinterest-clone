@@ -13,7 +13,7 @@ class SettingsPage extends React.Component {
         console.log('handling ImageUplaod');
         console.log('e.target.files[0]:', e.target.files[0]);
         const imgFile = e.target.files[0];
-        const uploadedImg = window.URL.createObjectURL(imgFile);
+        const uploadedImg = URL.createObjectURL(imgFile);
         this.setState({ uploadedImg });
 
         let formData = new FormData();
@@ -65,7 +65,7 @@ class SettingsPage extends React.Component {
     }
 
     render() {
-        const { account, openPasswordWindow} = this.props;
+        const { account, togglePasswordModal } = this.props;
         const { uploadedImg, email, username } = this.state;
         return (
             <div className="settings-page-container">
@@ -86,7 +86,7 @@ class SettingsPage extends React.Component {
                                 <input type="email" id='email' name='email' value={email} onChange={this.handleEmailInputChange}/>
                             </div>
                             <label className='label'>Password</label>
-                            <div className="change-password-button" onClick={openPasswordWindow}>
+                            <div className="change-password-button" onClick={() => togglePasswordModal(true)}>
                                 Change your password
                             </div>
                         </div>

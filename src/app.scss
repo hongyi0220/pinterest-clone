@@ -4,7 +4,8 @@
 @import './components/User/user-page';
 @import './components/Menu/header-menu';
 @import './components/Settings/settings-page';
-@import '/components/Window/password-window';
+@import './components/Modal/password-modal';
+@import './components/Modal/msg-modal';
 * {
     box-sizing: border-box;
     margin: 0;

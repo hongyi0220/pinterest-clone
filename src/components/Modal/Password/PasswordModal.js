@@ -1,5 +1,5 @@
 import React from 'react';
-import MsgModalContainer from './MsgModal';
+// import MsgModalContainer from './MsgModal';
 
 class PasswordModal extends React.Component {
     state = {
@@ -8,7 +8,7 @@ class PasswordModal extends React.Component {
         newPassword: '',
         maskedNewPassword: '',
         isWrongPassword: false,
-        uiMsgModal: false
+        // uiMsgModal: false
     }
     convertInputToPasswordBasedOnPrevState = (input, pwInPrevState) => {
         if (input.length > pwInPrevState.length) {
@@ -36,16 +36,16 @@ class PasswordModal extends React.Component {
             maskedNewPassword: this.maskPassword(eTarget.value)
         }));
     }
-    closePasswordModalFromBackground = e => {
-        if (e.target.className === 'password-modal-background') {
-            console.log('-intermediary-CLOSE-FROM-PARENT:PasswordModal');
-            this.props.togglePasswordModal(false);
-        }
-    }
+    // closePasswordModalFromBackground = e => {
+    //     if (e.target.className === 'password-modal-background') {
+    //         console.log('-intermediary-CLOSE-FROM-PARENT:PasswordModal');
+    //         this.props.togglePasswordModal(false);
+    //     }
+    // }
     closePasswordModalFromButton = e => {
         if (e.target.className === 'cancel button') {
             console.log('-intermediary-CLOSE-FROM-CHILD:PasswordModal');
-            this.props.togglePasswordModal(false);
+            this.props.toggleModal(false);
         }
     }
     submitForm = () => {
@@ -77,42 +77,38 @@ class PasswordModal extends React.Component {
             newPassword,
             maskedNewPassword,
             isWrongPassword,
-            uiMsgModal
+            // uiMsgModal
          } = this.state;
 
         return (
-            <div className="password-modal-background" onClick={this.closePasswordModalFromBackground}>
-                {uiMsgModal ? <MsgModalContainer /> :
-                    <div className="password-modal-container">
-                        <form action="" >
-                            <h2>Change your password</h2>
-                            <div className="input-field-container old-password">
-                                <div className="label-wrapper">
-                                    <label htmlFor="">Old password</label>
-                                </div>
+            <div className="password-modal-container">
+                <form action="" >
+                    <h2>Change your password</h2>
+                    <div className="input-field-container old-password">
+                        <div className="label-wrapper">
+                            <label htmlFor="">Old password</label>
+                        </div>
 
-                                <div className="input-wrapper">
-                                    <input className={isWrongPassword ? 'wrong-password' : ''} type="text" value={maskedOldPassword} onChange={this.handleOldPasswordInputChange}/>
-                                </div>
+                        <div className="input-wrapper">
+                            <input className={isWrongPassword ? 'wrong-password' : ''} type="text" value={maskedOldPassword} onChange={this.handleOldPasswordInputChange}/>
+                        </div>
 
-                            </div>
-                            <div className="input-field-container new-password">
-                                <div className="label-wrapper">
-                                    <label htmlFor="">New password</label>
-                                </div>
-                                <div className="input-wrapper">
-                                    <input type="text" value={maskedNewPassword} onChange={this.handleNewPasswordInputChange}/>
-                                </div>
-                            </div>
-                            <div className="buttons-container-wrapper">
-                                <div className="buttons-container">
-                                    <div className={newPassword && oldPassword ? 'change-password button' : 'change-password button disabled'} disabled={!newPassword && !oldPassword} onClick={this.submitForm}>Change password</div>
-                                    <div className='cancel button' onClick={this.closePasswordModalFromButton}>Cancel</div>
-                                </div>
-                            </div>
-                        </form>
                     </div>
-                }
+                    <div className="input-field-container new-password">
+                        <div className="label-wrapper">
+                            <label htmlFor="">New password</label>
+                        </div>
+                        <div className="input-wrapper">
+                            <input type="text" value={maskedNewPassword} onChange={this.handleNewPasswordInputChange}/>
+                        </div>
+                    </div>
+                    <div className="buttons-container-wrapper">
+                        <div className="buttons-container">
+                            <div className={newPassword && oldPassword ? 'change-password button' : 'change-password button disabled'} disabled={!newPassword && !oldPassword} onClick={this.submitForm}>Change password</div>
+                            <div className='cancel button' onClick={this.closePasswordModalFromButton}>Cancel</div>
+                        </div>
+                    </div>
+                </form>
             </div>
         );
     }

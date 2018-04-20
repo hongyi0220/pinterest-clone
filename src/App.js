@@ -12,7 +12,7 @@ import {
     UserPageContainer,
     HeaderMenu,
     SettingsPageContainer,
-    PasswordModalContainer
+    ModalBackgroundOverlayContainer
 } from './components';
 
 class App extends React.Component {
@@ -67,7 +67,7 @@ class App extends React.Component {
                     }
 
                     {
-                        ui.passwordModal ? <PasswordModalContainer /> : ''
+                        ui.modal ? <ModalBackgroundOverlayContainer /> : ''
                     }
                     <Route exact path='/settings' component={SettingsPageContainer}/>
                     <Route exact path='/search' component={WallPageContainer} />

@@ -1,7 +1,7 @@
-@import '../../styles-assets/mixins';
-@import '../../styles-assets/variables';
+@import '../../../styles-assets/mixins';
+@import '../../../styles-assets/variables';
 
-.password-modal-background {
+.modal-background-overlay {
     position: absolute;
     top: 60px;
     z-index: 3;

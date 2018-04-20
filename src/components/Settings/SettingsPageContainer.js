@@ -2,7 +2,7 @@ import { connect } from 'react-redux';
 import SettingsPage from './SettingsPage';
 import {
     toggleHeaderMenu,
-    togglePasswordModal
+    toggleModal
 } from '../../actions';
 
 const mapStateToProps = state => ({ account: state.account });
@@ -11,7 +11,7 @@ const SettingsPageContainer = connect(
     mapStateToProps,
     {
         toggleHeaderMenu,
-        togglePasswordModal
+        toggleModal
     }
 )(SettingsPage);
 

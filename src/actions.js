@@ -10,9 +10,9 @@ export const storeImages = images => ({
 
 export const toggleHeaderMenu = () => ({type: 'TOGGLE_HEADER_MENU'});
 
-export const togglePasswordModal = open => ({
-    type: 'TOGGLE_PASSWORD_WINDOW',
+export const toggleModal = open => ({
+    type: 'TOGGLE_MODAL',
     open
 });
 
-// export const closePasswordModal = () => ({type: 'CLOSE_PASSWORD_WINDOW'})
+export const openMsgModal = () => ({type: 'OPEN_MGS_MODAL'});

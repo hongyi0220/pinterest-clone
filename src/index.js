@@ -11,7 +11,7 @@ import {
 
 let store = createStore(reducer);
 
-const mapStateToProps = state => ({...state});
+const mapStateToProps = state => state;
 
 const AppContainer = connect(
     mapStateToProps,

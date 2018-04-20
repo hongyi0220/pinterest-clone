@@ -2,8 +2,8 @@ import { combineReducers } from 'redux';
 const LOG_IN_USER = 'LOG_IN_USER';
 const STORE_IMAGES = 'STORE_IMAGES';
 const TOGGLE_HEADER_MENU = 'TOGGLE_HEADER_MENU';
-const TOGGLE_PASSWORD_WINDOW = 'TOGGLE_PASSWORD_WINDOW';
-// const CLOSE_PASSWORD_WINDOW = 'CLOSE_PASSWORD_WINDOW';
+const TOGGLE_MODAL = 'TOGGLE_MODAL';
+const OPEN_MSG_MODAL = 'OPEN_MSG_MODAL';
 
 const account = (state = { user: null }, action) => {
     switch(action.type) {
@@ -26,7 +26,14 @@ const images = (state = null, action) => {
             return state;
     }
 }
-const ui = (state = { headerMenu: false, modalBackgroundOverlay: false, passwordModal: false }, action) => {
+
+const uiInitState = {
+    headerMenu: false,
+    modal: false,
+    msgModal: false,
+    createPinModal: false
+}
+const ui = (state = uiInitState, action) => {
     console.log(action);
     switch(action.type) {
         case TOGGLE_HEADER_MENU:
@@ -35,18 +42,18 @@ const ui = (state = { headerMenu: false, modalBackgroundOverlay: false, password
                 headerMenu: !state.headerMenu
             };
             break;
-        case TOGGLE_PASSWORD_WINDOW:
+        case TOGGLE_MODAL:
             return {
                 ...state,
-                passwordModal: action.open
+                modal: action.open
             }
             break;
-        // case OPEN_PASSWORD_WINDOW:
-        //     return {
-        //         ...state,
-        //         passwordModal: false
-        //     }
-        //     break;
+        case OPEN_MSG_MODAL:
+            return {
+                ...state,
+                msgModal: true
+            }
+            break;
         default:
             return state;
     }

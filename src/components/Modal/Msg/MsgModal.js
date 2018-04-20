@@ -1,10 +1,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import {
-    togglePasswordModal
-} from '../../actions';
+    toggleModal
+} from '../../../actions';
 
-const MsgModal = ({ togglePasswordModal }) => {
+const MsgModal = ({ toggleModal }) => {
     return (
         <div className="msg-modal-container">
             <h2>Password changed!</h2>
@@ -12,7 +12,7 @@ const MsgModal = ({ togglePasswordModal }) => {
                 Your password has been changed successfully.
             </div>
             <div className="button-wrapper">
-                <div className="okay button" onClick={() => togglePasswordModal(false)}>Okay</div>
+                <div className="okay button" onClick={() => toggleModal(false)}>Okay</div>
             </div>
         </div>
     );
@@ -21,7 +21,7 @@ const MsgModal = ({ togglePasswordModal }) => {
 const MsgModalContainer = connect(
     state => state,
     {
-        togglePasswordModal
+        toggleModal
     }
 )(MsgModal);
 

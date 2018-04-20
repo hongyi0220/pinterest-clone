@@ -4,10 +4,10 @@
 @import './components/User/user-page';
 @import './components/Menu/header-menu';
 @import './components/Settings/settings-page';
-@import './components/Modal/password-modal';
-@import './components/Modal/msg-modal';
-@import './components/Modal/create-pin-modal';
-@import './components/Modal/modal-background-overlay';
+@import './components/Modal/Password/password-modal';
+@import './components/Modal/Msg/msg-modal';
+@import './components/Modal/CreatePin/create-pin-modal';
+@import './components/Modal/BackgroundOverlay/modal-background-overlay';
 * {
     box-sizing: border-box;
     margin: 0;

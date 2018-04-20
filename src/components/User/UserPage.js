@@ -22,7 +22,7 @@ class UserPage extends React.Component {
         .catch(err => console.log(err));
     }
     render() {
-        const { account } = this.props;
+        const { account, toggleModal } = this.props;
         const { pindex, isCreatePinButtonHiglighted } = this.state;
         return (
             <div className="user-page-container">
@@ -37,7 +37,7 @@ class UserPage extends React.Component {
                 <div className="saved-images-container">
                     <h2>Saved Pins</h2>
                     <div className="wall">
-                        <div className='create-pin-button' onMouseEnter={this.highlightCreatePinButton} onMouseLeave={this.highlightCreatePinButton}>
+                        <div className='create-pin-button' onMouseEnter={this.highlightCreatePinButton} onMouseLeave={this.highlightCreatePinButton} onClick={() => toggleModal(true)}>
                             <div className={isCreatePinButtonHiglighted ? 'img-overlay on': 'img-overlay'}>
                                 <div className="action-button">
                                     <img src="./images/create-pin.png"/>

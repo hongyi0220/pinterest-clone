@@ -3,73 +3,106 @@
 .create-pin-modal-container {
     h2 {
         text-align: center;
-        border-bottom: 1px solid #EFEFEF;
+        border-bottom: 1px solid $pin-light-gray;
         padding: 1em;
         color: $pin-font-gray;
     }
     border-radius: 5px;
-    // border: 3px solid blue;
     background-color: white;
-    width: 25%;
+    width: 45%;
     min-width: 300px;
-    // height: 400px;
     position: relative;
     margin: auto;
-    top: calc(50% - 160px);
-    // transform: translateY(-160px);
+    top: calc(50% - (200px + 2em + 2em + 40px + 70px + 2em)/2);
     .drag-target-area-wrapper {
-        border-bottom: 1px solid #EFEFEF;
+        border-bottom: 1px solid $pin-light-gray;
         padding: 1em;
         .drag-target-area {
+            border: 2px dashed #b5b5b5;
+            border-radius: 10px;
             display: inline-block;
-            width: 35%;
-            height: $input-height;
-            vertical-align: top;
-            position: relative;
-            top: 5px;
-            label {
-                color: $pin-font-gray;
-                font-weight: 600;
-            }
-            .text-wrapper {
-
+            width: 100%;
+            height: 200px;
+            .img-wrapper, .text-wrapper {
+                position: relative;
+                margin:auto;
+                width: 70%;
+                top: calc(50% - 3em/2);
             }
             .img-wrapper {
+                // border: 1px solid blue;
+                text-align: center;
                 img {
-
+                    width: 2.5em;
                 }
             }
-        }
-        .tags-input-container {
-            width: 65%;
-            display: inline-block;
-            input {
-                @include input-pinterest-style;
-                width: calc(100% - 1em);
+            .text-wrapper {
+                // border: 1px solid purple;
+                text-align: center;
+                color: $pin-font-gray;
+                span {
+                    font-weight: 600;
+                }
+            }
+            input[type='file'] {
+                opacity: 0;
             }
         }
-    }
-    .input-field-container.old-password {
-        input.wrong-password {
-            border: 2px solid orange;
+    }//END OF .drag-target-area-wrapper
+    .input-field-container.tags {
+        width: 100%;
+        border-bottom: 1px solid $pin-light-gray;
+        // display: inline-block;
+        label {
+            margin-left: .5em;
+            color: $pin-font-gray;
+            font-weight: 600;
         }
+        input {
+            @include input-pinterest-style(calc(100% - 1em));
+            background-color: white;
+        }
+    }
+    // .input-field-container.old-password {
+    //     input.wrong-password {
+    //         border: 2px solid orange;
+    //     }
+    // }
+    .button {
+        // float: left;
+        display: inline-block;
+        position: relative;
+        top: calc(50% - 40px);
     }
     .modal-controls-container {
         height: 70px;
         padding: 1em;
-        .toggle-buttons-container {
-            .button {
-                float: right;
+        .all-buttons-container {
+            .toggle-buttons-container {
+                // border: 1px solid red;
+                float: left;
                 display: inline-block;
-                position: relative;
-                top: calc(50% - 40px);
-            }
-            .button.upload-button {
-                @include pinterest-gray-button(80px);
-                margin-right: .35em;
+                background-color: $pin-light-gray;
+                border-radius: 5px;
+                .button.upload {
+                    display: inline-block;
+                    @include pinterest-gray-button(140px);
+                    margin-right: .35em;
+                }
+                .button.upload.off {
+
+                }
+                .upload.from-local {
+
+                }
+                .upload.from-src {
+
+                }
             }
             .button.done {
-                @include pinterest-gray-button(170px);
+                display: inline-block;
+                float: right;
+                @include pinterest-gray-button(70px);
                 background-color: $pin-red;
                 color: white;
                 &:hover {

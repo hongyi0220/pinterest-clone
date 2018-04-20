@@ -18,7 +18,10 @@ class UserPage extends React.Component {
     deletePin = () => {
         const { pindex } = this.state;
         console.log(`/delete-pin?${pindex.split('-')[1]}`);
-        fetch(`/delete-pin?pindex=${pindex.split('-')[1]}`, {credentials: 'include'})
+        fetch(`/pin?pindex=${pindex.split('-')[1]}`, {
+            method: 'delete',
+            credentials: 'include'
+        })
         .catch(err => console.log(err));
     }
     render() {

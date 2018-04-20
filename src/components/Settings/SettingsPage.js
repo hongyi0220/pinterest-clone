@@ -41,7 +41,7 @@ class SettingsPage extends React.Component {
         const body = JSON.stringify(this.state);
         console.log('JSON.stringify(this.state):',body );
         fetch('/profile', {
-            method: 'post',
+            method: 'put',
             headers: {
                 'content-type': 'application/json'
             },

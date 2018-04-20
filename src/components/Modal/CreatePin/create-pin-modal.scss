@@ -52,9 +52,12 @@
     .input-field-container.tags {
         width: 100%;
         border-bottom: 1px solid $pin-light-gray;
-        // display: inline-block;
+        // border: 2px dotted blue;
+        position: relative;
         label {
-            margin-left: .5em;
+            position: relative;
+            left: .5em;
+            top: .2em;
             color: $pin-font-gray;
             font-weight: 600;
         }
@@ -62,11 +65,37 @@
             @include input-pinterest-style(calc(100% - 1em));
             background-color: white;
         }
+        input.enough-tags {
+            border: 2px solid orange;
+        }
+        .tags-overlay-container {
+            position: absolute;
+            // border: 2px solid red;
+            top: 0;
+            left: 2.6em;
+            height: 1.55em;
+            overflow: scroll;
+            .tag {
+                padding: .3em;
+                display: inline-block;
+                background-color: $pin-light-gray;
+                color: $pin-font-gray;
+                margin-right: .3em;
+                margin-bottom: .2em;
+                border-radius: 3px;
+                .remove-tag-button {
+                    display: inline-block;
+                    // transform: rotate(180deg);
+                    img {
+                        width: 1em;
+                        transform: rotate(45deg);
+                    }
+                }
+            }
+        }
     }
-    // .input-field-container.old-password {
-    //     input.wrong-password {
-    //         border: 2px solid orange;
-    //     }
+    // .input-field-container.tags {
+    //
     // }
     .button {
         // float: left;

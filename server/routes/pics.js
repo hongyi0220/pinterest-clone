@@ -1,10 +1,14 @@
 const apiKey = process.env.API_KEY;
 const http = require('https');
 const fetch = require('node-fetch');
+const multer = require('multer');
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
+const cloudinary = require('cloudinary');
 
 module.exports = (app, db) => {
     const Users = db.collection('users');
-    app.get('/images', (req, res) => {
+    app.get('/pics', (req, res) => {
         console.log('/images route reached!');
         console.log('session.id:', req.session.id);
         let { page, q } = req.query;
@@ -23,8 +27,25 @@ module.exports = (app, db) => {
         .catch(err => console.log(err));
     });
 
-    app.get('/save-pin', (req, res) => {
-        console.log('/save-pin reached!');
+    app.post('/pic', upload.single('imgFile'), (req, res) => {
+        const { tags } = req.body;
+        cloudinary.v2.uploader.upload_stream({ resource_type: 'raw'}, (err, result) => {
+            if (err) console.log(err);
+            Users.updateOne(
+                { username: req.user.username },
+                {
+                    $push: {
+                        pins: {src: result.secure_url,
+                            tags}
+                    }
+                }
+            )
+        }).end(req.file.buffer);
+
+    });
+
+    app.get('/pin', (req, res) => {
+        console.log('GET pin reached!');
         console.log('session.id:', req.session.id);
         console.log('req._passport.session:',req._passport.session);
         console.log('req.user:',req.user);
@@ -42,8 +63,8 @@ module.exports = (app, db) => {
         res.end();
     });
 
-    app.get('/delete-pin', (req, res) => {
-        console.log('/delete-pin reached!');
+    app.delete('/pin', (req, res) => {
+        console.log('DELETE pin reached!');
 
         const pindex = req.query.pindex;
         console.log(`pindex: ${pindex}`);
@@ -58,4 +79,5 @@ module.exports = (app, db) => {
         .catch(err => console.log(err));
         res.end();
     });
+
 };

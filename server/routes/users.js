@@ -147,7 +147,7 @@ module.exports = (app, db) => {
         res.redirect('/');
     });
 
-    app.post('/profile', (req, res) => {
+    app.put('/profile', (req, res) => {
         console.log('/profile reached!');
         const { email, username, uploadedImg } = req.body;
         console.log('req.body:',req.body);
@@ -174,7 +174,7 @@ module.exports = (app, db) => {
         }).end(req.file.buffer);
     });
 
-    app.post('/password', (req, res) => {
+    app.put('/password', (req, res) => {
         const { oldPassword, newPassword } = req.body;
         console.log('oldPassword, newPassword:', oldPassword, newPassword);
         console.log('req.user.username:',req.user.username);

@@ -15,6 +15,10 @@ const webpack = require('webpack');
 const webpackConfig = require('../webpack/webpack.dev.js');
 const compiler = webpack(webpackConfig);
 console.log('server loading');
+// const multer = require('multer');
+// const storage = multer.memoryStorage();
+// const upload = multer({ storage });
+// const cloudinary = require('cloudinary');
 
 app.use(require('webpack-dev-middleware')(compiler, {
     publicPath: webpackConfig.output.publicPath

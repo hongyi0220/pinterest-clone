@@ -52,7 +52,7 @@ class PasswordModal extends React.Component {
         const { oldPassword, newPassword } = this.state
         const body = JSON.stringify({ oldPassword, newPassword });
         fetch('/password', {
-            method: 'post',
+            method: 'put',
             credentials: 'include',
             headers: {
                 'content-type': 'application/json'

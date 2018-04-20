@@ -16,7 +16,7 @@ class Header extends React.Component {
         const q = input.trim().replace(/\s/g, '%20');
         if (e.key === 'Enter') {
             this.props.history.push(`/search?term=${q}`)
-            fetch(`/images?q=${q}&page=${page}`, {credentials: 'include'})
+            fetch(`/pics?q=${q}&page=${page}`, {credentials: 'include'})
             .then(res => res.json())
             .then(images => {
                 storeImages(images);

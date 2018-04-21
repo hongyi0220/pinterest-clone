@@ -66,13 +66,45 @@ class CreatePinModal extends React.Component {
             return;
         }
     }
+    handleImgFileDrop = e => {
+        e.preventDefault();
+        if (e.dataTransfer.items) {
+                console.log('e.dataTransfer.items');
+                let imgFile = e.dataTransfer.items[0].getAsFile();
+                const uploadedImg = URL.createObjectURL(imgFile);
+                this.setState({ uploadedImg, imgFile });
+                // console.log('imgFile:', imgFile);
+                this.removeDragData(e);
+        } else {
+                console.log('e.dataTransfer.files');
+                let imgFile = e.dataTransfer.files[0];
+                const uploadedImg = URL.createObjectURL(imgFile);
+                this.setState({ uploadedImg, imgFile });
+                // console.log('imgFile:', imgFile);
+                this.removeDragData(e);
+        }
+        // this.removeDragData(e);
+    }
+    removeDragData = e => {
+        console.log('Removing drag data')
+        if (e.dataTransfer.items) {
+            e.dataTransfer.items.clear();
+        } else {
+            e.dataTransfer.clearData();
+        }
+    }
+    handleDragOver = e => {
+        console.log('File(s) in drop zone');
+        e.preventDefault();
+    }
     render() {
         const { tags, tempTagInput, isTagInputDisabled, uploadedImg } = this.state;
         return (
             <div className="create-pin-modal-container">
                 <h2>Create Pin</h2>
                 <div className="drag-target-area-wrapper" onClick={this.openInputTypeFile}>
-                    <div className="drag-target-area">
+                    <div className="drag-target-area" onDrop={this.handleImgFileDrop} onDragOver={this.handleDragOver}>
+
                         {uploadedImg ? <img className='preview-img' src={uploadedImg}/> : <div className="imgFileInputAreaDefaultImgTxt">
                             <div className="img-wrapper">
                                 <img src="./images/camera-icon.png"/>
@@ -82,11 +114,11 @@ class CreatePinModal extends React.Component {
                             </div>
                         </div>}
 
-
                         <input ref={el => this.inputTypeFile = el} type="file" accept='image/*' onChange={this.handleImageUpload}/>
                     </div>
                 </div>
                 <div className="input-field-container tags">
+
                     <label htmlFor="tags">Tags</label>
                     <input type="text" id='tags' className={isTagInputDisabled ? 'enough-tags' : ''} placeholder="Tab to create a new tag" onChange={this.handleTagInputChange} onKeyDown={this.createTag} value={tempTagInput} disabled={isTagInputDisabled} />
                     <div className="tags-overlay-container">
@@ -94,6 +126,7 @@ class CreatePinModal extends React.Component {
                             {t} <div id={`tag#${i}`} className="remove-tag-button" onClick={this.removeTag}><img id={`tag#${i}`} src="./images/create-pin.png"/></div>
                         </div>)}
                     </div>
+
                 </div>
                 <div className="modal-controls-container">
                     <div className="all-buttons-container">

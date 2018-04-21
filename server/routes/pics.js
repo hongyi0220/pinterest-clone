@@ -17,7 +17,7 @@ module.exports = (app, db) => {
 
         fetch(url)
         .then(res => res.json())
-        .then(resJson => resJson.hits.map(hit => ({src: hit.webformatURL, tags: hit.tags})))
+        .then(resJson => resJson.hits.map(hit => ({src: hit.webformatURL, tags: hit.tags.split(' ').slice(0, 5)})))
         .then(images => {
             console.log('req.session:', req.session);
             req.session.images = images;
@@ -28,15 +28,18 @@ module.exports = (app, db) => {
     });
 
     app.post('/pic', upload.single('imgFile'), (req, res) => {
-        const { tags } = req.body;
+        let { tags } = req.body;
+        tags = tags.split(',');
         cloudinary.v2.uploader.upload_stream({ resource_type: 'raw'}, (err, result) => {
             if (err) console.log(err);
             Users.updateOne(
                 { username: req.user.username },
                 {
                     $push: {
-                        pins: {src: result.secure_url,
-                            tags}
+                        pins: {
+                            src: result.secure_url,
+                            tags
+                        }
                     }
                 }
             )

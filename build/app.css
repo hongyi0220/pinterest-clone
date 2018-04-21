@@ -651,11 +651,11 @@ html {
 .create-pin-modal-container {
   border-radius: 5px;
   background-color: white;
-  width: 25%;
+  width: 45%;
   min-width: 300px;
   position: relative;
   margin: auto;
-  top: calc(50% - 160px); }
+  top: calc(50% - (200px + 2em + 2em + 40px + 70px + 2em)/2); }
   .create-pin-modal-container h2 {
     text-align: center;
     border-bottom: 1px solid #EFEFEF;
@@ -665,67 +665,115 @@ html {
     border-bottom: 1px solid #EFEFEF;
     padding: 1em; }
     .create-pin-modal-container .drag-target-area-wrapper .drag-target-area {
+      border: 2px dashed #b5b5b5;
+      border-radius: 10px;
       display: inline-block;
-      width: 35%;
-      height: 45Px;
-      vertical-align: top;
-      position: relative;
-      top: 5px; }
-      .create-pin-modal-container .drag-target-area-wrapper .drag-target-area label {
-        color: #555;
-        font-weight: 600; }
-    .create-pin-modal-container .drag-target-area-wrapper .tags-input-container {
-      width: 65%;
-      display: inline-block; }
-      .create-pin-modal-container .drag-target-area-wrapper .tags-input-container input {
-        margin: .5em;
-        border-radius: 5px;
-        height: 40px;
-        width: 60%;
-        border: 1px solid #ccc;
-        padding-left: 1em;
-        outline: none;
-        color: #555;
-        background-color: #EFEFEF;
-        width: calc(100% - 1em); }
-        .create-pin-modal-container .drag-target-area-wrapper .tags-input-container input:focus {
-          border: 5px solid #8BC3FD;
-          padding: 12px; }
-        .create-pin-modal-container .drag-target-area-wrapper .tags-input-container input::placeholder {
-          color: #757575;
+      width: 100%;
+      height: 200px; }
+      .create-pin-modal-container .drag-target-area-wrapper .drag-target-area .imgFileInputAreaDefaultImgTxt .img-wrapper, .create-pin-modal-container .drag-target-area-wrapper .drag-target-area .imgFileInputAreaDefaultImgTxt .text-wrapper {
+        position: relative;
+        margin: auto;
+        width: 70%;
+        top: calc(50% - 3em/2); }
+      .create-pin-modal-container .drag-target-area-wrapper .drag-target-area .imgFileInputAreaDefaultImgTxt .img-wrapper {
+        text-align: center; }
+        .create-pin-modal-container .drag-target-area-wrapper .drag-target-area .imgFileInputAreaDefaultImgTxt .img-wrapper img {
+          width: 2.5em; }
+      .create-pin-modal-container .drag-target-area-wrapper .drag-target-area .imgFileInputAreaDefaultImgTxt .text-wrapper {
+        text-align: center;
+        color: #555; }
+        .create-pin-modal-container .drag-target-area-wrapper .drag-target-area .imgFileInputAreaDefaultImgTxt .text-wrapper span {
           font-weight: 600; }
-  .create-pin-modal-container .input-field-container.old-password input.wrong-password {
-    border: 2px solid orange; }
+      .create-pin-modal-container .drag-target-area-wrapper .drag-target-area .preview-img {
+        width: 100%;
+        height: 100%; }
+      .create-pin-modal-container .drag-target-area-wrapper .drag-target-area input[type='file'] {
+        opacity: 0; }
+  .create-pin-modal-container .input-field-container.tags {
+    width: 100%;
+    border-bottom: 1px solid #EFEFEF;
+    position: relative; }
+    .create-pin-modal-container .input-field-container.tags label {
+      position: relative;
+      left: .5em;
+      top: .2em;
+      color: #555;
+      font-weight: 600; }
+    .create-pin-modal-container .input-field-container.tags input {
+      margin: .5em;
+      border-radius: 5px;
+      height: 40px;
+      width: calc(100% - 1em);
+      border: 1px solid #ccc;
+      padding-left: 1em;
+      outline: none;
+      color: #555;
+      background-color: #EFEFEF;
+      background-color: white; }
+      .create-pin-modal-container .input-field-container.tags input:focus {
+        border: 5px solid #8BC3FD;
+        padding: 12px; }
+      .create-pin-modal-container .input-field-container.tags input::placeholder {
+        color: #757575;
+        font-weight: 600; }
+    .create-pin-modal-container .input-field-container.tags input.enough-tags {
+      border: 2px solid orange; }
+    .create-pin-modal-container .input-field-container.tags .tags-overlay-container {
+      position: absolute;
+      top: 0;
+      left: 2.6em;
+      height: 1.55em;
+      overflow: scroll; }
+      .create-pin-modal-container .input-field-container.tags .tags-overlay-container .tag {
+        padding: .3em;
+        display: inline-block;
+        background-color: #EFEFEF;
+        color: #555;
+        margin-right: .3em;
+        margin-bottom: .2em;
+        border-radius: 3px; }
+        .create-pin-modal-container .input-field-container.tags .tags-overlay-container .tag .remove-tag-button {
+          display: inline-block; }
+          .create-pin-modal-container .input-field-container.tags .tags-overlay-container .tag .remove-tag-button img {
+            width: 1em;
+            transform: rotate(45deg); }
+  .create-pin-modal-container .button {
+    display: inline-block;
+    position: relative;
+    top: calc(50% - 40px); }
   .create-pin-modal-container .modal-controls-container {
     height: 70px;
     padding: 1em; }
-    .create-pin-modal-container .modal-controls-container .toggle-buttons-container .button {
-      float: right;
+    .create-pin-modal-container .modal-controls-container .all-buttons-container .toggle-buttons-container {
+      float: left;
       display: inline-block;
-      position: relative;
-      top: calc(50% - 40px); }
-    .create-pin-modal-container .modal-controls-container .toggle-buttons-container .button.upload-button {
+      background-color: #EFEFEF;
+      border-radius: 5px; }
+      .create-pin-modal-container .modal-controls-container .all-buttons-container .toggle-buttons-container .button.upload {
+        display: inline-block;
+        background-color: #efefef;
+        color: #555;
+        width: 140px;
+        border-radius: 5px;
+        text-align: center;
+        line-height: 40px;
+        height: 40px;
+        font-weight: 600;
+        border: none;
+        outline: none;
+        margin-right: .35em; }
+        .create-pin-modal-container .modal-controls-container .all-buttons-container .toggle-buttons-container .button.upload:hover {
+          background-color: #E2E2E2;
+          cursor: pointer; }
+        .create-pin-modal-container .modal-controls-container .all-buttons-container .toggle-buttons-container .button.upload:active {
+          border: 5px solid #8BC3FD;
+          padding: 0; }
+    .create-pin-modal-container .modal-controls-container .all-buttons-container .button.done {
+      display: inline-block;
+      float: right;
       background-color: #efefef;
       color: #555;
-      width: 80px;
-      border-radius: 5px;
-      text-align: center;
-      line-height: 40px;
-      height: 40px;
-      font-weight: 600;
-      border: none;
-      outline: none;
-      margin-right: .35em; }
-      .create-pin-modal-container .modal-controls-container .toggle-buttons-container .button.upload-button:hover {
-        background-color: #E2E2E2;
-        cursor: pointer; }
-      .create-pin-modal-container .modal-controls-container .toggle-buttons-container .button.upload-button:active {
-        border: 5px solid #8BC3FD;
-        padding: 0; }
-    .create-pin-modal-container .modal-controls-container .toggle-buttons-container .button.done {
-      background-color: #efefef;
-      color: #555;
-      width: 170px;
+      width: 70px;
       border-radius: 5px;
       text-align: center;
       line-height: 40px;
@@ -735,18 +783,18 @@ html {
       outline: none;
       background-color: #bb0f24;
       color: white; }
-      .create-pin-modal-container .modal-controls-container .toggle-buttons-container .button.done:hover {
+      .create-pin-modal-container .modal-controls-container .all-buttons-container .button.done:hover {
         background-color: #E2E2E2;
         cursor: pointer; }
-      .create-pin-modal-container .modal-controls-container .toggle-buttons-container .button.done:active {
+      .create-pin-modal-container .modal-controls-container .all-buttons-container .button.done:active {
         border: 5px solid #8BC3FD;
         padding: 0; }
-      .create-pin-modal-container .modal-controls-container .toggle-buttons-container .button.done:hover {
+      .create-pin-modal-container .modal-controls-container .all-buttons-container .button.done:hover {
         background-color: #ab0e21; }
-    .create-pin-modal-container .modal-controls-container .toggle-buttons-container .button.done.disabled {
+    .create-pin-modal-container .modal-controls-container .all-buttons-container .button.done.disabled {
       background-color: rgba(239, 239, 239, 0.5);
       color: rgba(85, 85, 85, 0.5); }
-      .create-pin-modal-container .modal-controls-container .toggle-buttons-container .button.done.disabled:hover {
+      .create-pin-modal-container .modal-controls-container .all-buttons-container .button.done.disabled:hover {
         cursor: not-allowed; }
 
 .modal-background-overlay {

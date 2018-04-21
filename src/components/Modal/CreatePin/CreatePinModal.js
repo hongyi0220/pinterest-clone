@@ -4,22 +4,26 @@ class CreatePinModal extends React.Component {
     state = {
         tempTagInput: '',
         tags: [],
-        isTagInputDisabled: false
+        isTagInputDisabled: false,
+        uploadedImg: null,
+        imgFile: null
     };
     inputTypeFile = null;
     handleImageUpload = e => {
         console.log('handling ImageUplaod from createPinModal');
         console.log('e.target.files[0]:', e.target.files[0]);
         const imgFile = e.target.files[0];
-        // const uploadedImg = URL.createObjectURL(imgFile);
-        // this.setState({ uploadedImg });
-        const { tags } = this.state;
+        const uploadedImg = URL.createObjectURL(imgFile);
+        this.setState({ uploadedImg, imgFile });
+    }
+    submitForm = () => {
+        const { tags, imgFile } = this.state;
         let formData = new FormData();
         formData.append('imgFile', imgFile);
         formData.append('tags', tags)
 
-        console.log('formData after appending data:', formData);
-        fetch('/pin', {
+        // console.log('formData after appending data:', formData);
+        fetch('/pic', {
             method: 'post',
             credentials: 'include',
             body: formData
@@ -37,8 +41,7 @@ class CreatePinModal extends React.Component {
     openInputTypeFile = () => this.inputTypeFile.click();
     handleTagInputChange = e => this.setState({ tempTagInput: e.target.value });
     removeTag = e => {
-        // console.log('e at removeTAG:', e);
-        // this.setState({ isTagInputDisabled: false }, () => console.log('this.state after remove tag:',this.state));
+
         const tagIndex = +e.target.id.split('#')[1];
         console.log('tagIndex:',tagIndex);
         const state = { ...this.state };
@@ -64,18 +67,22 @@ class CreatePinModal extends React.Component {
         }
     }
     render() {
-        const { tags, tempTagInput, isTagInputDisabled } = this.state;
+        const { tags, tempTagInput, isTagInputDisabled, uploadedImg } = this.state;
         return (
             <div className="create-pin-modal-container">
                 <h2>Create Pin</h2>
                 <div className="drag-target-area-wrapper" onClick={this.openInputTypeFile}>
                     <div className="drag-target-area">
-                        <div className="img-wrapper">
-                            <img src="./images/camera-icon.png"/>
-                        </div>
-                        <div className="text-wrapper">
-                            Drag and drop <span>OR</span> click to upload
-                        </div>
+                        {uploadedImg ? <img className='preview-img' src={uploadedImg}/> : <div className="imgFileInputAreaDefaultImgTxt">
+                            <div className="img-wrapper">
+                                <img src="./images/camera-icon.png"/>
+                            </div>
+                            <div className="text-wrapper">
+                                Drag and drop <span>OR</span> click to upload
+                            </div>
+                        </div>}
+
+
                         <input ref={el => this.inputTypeFile = el} type="file" accept='image/*' onChange={this.handleImageUpload}/>
                     </div>
                 </div>
@@ -94,7 +101,7 @@ class CreatePinModal extends React.Component {
                             <div className="button upload from-local">Upload Pin</div>
                             <div className="button upload from-src">Save from site</div>
                         </div>
-                        <div className="button done">Done</div>
+                        <div className="button done" onClick={this.submitForm}>Done</div>
                     </div>
 
                 </div>

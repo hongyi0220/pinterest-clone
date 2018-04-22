@@ -3,7 +3,7 @@ import { Route } from 'react-router-dom';
 import { connect } from 'react-redux';
 import MsgModalContainer from '../Msg/MsgModal';
 import PasswordModalContainer from '../Password/PasswordModalContainer';
-import CreatePinModal from '../CreatePin/CreatePinModal';
+import CreatePinModalContainer from '../CreatePin/CreatePinModalContainer';
 import {
     toggleModal
 } from '../../../actions';
@@ -26,7 +26,7 @@ class ModalBackgroundOverlay extends React.Component {
         return (
             <div className="modal-background-overlay" onClick={this.closePasswordModalFromBackground}>
                 <Route exact path='/settings' render={() => ui.MsgModal ? <MsgModalContainer /> : <PasswordModalContainer />} />
-                <Route exact path='/user' component={CreatePinModal} />
+                <Route exact path='/user' component={CreatePinModalContainer} />
             </div>
         );
     }

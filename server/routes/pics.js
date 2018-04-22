@@ -46,6 +46,18 @@ module.exports = (app, db) => {
         }).end(req.file.buffer);
 
     });
+    app.put('/pic', (req, res) => {
+        console.log('PUT /pic reached');
+        const { pic } = req.body;
+        console.log('pic:', pic);
+        Users.updateOne(
+            { username: req.user.username },
+            {
+                $push: { pins: pic }
+            }
+        )
+        .catch(err => console.log(err));
+    });
 
     app.get('/pin', (req, res) => {
         console.log('GET pin reached!');

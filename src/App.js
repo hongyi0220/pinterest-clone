@@ -70,7 +70,7 @@ class App extends React.Component {
                         ui.modal ? <ModalBackgroundOverlayContainer /> : ''
                     }
                     <Route exact path='/settings' component={SettingsPageContainer}/>
-                    <Route exact path='/search' component={WallPageContainer} />
+                    <Route exact path='/(search|find)' component={WallPageContainer} />
                 </div>
             </Router>
         );

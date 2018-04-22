@@ -652,7 +652,7 @@ html {
   border-radius: 5px;
   background-color: white;
   width: 45%;
-  min-width: 300px;
+  min-width: 400px;
   position: relative;
   margin: auto;
   top: calc(50% - (200px + 2em + 2em + 40px + 70px + 2em)/2); }
@@ -737,23 +737,87 @@ html {
           .create-pin-modal-container .input-field-container.tags .tags-overlay-container .tag .remove-tag-button img {
             width: 1em;
             transform: rotate(45deg); }
-  .create-pin-modal-container .button {
-    display: inline-block;
-    position: relative;
-    top: calc(50% - 40px); }
+  .create-pin-modal-container .create-pin-from-url-container {
+    height: 308px;
+    position: relative; }
+    .create-pin-modal-container .create-pin-from-url-container .input-field.upload-from-url {
+      position: relative;
+      top: calc(50% - (40px + 1em)/2);
+      text-align: center; }
+      .create-pin-modal-container .create-pin-from-url-container .input-field.upload-from-url label {
+        display: block;
+        color: #555;
+        font-weight: 600; }
+      .create-pin-modal-container .create-pin-from-url-container .input-field.upload-from-url input {
+        margin: .5em;
+        border-radius: 5px;
+        height: 40px;
+        width: calc(50%);
+        border: 1px solid #ccc;
+        padding-left: 1em;
+        outline: none;
+        color: #555;
+        background-color: #EFEFEF;
+        background-color: white; }
+        .create-pin-modal-container .create-pin-from-url-container .input-field.upload-from-url input:focus {
+          border: 5px solid #8BC3FD;
+          padding: 12px; }
+        .create-pin-modal-container .create-pin-from-url-container .input-field.upload-from-url input::placeholder {
+          color: #757575;
+          font-weight: 600; }
+        .create-pin-modal-container .create-pin-from-url-container .input-field.upload-from-url input::placeholder {
+          color: rgba(85, 85, 85, 0.5); }
   .create-pin-modal-container .modal-controls-container {
     height: 70px;
     padding: 1em; }
-    .create-pin-modal-container .modal-controls-container .all-buttons-container .toggle-buttons-container {
-      float: left;
-      display: inline-block;
-      background-color: #EFEFEF;
-      border-radius: 5px; }
-      .create-pin-modal-container .modal-controls-container .all-buttons-container .toggle-buttons-container .button.upload {
+    .create-pin-modal-container .modal-controls-container .all-buttons-container {
+      height: 46px;
+      position: relative;
+      top: calc(50% - 46px/2); }
+      .create-pin-modal-container .modal-controls-container .all-buttons-container .toggle-buttons-container {
+        height: 100%;
+        float: left;
         display: inline-block;
+        background-color: #EFEFEF;
+        border-radius: 5px;
+        white-space: nowrap; }
+        .create-pin-modal-container .modal-controls-container .all-buttons-container .toggle-buttons-container .button {
+          display: inline-block;
+          background-color: #efefef;
+          color: #555;
+          width: 140px;
+          border-radius: 5px;
+          text-align: center;
+          line-height: 40px;
+          height: 40px;
+          font-weight: 600;
+          border: none;
+          outline: none;
+          color: rgba(85, 85, 85, 0.5);
+          position: relative;
+          top: calc(50% - 40px/2); }
+          .create-pin-modal-container .modal-controls-container .all-buttons-container .toggle-buttons-container .button:hover {
+            background-color: #E2E2E2;
+            cursor: pointer; }
+          .create-pin-modal-container .modal-controls-container .all-buttons-container .toggle-buttons-container .button:active {
+            border: 5px solid #8BC3FD;
+            padding: 0; }
+          .create-pin-modal-container .modal-controls-container .all-buttons-container .toggle-buttons-container .button:hover {
+            background-color: #EFEFEF;
+            cursor: pointer; }
+        .create-pin-modal-container .modal-controls-container .all-buttons-container .toggle-buttons-container .button.upload-from-local {
+          margin-left: .22em; }
+        .create-pin-modal-container .modal-controls-container .all-buttons-container .toggle-buttons-container .button.upload-from-url {
+          margin-right: .22em; }
+        .create-pin-modal-container .modal-controls-container .all-buttons-container .toggle-buttons-container .button.clicked {
+          background-color: white;
+          color: #555; }
+      .create-pin-modal-container .modal-controls-container .all-buttons-container .button.done {
+        display: inline-block;
+        float: right;
         background-color: #efefef;
         color: #555;
-        width: 140px;
+        width: 70px;
         border-radius: 5px;
         text-align: center;
         line-height: 40px;
@@ -761,41 +825,23 @@ html {
         font-weight: 600;
         border: none;
         outline: none;
-        margin-right: .35em; }
-        .create-pin-modal-container .modal-controls-container .all-buttons-container .toggle-buttons-container .button.upload:hover {
+        background-color: #bb0f24;
+        color: white;
+        position: relative;
+        top: calc(50% - 40px/2); }
+        .create-pin-modal-container .modal-controls-container .all-buttons-container .button.done:hover {
           background-color: #E2E2E2;
           cursor: pointer; }
-        .create-pin-modal-container .modal-controls-container .all-buttons-container .toggle-buttons-container .button.upload:active {
+        .create-pin-modal-container .modal-controls-container .all-buttons-container .button.done:active {
           border: 5px solid #8BC3FD;
           padding: 0; }
-    .create-pin-modal-container .modal-controls-container .all-buttons-container .button.done {
-      display: inline-block;
-      float: right;
-      background-color: #efefef;
-      color: #555;
-      width: 70px;
-      border-radius: 5px;
-      text-align: center;
-      line-height: 40px;
-      height: 40px;
-      font-weight: 600;
-      border: none;
-      outline: none;
-      background-color: #bb0f24;
-      color: white; }
-      .create-pin-modal-container .modal-controls-container .all-buttons-container .button.done:hover {
-        background-color: #E2E2E2;
-        cursor: pointer; }
-      .create-pin-modal-container .modal-controls-container .all-buttons-container .button.done:active {
-        border: 5px solid #8BC3FD;
-        padding: 0; }
-      .create-pin-modal-container .modal-controls-container .all-buttons-container .button.done:hover {
-        background-color: #ab0e21; }
-    .create-pin-modal-container .modal-controls-container .all-buttons-container .button.done.disabled {
-      background-color: rgba(239, 239, 239, 0.5);
-      color: rgba(85, 85, 85, 0.5); }
-      .create-pin-modal-container .modal-controls-container .all-buttons-container .button.done.disabled:hover {
-        cursor: not-allowed; }
+        .create-pin-modal-container .modal-controls-container .all-buttons-container .button.done:hover {
+          background-color: #ab0e21; }
+      .create-pin-modal-container .modal-controls-container .all-buttons-container .button.done.disabled {
+        background-color: rgba(239, 239, 239, 0.5);
+        color: rgba(85, 85, 85, 0.5); }
+        .create-pin-modal-container .modal-controls-container .all-buttons-container .button.done.disabled:hover {
+          cursor: not-allowed; }
 
 .modal-background-overlay {
   position: absolute;

@@ -20,7 +20,7 @@ class Header extends React.Component {
             .then(res => res.json())
             .then(images => {
                 storeImages(images);
-                console.log();
+                console.log(images);
             })
             .catch(err => console.log(err));
         }

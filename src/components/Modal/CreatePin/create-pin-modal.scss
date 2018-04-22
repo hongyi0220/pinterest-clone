@@ -10,7 +10,7 @@
     border-radius: 5px;
     background-color: white;
     width: 45%;
-    min-width: 300px;
+    min-width: 400px;
     position: relative;
     margin: auto;
     top: calc(50% - (200px + 2em + 2em + 40px + 70px + 2em)/2);
@@ -100,38 +100,70 @@
             }
         }
     }
-    // .input-field-container.tags {
-    //
-    // }
-    .button {
-        // float: left;
-        display: inline-block;
+    .create-pin-from-url-container {
+        height: 308px;
         position: relative;
-        top: calc(50% - 40px);
+        .input-field.upload-from-url {
+            position: relative;
+            top: calc(50% - (40px + 1em)/2);
+            text-align: center;
+            label {
+                // position: relative;
+                // left: .5em;
+                // top: .2em;
+                display: block;
+                color: $pin-font-gray;
+                font-weight: 600;
+            }
+            input {
+                @include input-pinterest-style(calc(50%));
+                background-color: white;
+                &::placeholder {
+                    color: rgba(85,85,85,.5);
+                }
+            }
+        }
     }
     .modal-controls-container {
         height: 70px;
         padding: 1em;
         .all-buttons-container {
+            // border: 2px dotted blue;
+            height: 46px;
+            position: relative;
+            top: calc(50% - 46px/2);
             .toggle-buttons-container {
-                // border: 1px solid red;
+                // border: 2px solid red;
+                height: 100%;
                 float: left;
                 display: inline-block;
                 background-color: $pin-light-gray;
                 border-radius: 5px;
-                .button.upload {
+                // position: relative;
+                white-space: nowrap;
+                .button {
+
                     display: inline-block;
                     @include pinterest-gray-button(140px);
-                    margin-right: .35em;
+                    &:hover {
+                        background-color: $pin-light-gray;
+                        cursor: pointer;
+                    }
+                    // margin-right: .35em;
+                    color: rgba(85,85,85,.5);
+                    position: relative;
+                    top: calc(50% - 40px/2);
+                    // border: 2px dotted blue;
                 }
-                .button.upload.off {
-
+                .button.upload-from-local {
+                    margin-left: .22em;
                 }
-                .upload.from-local {
-
+                .button.upload-from-url {
+                    margin-right: .22em;
                 }
-                .upload.from-src {
-
+                .button.clicked {
+                    background-color: white;
+                    color: $pin-font-gray;
                 }
             }
             .button.done {
@@ -140,6 +172,8 @@
                 @include pinterest-gray-button(70px);
                 background-color: $pin-red;
                 color: white;
+                position: relative;
+                top: calc(50% - 40px/2);
                 &:hover {
                     background-color: $pin-red-hover;
                 }

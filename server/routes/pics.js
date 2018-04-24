@@ -18,35 +18,36 @@ module.exports = (app, db) => {
         fetch(url)
         .then(res => res.json())
         .then(resJson => resJson.hits.map(hit => ({src: hit.webformatURL, tags: hit.tags.split(' ').slice(0, 5)})))
-        .then(images => {
+        .then(imgs => {
             console.log('req.session:', req.session);
-            req.session.images = images;
+            req.session.imgs = imgs;
             console.log('req.session2:', req.session);
-            res.send(images)
+            res.send(imgs)
         })
         .catch(err => console.log(err));
     });
 
-    app.post('/pic', upload.single('imgFile'), (req, res) => {
-        let { tags } = req.body;
-        tags = tags.split(',');
-        cloudinary.v2.uploader.upload_stream({ resource_type: 'raw'}, (err, result) => {
-            if (err) console.log(err);
-            Users.updateOne(
-                { username: req.user.username },
-                {
-                    $push: {
-                        pins: {
-                            src: result.secure_url,
-                            tags
+    app.route('/pic')
+        .post(upload.single('imgFile'), (req, res) => {
+            let { tags } = req.body;
+            tags = tags.split(',');
+            cloudinary.v2.uploader.upload_stream({ resource_type: 'raw'}, (err, result) => {
+                if (err) console.log(err);
+                Users.updateOne(
+                    { username: req.user.username },
+                    {
+                        $push: {
+                            pins: {
+                                src: result.secure_url,
+                                tags
+                            }
                         }
                     }
-                }
-            )
-        }).end(req.file.buffer);
+                )
+            }).end(req.file.buffer);
 
-    });
-    app.put('/pic', (req, res) => {
+        })
+        .put((req, res) => {
         console.log('PUT /pic reached');
         const { pic } = req.body;
         console.log('pic:', pic);
@@ -59,40 +60,40 @@ module.exports = (app, db) => {
         .catch(err => console.log(err));
     });
 
-    app.get('/pin', (req, res) => {
-        console.log('GET pin reached!');
-        console.log('session.id:', req.session.id);
-        console.log('req._passport.session:',req._passport.session);
-        console.log('req.user:',req.user);
-        console.log('req.isAuthenticated():',req.isAuthenticated());
-        console.log('req.session:', req.session);
-        const pindex = req.query.pindex;
-        console.log(pindex);
-        console.log('req.user:',req.user);
-        Users.updateOne(
-            { email: req.user.email },
-            {
-                $push: { pins: req.session.images[pindex] }
-            }
-        );
-        res.end();
-    });
+    app.route('/pin')
+        .get((req, res) => {
+            console.log('GET pin reached!');
+            console.log('session.id:', req.session.id);
+            console.log('req._passport.session:',req._passport.session);
+            console.log('req.user:',req.user);
+            console.log('req.isAuthenticated():',req.isAuthenticated());
+            console.log('req.session:', req.session);
+            const pindex = req.query.pindex;
+            console.log(pindex);
+            console.log('req.user:',req.user);
+            Users.updateOne(
+                { email: req.user.email },
+                {
+                    $push: { pins: req.session.imgs[pindex] }
+                }
+            );
+            res.end();
+        })
+        .delete((req, res) => {
+            console.log('DELETE pin reached!');
 
-    app.delete('/pin', (req, res) => {
-        console.log('DELETE pin reached!');
+            const pindex = req.query.pindex;
+            console.log(`pindex: ${pindex}`);
 
-        const pindex = req.query.pindex;
-        console.log(`pindex: ${pindex}`);
-
-        Users.updateOne(
-            { email: req.user.email },
-            {
-                $unset: { [`pins.${pindex}`]: 1 }
-            }
-        )
-        .then(() => Users.updateOne({ email: req.user.email }, { $pull: {pins: null}}))
-        .catch(err => console.log(err));
-        res.end();
-    });
+            Users.updateOne(
+                { email: req.user.email },
+                {
+                    $unset: { [`pins.${pindex}`]: 1 }
+                }
+            )
+            .then(() => Users.updateOne({ email: req.user.email }, { $pull: {pins: null}}))
+            .catch(err => console.log(err));
+            res.end();
+        });
 
 };

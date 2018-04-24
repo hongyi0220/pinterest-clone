@@ -6,7 +6,7 @@ import { createStore } from 'redux';
 import reducer from './reducers';
 import {
     logInUser,
-    storeImages
+    storeImgs
 } from './actions';
 
 let store = createStore(reducer);
@@ -17,7 +17,7 @@ const AppContainer = connect(
     mapStateToProps,
     {
         logInUser,
-        storeImages
+        storeImgs
     }
 )(App);
 

@@ -3,9 +3,9 @@ export const logInUser = user => ({
     user
 });
 
-export const storeImages = images => ({
-    type: 'STORE_IMAGES',
-    images
+export const storeImgs = imgs => ({
+    type: 'STORE_IMGS',
+    imgs
 });
 
 export const toggleHeaderMenu = () => ({type: 'TOGGLE_HEADER_MENU'});
@@ -15,4 +15,4 @@ export const toggleModal = open => ({
     open
 });
 
-export const openMsgModal = () => ({type: 'OPEN_MGS_MODAL'});
+export const openMsgModal = () => ({type: 'OPEN_MSG_MODAL'});

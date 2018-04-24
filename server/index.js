@@ -43,21 +43,26 @@ MongoClient.connect(dbUrl, (err, database) => {
 
     require('./routes')(app, database);
 
-    app.get('/session', (req, res) => {
-        console.log('/session route');
-        console.log('session.id:', req.session.id);
-        console.log('req._passport.session:',req._passport.session);
-        console.log('req.user:',req.user);
-        console.log('req.isAuthenticated():',req.isAuthenticated());
-        console.log('req.session:', req.session);
+    app.route('/session')
+        .get((req, res) => {
+            console.log('/session route');
+            console.log('session.id:', req.session.id);
+            console.log('req._passport.session:',req._passport.session);
+            console.log('req.user:',req.user);
+            console.log('req.isAuthenticated():',req.isAuthenticated());
+            console.log('req.session:', req.session);
 
-        res.send(
-            {
-                user: req.user,
-                images: req.session.images
-            }
-        );
-    });
+            res.send(
+                {
+                    user: req.user,
+                    images: req.session.imgs
+                }
+            );
+        })
+        .post((req, res) => {
+            req.session.imgs = req.body.imgs;
+            res.end();
+        });
 
     app.get('*', (req, res) => {
         res.sendFile(path.resolve(__dirname, '../build/index.html'));

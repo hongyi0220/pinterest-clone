@@ -38,11 +38,11 @@ class App extends React.Component {
 
     componentWillMount() {
         console.log('cmpWlMnt');
-        const { logInUser, storeImages } = this.props;
+        const { logInUser, storeImgs } = this.props;
         this.getSession()
-                .then(sessionObj => {
-                    if (sessionObj.user) logInUser(sessionObj.user);
-                    if (sessionObj.images) storeImages(sessionObj.images);
+                .then(session => {
+                    if (session.user) logInUser(session.user);
+                    if (session.imgs) storeImgs(session.imgs);
                 })
                 .catch(err => console.log(err));
 

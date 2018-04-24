@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux';
 const LOG_IN_USER = 'LOG_IN_USER';
-const STORE_IMAGES = 'STORE_IMAGES';
+const STORE_IMGS = 'STORE_IMGS';
 const TOGGLE_HEADER_MENU = 'TOGGLE_HEADER_MENU';
 const TOGGLE_MODAL = 'TOGGLE_MODAL';
 const OPEN_MSG_MODAL = 'OPEN_MSG_MODAL';
@@ -17,10 +17,10 @@ const account = (state = { user: null }, action) => {
             return state;
     }
 }
-const images = (state = null, action) => {
+const imgs = (state = null, action) => {
     switch(action.type) {
-        case STORE_IMAGES:
-            return action.images;
+        case STORE_IMGS:
+            return action.imgs;
             break;
         default:
             return state;
@@ -61,7 +61,7 @@ const ui = (state = uiInitState, action) => {
 const reducer = combineReducers(
     {
         account,
-        images,
+        imgs,
         ui
     }
 );

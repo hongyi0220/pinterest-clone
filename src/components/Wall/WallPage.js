@@ -17,15 +17,16 @@ class WallPage extends React.Component {
         fetch(`/pin?pindex=${pindex.split('-')[1]}`, {credentials: 'include'})
         .catch(err => console.log(err));
     }
+
     render() {
-        const { images } = this.props;
+        const { imgs } = this.props;
         const { pindex } = this.state;
 
         return (
             <div className='wall-page-container'>
                 <div className="wall">
-                    {images ?
-                        images.map((img, i) => <div id={`pin-${i}`} key={i} className='img-container' onMouseEnter={e=>{console.log('entering'); this.highlightPin(e)}} onMouseLeave={e=>{console.log('leaving'); this.highlightPin(null)}}>
+                    {imgs ?
+                        imgs.map((img, i) => <div id={`pin-${i}`} key={i} className='img-container' onMouseEnter={e=>{console.log('entering'); this.highlightPin(e)}} onMouseLeave={e=>{console.log('leaving'); this.highlightPin(null)}}>
                             <div id={`pin-${i}`} className={pindex === `pin-${i}` ? 'img-overlay on': 'img-overlay'}>
                                 <div className="action-button">
                                     <img src="./images/pin.png" alt="" className="pin"/>
@@ -33,8 +34,8 @@ class WallPage extends React.Component {
                                 </div>
                                 <div className="share-button"></div>
                             </div>
-                            <img className='wall-img' src={img.src} />
-                        </div>) : ''
+                            <img className='wall-img' src={img.src} onError={e => e.target.src = '/images/default-no-img.jpg'}/>
+                        </div>) : <div className="no-imgs-msg-wrapper">0 image found</div>
                     }
                 </div>
             </div>

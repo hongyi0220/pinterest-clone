@@ -1,6 +1,6 @@
 import React from 'react';
 // import {
-//     storeImages
+//     storeImgs
 // } from '../../../actions';
 
 class CreatePinModal extends React.Component {
@@ -21,14 +21,35 @@ class CreatePinModal extends React.Component {
         const uploadedImg = URL.createObjectURL(imgFile);
         this.setState({ uploadedImg, imgFile });
     }
+    formatURL = url => {
+        let result;
+        if (!/^https?/i.test(url)) {
+            console.log('no http(s), attaching one');
+            result = `http://${url}`;
+        }
+        while (/[/]$/.test(url)) {
+            result = result.slice(1, result.length - 1);
+        }
+        return result;
+    }
+    formatImgSrc = (rootDomain, src) => {
+        if (/(^https?:|^[/]{2})/i.test(src)) {
+            return src;
+        } else if (/^[/]{1}/.test(src)) {
+            return rootDomain + src;
+        } else {
+            return `${rootDomain}/${src}`
+        }
+    }
     submitForm = () => {
 
         const { tags, imgFile, uploadFromURL } = this.state;
 
         if (uploadFromURL) {
             console.log('uploadFromURL:',uploadFromURL);
-            const isValidDomain = /\.{1}(?=\w{2,})/;
-            const isValidImgFile = /\.{1}(?=jpg|jpeg|png|gif)/i;
+            const isValidDomain = /\.{1}(?=\w{2,})/i;
+            const isValidImgFile = /\.{1}(?=jpg|jpeg|png|gif)^/i;
+
             if (isValidImgFile.test(uploadFromURL)) {
                 console.log('isValidImgFile');
                 fetch('/pic', {
@@ -46,36 +67,68 @@ class CreatePinModal extends React.Component {
                 .then(resJson => {
 
                     // this.setState({ uploadedImg: resJson.url })
-                });
+                })
+                .catch(err => console.log(err));
 
             } else if (isValidDomain.test(uploadFromURL)) {
                 console.log('isValidDomain fetching html...');
-                let url;
-                if (!/https?/.test(uploadFromURL)) {
-                    console.log('no http(s), attaching one');
-                    url = 'http://' + uploadFromURL;
-                } else {
-                    url = uploadFromURL;
-                }
+                // let url;
+                // if (!/https?/i.test(uploadFromURL)) {
+                //     console.log('no http(s), attaching one');
+                //     url = 'http://' + uploadFromURL;
+                // } else if (/[/]$/.test(uploadFromURL)) {
+                //     url = u
+                // }
+                // else {
+                //     url = uploadFromURL;
+                // }
+                const url = this.formatURL(uploadFromURL);
                 const proxyurl = "https://cors-anywhere.herokuapp.com/";
-                fetch(proxyurl + url)
+                fetch(proxyurl + url, {
+                    // headers: {
+                    //     'accept': 'text/html'
+                    // }
+                })
                 .then(res => res.text())
                 .then(resTxt => {
                     console.log('res after fetching from vaildDomain:',resTxt);
-                    const imgsArr = this.parseHTML(resTxt).map(img => ({
-                        src: `${url}/${img.src}`,
-                        tags: img.tags
-                    })); // Display imgs scraped from the URL on wall @ route: /find
-                    console.log('imgsArr:', imgsArr);
-                    console.log('storeImages triggered');
-                    this.props.storeImages(imgsArr);
+                    const htmlDoc = this.parseHTML(resTxt)
+                    const imgs = this.getAllImgSrcs(htmlDoc).map(img => {
+                        // const formatImgSrc = (rootDomain, src) => {
+                        //     if (/(^https?:|^[/]{2})/i.test(src)) {
+                        //         return src;
+                        //     } else if (/^[/]{1}/.test(src)) {
+                        //         return rootDomain + src;
+                        //     } else {
+                        //         return `${rootDomain}/${src}`
+                        //     }
+                        // }
+
+                        if (img.src) {
+                            return {
+                                src: this.formatImgSrc(url, img.src),
+                                tags: img.tags
+                            };
+                        }
+                    }); // Display imgs scraped from the URL on wall @ route: /find
+                    console.log('imgsArr:', imgs);
+                    console.log('storeImgs triggered');
+                    this.props.storeImgs(imgs);
+                    fetch('/session', {
+                        method: 'post',
+                        credentials: 'include',
+                        headers: {
+                            'content-type': 'application/json'
+                        },
+                        body: JSON.stringify({ imgs })
+                    });
                     console.log('navigating to /find');
                     this.props.history.push('/find');
 
                 })
                 .catch(err => console.log(err));
             }
-        } else {
+        } else { // upload img from drag & drop component
             let formData = new FormData();
             formData.append('imgFile', imgFile);
             formData.append('tags', tags)
@@ -102,7 +155,7 @@ class CreatePinModal extends React.Component {
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, 'text/html');
         console.log('doc after parsing:', doc);
-        return this.getAllImgSrcs(doc);
+        return doc;
     }
     getAllImgSrcs = doc => {
         console.log('getAllImgSrcs triggered');
@@ -110,13 +163,16 @@ class CreatePinModal extends React.Component {
         console.log('imgs:', imgs);
         return Array.prototype.map.call(imgs, img => {
             console.log(img);
+
             if (img.attributes.src) {
                 return {
                     src: img.attributes.src.value,
                     tags: img.attributes.alt ? [img.attributes.alt.value] : []
                 }
+            } else {
+                return null;
             }
-        });
+        }).filter(img => img !== null);
     }
     openInputTypeFile = () => this.inputTypeFile.click();
     handleTagInputChange = e => this.setState({ tempTagInput: e.target.value });

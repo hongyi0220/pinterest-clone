@@ -1,13 +1,13 @@
 import { connect } from 'react-redux';
 import CreatePinModal from './CreatePinModal';
 import {
-    storeImages
+    storeImgs
 } from '../../../actions';
 
 const CreatePinModalContainer = connect(
     state => ({}),
     {
-        storeImages
+        storeImgs
     }
 )(CreatePinModal);
 export default CreatePinModalContainer;

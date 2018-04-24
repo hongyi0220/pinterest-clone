@@ -2,7 +2,7 @@ import { connect } from 'react-redux';
 import WallPage from './WallPage';
 // import some actions
 
-const mapStateToProps = state => ({images: state.images});
+const mapStateToProps = state => ({imgs: state.imgs});
 
 const WallPageContainer = connect(
     mapStateToProps,

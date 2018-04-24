@@ -10,7 +10,7 @@ class Header extends React.Component {
 
     searchImage = e => {
         const { input, page, iamges } = this.state;
-        const { storeImages } = this.props;
+        const { storeImgs } = this.props;
         console.log('keyDown:',e.key);
 
         const q = input.trim().replace(/\s/g, '%20');
@@ -18,9 +18,9 @@ class Header extends React.Component {
             this.props.history.push(`/search?term=${q}`)
             fetch(`/pics?q=${q}&page=${page}`, {credentials: 'include'})
             .then(res => res.json())
-            .then(images => {
-                storeImages(images);
-                console.log(images);
+            .then(imgs => {
+                storeImgs(imgs);
+                console.log(imgs);
             })
             .catch(err => console.log(err));
         }

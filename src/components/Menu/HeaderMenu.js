@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+// import { Link } from 'react-router-dom';
 
 const HeaderMenu = ({ history }) => {
     return (
@@ -8,7 +8,7 @@ const HeaderMenu = ({ history }) => {
                 <div className='link' onClick={() => history.push('/settings')}>Edit settings</div>
             </div>
             <div className="menu-item-wrapper-logout">
-                <Link to='/logout'>Log out</Link>
+                <a href='/logout'>Log out</a>
             </div>
         </div>
     );

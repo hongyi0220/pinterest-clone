@@ -32,7 +32,7 @@ module.exports = (app, db) => {
             let { tags } = req.body;
             tags = tags.split(',');
             cloudinary.v2.uploader.upload_stream({ resource_type: 'raw'}, (err, result) => {
-                if (err) console.log(err);
+                if (err) { console.log(err); }
                 Users.updateOne(
                     { username: req.user.username },
                     {
@@ -110,5 +110,23 @@ module.exports = (app, db) => {
             .catch(err => console.log(err));
             res.end();
         });
+
+        app.route('/pins')
+            .get((req, res) => {
+                console.log('GET /pins reached');
+                Users.find({
+                    "pins": {
+                        $gte: {
+                            $size: 1
+                        }
+                    }
+                })
+                .toArray((err, docs) => {
+                    if (err) { console.log(err); }
+                    console.log('DOCS:', docs);
+                    res.send(docs);
+
+                });
+            });
 
 };

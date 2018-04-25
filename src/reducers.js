@@ -29,7 +29,7 @@ const imgs = (state = null, action) => {
 
 const uiInitState = {
     headerMenu: false,
-    modal: false,
+    modalBackgroundOverlay: false,
     msgModal: false,
     createPinModal: false
 }
@@ -45,7 +45,7 @@ const ui = (state = uiInitState, action) => {
         case TOGGLE_MODAL:
             return {
                 ...state,
-                modal: action.open
+                modalBackgroundOverlay: action.open
             }
             break;
         case OPEN_MSG_MODAL:

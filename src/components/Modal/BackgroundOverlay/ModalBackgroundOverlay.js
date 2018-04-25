@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Route } from 'react-router-dom';
 import { connect } from 'react-redux';
 import MsgModalContainer from '../Msg/MsgModal';
@@ -12,21 +13,33 @@ class ModalBackgroundOverlay extends React.Component {
     state = {
         // isMsgModalOpen: false
     }
-    closePasswordModalFromBackground = e => {
+    static propTypes = {
+        toggleModal: PropTypes.func.isRequired
+    };
+
+    closeModalFromBackground = e => {
         if (e.target.className === 'modal-background-overlay') {
-            console.log('-intermediary-CLOSE-FROM-PARENT:PasswordModal');
+            console.log('close modal from modal-background-overlay');
             this.props.toggleModal(false);
         }
     }
 
+    componentDidMount() {
+        console.log('ModalBackgroundOverlay mounted');
+    }
+    componentWillUnmount() {
+        console.log('ModalBackgroundOverlay will UNmount');
+    }
+
     render() {
         const {} = this.state;
-        const { ui } = this.props;
+        const { ui, history } = this.props;
+        console.log('ModalBackgroundOverlay rendered');
 
         return (
-            <div className="modal-background-overlay" onClick={this.closePasswordModalFromBackground}>
+            <div className="modal-background-overlay" onClick={this.closeModalFromBackground}>
                 <Route exact path='/settings' render={() => ui.msgModal ? <MsgModalContainer /> : <PasswordModalContainer />} />
-                <Route exact path='/user' render={() => ui.msgModal? <MsgModalContainer /> : <CreatePinModalContainer history={this.props.history}/>} />
+                <Route exact path='/user' render={() => ui.msgModal? <MsgModalContainer /> : <CreatePinModalContainer history={history}/>} />
             </div>
         );
     }

@@ -18,12 +18,13 @@ import {
 class App extends React.Component {
     state = {
 
-    }
+    };
 
     static propTypes = {
         logInUser: PropTypes.func.isRequired,
-        account: PropTypes.object
-    }
+        account: PropTypes.object.isRequired,
+        ui: PropTypes.object.isRequired
+    };
 
     getSession = () => {
         console.log('getSession called');
@@ -45,7 +46,6 @@ class App extends React.Component {
                     if (session.imgs) storeImgs(session.imgs);
                 })
                 .catch(err => console.log(err));
-
     }
 
     render() {
@@ -67,7 +67,7 @@ class App extends React.Component {
                     }
 
                     {
-                        ui.modal ? <ModalBackgroundOverlayContainer /> : ''
+                        ui.modalBackgroundOverlay ? <Route component={ModalBackgroundOverlayContainer} /> : ''
                     }
                     <Route exact path='/settings' component={SettingsPageContainer}/>
                     <Route exact path='/(search|find)' component={WallPageContainer} />

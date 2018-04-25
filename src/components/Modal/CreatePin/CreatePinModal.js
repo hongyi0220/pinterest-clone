@@ -8,19 +8,22 @@ class CreatePinModal extends React.Component {
         isTagInputDisabled: false,
         previewImg: null,
         imgFile: null,
-        isUploadFromLocalClicked: true,
+        isSaveFromSiteClicked: true,
         saveFromSiteURL: ''
     };
     static propTypes = {
-        history: PropTypes.func.isRequired
-    }
+        history: PropTypes.object.isRequired,
+        toggleModal: PropTypes.func.isRequired
+    };
     inputTypeFile = null;
+
     handleImageUpload = e => {
 
         const imgFile = e.target.files[0];
         const previewImg = URL.createObjectURL(imgFile);
         this.setState({ previewImg, imgFile });
     }
+
     formatURL = url => {
         let result;
         if (!/^https?/i.test(url)) {
@@ -32,6 +35,7 @@ class CreatePinModal extends React.Component {
         }
         return result;
     }
+
     formatImgSrc = (rootDomain, src) => {
         if (/(^https?:|^[/]{2})/i.test(src)) {
             return src;
@@ -41,6 +45,12 @@ class CreatePinModal extends React.Component {
             return `${rootDomain}/${src}`
         }
     }
+
+    closeModal = () => {
+        console.log('closing modal');
+        this.props.toggleModal(false);
+    }
+
     submitForm = () => {
         const { tags, imgFile, saveFromSiteURL } = this.state;
 
@@ -103,13 +113,18 @@ class CreatePinModal extends React.Component {
                         },
                         body: JSON.stringify({ imgs })
                     });
+
+                    console.log('this :', this);
                     console.log('navigating to /find');
-                    this.props.toggleModal(false);
                     this.props.history.push('/find');
+                    // this.closeModal(); 
+                    this.props.toggleModal(false);
+                    console.log('toggling modal..');
                     // this.props.openMsgModal('Pin saved!', 'Your Pin has been saved successfully.');
                 })
                 .catch(err => {
                     console.log(err);
+                    // console.log('this :', this)
                     this.props.openMsgModal('Error!', 'Something went wrong on our side')
                 });
             }
@@ -138,6 +153,7 @@ class CreatePinModal extends React.Component {
             .catch(err => console.log(err));
         }
     }
+
     parseHTML = html => {
         console.log('parseHTML triggered');
         const parser = new DOMParser();
@@ -145,6 +161,7 @@ class CreatePinModal extends React.Component {
         console.log('doc after parsing:', doc);
         return doc;
     }
+
     getAllImgSrcs = doc => {
         console.log('getAllImgSrcs triggered');
         const imgs = doc.getElementsByTagName('img');
@@ -162,9 +179,13 @@ class CreatePinModal extends React.Component {
             }
         }).filter(img => img !== null);
     }
+
     openInputTypeFile = () => this.inputTypeFile.click();
+
     handleTagInputChange = e => this.setState({ tempTagInput: e.target.value });
+
     handleURLInputChange = e => this.setState({ saveFromSiteURL: e.target.value });
+
     removeTag = e => {
 
         const tagIndex = +e.target.id.split('#')[1];
@@ -175,6 +196,7 @@ class CreatePinModal extends React.Component {
 
         this.setState(state);
     }
+
     createTag = e => {
 
         if (this.state.tags.length >= 5) {
@@ -191,6 +213,7 @@ class CreatePinModal extends React.Component {
             return;
         }
     }
+
     handleImgFileDrop = e => {
         e.preventDefault();
         if (e.dataTransfer.items) {
@@ -210,6 +233,7 @@ class CreatePinModal extends React.Component {
         }
         // this.removeDragData(e);
     }
+
     removeDragData = e => {
 
         if (e.dataTransfer.items) {
@@ -218,20 +242,34 @@ class CreatePinModal extends React.Component {
             e.dataTransfer.clearData();
         }
     }
+
     handleDragOver = e => {
 
         e.preventDefault();
     }
-    clickUploadFromLocal = () => this.setState({ isUploadFromLocalClicked: true });
-    clicksaveFromSiteURL = () => this.setState({ isUploadFromLocalClicked: false });
+
+    clickUploadFromLocal = () => this.setState({ isSaveFromSiteClicked: true });
+
+    clicksaveFromSiteURL = () => this.setState({ isSaveFromSiteClicked: false });
+
     clearImgFileInState = () => this.setState({ imgFile: null });
+
+    componentDidMount() {
+        console.log('CreatePinModal mounted');
+    }
+    // componentWillUnmount() {
+    //     console.log('CreatePinModal will UNmount');
+    //     this.closeModal();
+    // }
+
     render() {
-        const { tags, tempTagInput, isTagInputDisabled, previewImg, imgFile, isUploadFromLocalClicked, saveFromSiteURL } = this.state;
+        console.log('CreatePinModal rendered');
+        const { tags, tempTagInput, isTagInputDisabled, previewImg, imgFile, isSaveFromSiteClicked, saveFromSiteURL } = this.state;
         return (
             <div className="create-pin-modal-container">
 
                 <h2>Create Pin</h2>
-                {isUploadFromLocalClicked ?
+                {isSaveFromSiteClicked ?
                     <div className="create-pin-from-local-container">
                         <div className="drag-target-area-wrapper" onClick={this.openInputTypeFile}>
                             <div className="drag-target-area" onDrop={this.handleImgFileDrop} onDragOver={this.handleDragOver}>
@@ -270,8 +308,8 @@ class CreatePinModal extends React.Component {
                 <div className="modal-controls-container">
                     <div className="all-buttons-container">
                         <div className="toggle-buttons-container">
-                            <div className={isUploadFromLocalClicked ? 'button upload-from-local clicked' : 'button upload-from-local'} onClick={this.clickUploadFromLocal}>Upload Pin</div>
-                            <div className={isUploadFromLocalClicked ? 'button upload-from-url' : 'button upload-from-url clicked'} onClick={() => {this.clicksaveFromSiteURL(); this.clearImgFileInState()}}>Save from site</div>
+                            <div className={isSaveFromSiteClicked ? 'button upload-from-local clicked' : 'button upload-from-local'} onClick={this.clickUploadFromLocal}>Upload Pin</div>
+                            <div className={isSaveFromSiteClicked ? 'button upload-from-url' : 'button upload-from-url clicked'} onClick={() => {this.clicksaveFromSiteURL(); this.clearImgFileInState()}}>Save from site</div>
                         </div>
                         <div className={imgFile || saveFromSiteURL ? 'button done' : 'button done disabled'} onClick={this.submitForm}>Done</div>
                     </div>

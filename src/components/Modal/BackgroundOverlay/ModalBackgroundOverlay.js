@@ -25,8 +25,8 @@ class ModalBackgroundOverlay extends React.Component {
 
         return (
             <div className="modal-background-overlay" onClick={this.closePasswordModalFromBackground}>
-                <Route exact path='/settings' render={() => ui.MsgModal ? <MsgModalContainer /> : <PasswordModalContainer />} />
-                <Route exact path='/user' component={CreatePinModalContainer} />
+                <Route exact path='/settings' render={() => ui.msgModal ? <MsgModalContainer /> : <PasswordModalContainer />} />
+                <Route exact path='/user' render={() => ui.msgModal? <MsgModalContainer /> : <CreatePinModalContainer history={this.props.history}/>} />
             </div>
         );
     }

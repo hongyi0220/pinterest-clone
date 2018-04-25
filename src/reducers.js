@@ -51,7 +51,7 @@ const ui = (state = uiInitState, action) => {
         case OPEN_MSG_MODAL:
             return {
                 ...state,
-                msgModal: true
+                msgModal: action.content
             }
             break;
         default:

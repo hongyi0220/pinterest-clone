@@ -44,6 +44,14 @@ module.exports = (app, db) => {
                         }
                     }
                 )
+                .then(response => {
+                    const { matchedCount, modifiedCount } = response;
+                    res.send({
+                        matchedCount,
+                        modifiedCount
+                    });
+                })
+                .catch(err => console.log(err))
             }).end(req.file.buffer);
 
         })
@@ -57,7 +65,14 @@ module.exports = (app, db) => {
                 $push: { pins: pic }
             }
         )
-        .catch(err => console.log(err));
+        .then(response => {
+            const { matchedCount, modifiedCount } = response;
+            res.send({
+                matchedCount,
+                modifiedCount
+            });
+        })
+        .catch(err => res.status(500).json({ err }));
     });
 
     app.route('/pin')

@@ -4,12 +4,12 @@ import {
     toggleModal
 } from '../../../actions';
 
-const MsgModal = ({ toggleModal }) => {
+const MsgModal = ({ msgModal, toggleModal }) => {
     return (
         <div className="msg-modal-container">
-            <h2>Password changed!</h2>
+            <h2>{msgModal.title || 'Success!'}</h2>
             <div className="msg-text-wrapper">
-                Your password has been changed successfully.
+                {msgModal.msg}
             </div>
             <div className="button-wrapper">
                 <div className="okay button" onClick={() => toggleModal(false)}>Okay</div>
@@ -19,7 +19,7 @@ const MsgModal = ({ toggleModal }) => {
 }
 
 const MsgModalContainer = connect(
-    state => state,
+    state => ({ msgModal: state.ui.msgModal }),
     {
         toggleModal
     }

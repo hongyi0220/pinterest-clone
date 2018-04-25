@@ -1,7 +1,8 @@
 import { connect } from 'react-redux';
 import PasswordModal from './PasswordModal';
 import {
-    toggleModal
+    toggleModal,
+    openMsgModal
 } from '../../../actions';
 
 const mapStateToProps = state => ({ ui: state.ui });
@@ -9,7 +10,8 @@ const mapStateToProps = state => ({ ui: state.ui });
 const PasswordModalContainer = connect(
     mapStateToProps,
     {
-        toggleModal
+        toggleModal,
+        openMsgModal
     }
 )(PasswordModal);
 

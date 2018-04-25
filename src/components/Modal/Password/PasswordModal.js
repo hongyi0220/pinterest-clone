@@ -36,12 +36,7 @@ class PasswordModal extends React.Component {
             maskedNewPassword: this.maskPassword(eTarget.value)
         }));
     }
-    // closePasswordModalFromBackground = e => {
-    //     if (e.target.className === 'password-modal-background') {
-    //         console.log('-intermediary-CLOSE-FROM-PARENT:PasswordModal');
-    //         this.props.togglePasswordModal(false);
-    //     }
-    // }
+
     closePasswordModalFromButton = e => {
         if (e.target.className === 'cancel button') {
             console.log('-intermediary-CLOSE-FROM-CHILD:PasswordModal');
@@ -64,7 +59,7 @@ class PasswordModal extends React.Component {
             if (!resJson.matchedCount) {
                 this.setState({ isWrongPassword: true });
             } else if (resJson.matchedCount && resJson.modifiedCount) {
-                this.setState({ uiMsgModal: true });
+                this.props.openMsgModal('Password changed!', 'Your password has been changed successfully.');
             }
         })
         .catch(err => console.log(err));

@@ -55,7 +55,7 @@ MongoClient.connect(dbUrl, (err, database) => {
             res.send(
                 {
                     user: req.user,
-                    images: req.session.imgs
+                    imgs: req.session.imgs
                 }
             );
         })

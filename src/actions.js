@@ -8,11 +8,17 @@ export const storeImgs = imgs => ({
     imgs
 });
 
-export const toggleHeaderMenu = () => ({type: 'TOGGLE_HEADER_MENU'});
+export const toggleHeaderMenu = () => ({ type: 'TOGGLE_HEADER_MENU' });
 
 export const toggleModal = open => ({
     type: 'TOGGLE_MODAL',
     open
 });
 
-export const openMsgModal = () => ({type: 'OPEN_MSG_MODAL'});
+export const openMsgModal = (title, msg) => ({
+    type: 'OPEN_MSG_MODAL',
+    content: {
+        title,
+        msg
+    }
+});

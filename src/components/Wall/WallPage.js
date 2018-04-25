@@ -34,8 +34,8 @@ class WallPage extends React.Component {
                                 </div>
                                 <div className="share-button"></div>
                             </div>
-                            <img className='wall-img' src={img.src} onError={e => e.target.src = '/images/default-no-img.jpg'}/>
-                        </div>) : <div className="no-imgs-msg-wrapper">0 image found</div>
+                            <img className='wall-img' src={img.src} onError={e => e.target.src = './images/default-no-img.jpg'}/>
+                        </div>) : <div className="no-imgs-msg-wrapper">No images found</div>
                     }
                 </div>
             </div>

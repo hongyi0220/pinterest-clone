@@ -2,7 +2,7 @@ import React from 'react';
 
 class SettingsPage extends React.Component {
     state = {
-        uploadedImg: '',
+        previewImg: '',
         email: '',
         username: ''
     };
@@ -13,8 +13,8 @@ class SettingsPage extends React.Component {
         console.log('handling ImageUplaod');
         console.log('e.target.files[0]:', e.target.files[0]);
         const imgFile = e.target.files[0];
-        const uploadedImg = URL.createObjectURL(imgFile);
-        this.setState({ uploadedImg });
+        const previewImg = URL.createObjectURL(imgFile);
+        this.setState({ previewImg });
 
         let formData = new FormData();
         formData.append('imgFile', imgFile);
@@ -31,7 +31,7 @@ class SettingsPage extends React.Component {
         })
         .then(resJson => {
             console.log('resJson from /profile-img:',resJson);
-            this.setState({ uploadedImg: resJson.url })
+            this.setState({ previewImg: resJson.url })
         })
         .catch(err => console.log(err));
     }
@@ -57,7 +57,7 @@ class SettingsPage extends React.Component {
     componentWillMount() {
         console.log('SettingsPage componentWillMount');
         this.setState({
-            uploadedImg: this.props.account.user.profileImg,
+            previewImg: this.props.account.user.profileImg,
             email: this.props.account.user.email,
             username: this.props.account.user.username
         });
@@ -66,7 +66,7 @@ class SettingsPage extends React.Component {
 
     render() {
         const { account, toggleModal } = this.props;
-        const { uploadedImg, email, username } = this.state;
+        const { previewImg, email, username } = this.state;
         return (
             <div className="settings-page-container">
                 <div className="settings-list-container">
@@ -99,7 +99,7 @@ class SettingsPage extends React.Component {
                             <label className='label'>Picture</label>
                             <div className="picture-container">
                                 <div className="profile-img-wrapper">
-                                    <img src={uploadedImg} alt="profile image" className="profile-img"/>
+                                    <img src={previewImg} alt="profile image" className="profile-img"/>
                                 </div>
                                 <div className='input-field-container file'>
                                     <label htmlFor="profile-img" className='change-picture-button'>Change picture</label>

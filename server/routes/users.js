@@ -149,9 +149,9 @@ module.exports = (app, db) => {
 
     app.put('/profile', (req, res) => {
         console.log('/profile reached!');
-        const { email, username, uploadedImg } = req.body;
+        const { email, username, previewImg } = req.body;
         console.log('req.body:',req.body);
-        console.log('email, username, uploadedImg:',email, username, uploadedImg);
+        console.log('email, username, uploadedImg:',email, username, previewImg);
 
 
         Users.updateOne(
@@ -159,7 +159,7 @@ module.exports = (app, db) => {
             { $set: {
                 email,
                 username,
-                profileImg: uploadedImg
+                profileImg: previewImg || './images/default-profile-image.png'
             }}
         )
         .catch(err => console.log(err));
@@ -170,7 +170,7 @@ module.exports = (app, db) => {
             if (err) console.log(err);
             console.log('result:', result);
             console.log('result.secure_url:',result.secure_url);
-            res.status(201).json({url:result.secure_url});
+            res.status(201).json({ url:result.secure_url });
         }).end(req.file.buffer);
     });
 

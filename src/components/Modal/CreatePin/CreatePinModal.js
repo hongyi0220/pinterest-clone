@@ -1,25 +1,25 @@
 import React from 'react';
-// import {
-//     storeImgs
-// } from '../../../actions';
+import PropTypes from 'prop-types';
 
 class CreatePinModal extends React.Component {
     state = {
         tempTagInput: '',
         tags: [],
         isTagInputDisabled: false,
-        uploadedImg: null,
+        previewImg: null,
         imgFile: null,
         isUploadFromLocalClicked: true,
-        uploadFromURL: ''
+        saveFromSiteURL: ''
     };
+    static propTypes = {
+        history: PropTypes.func.isRequired
+    }
     inputTypeFile = null;
     handleImageUpload = e => {
 
-
         const imgFile = e.target.files[0];
-        const uploadedImg = URL.createObjectURL(imgFile);
-        this.setState({ uploadedImg, imgFile });
+        const previewImg = URL.createObjectURL(imgFile);
+        this.setState({ previewImg, imgFile });
     }
     formatURL = url => {
         let result;
@@ -27,8 +27,8 @@ class CreatePinModal extends React.Component {
             console.log('no http(s), attaching one');
             result = `http://${url}`;
         }
-        while (/[/]$/.test(url)) {
-            result = result.slice(1, result.length - 1);
+        while (/[/]$/.test(result)) {
+            result = result.slice(0, result.length - 1);
         }
         return result;
     }
@@ -42,15 +42,14 @@ class CreatePinModal extends React.Component {
         }
     }
     submitForm = () => {
+        const { tags, imgFile, saveFromSiteURL } = this.state;
 
-        const { tags, imgFile, uploadFromURL } = this.state;
-
-        if (uploadFromURL) {
-            console.log('uploadFromURL:',uploadFromURL);
+        if (saveFromSiteURL) {
+            console.log('saveFromSiteURL:',saveFromSiteURL);
             const isValidDomain = /\.{1}(?=\w{2,})/i;
             const isValidImgFile = /\.{1}(?=jpg|jpeg|png|gif)^/i;
 
-            if (isValidImgFile.test(uploadFromURL)) {
+            if (isValidImgFile.test(saveFromSiteURL)) {
                 console.log('isValidImgFile');
                 fetch('/pic', {
                     method: 'put',
@@ -58,51 +57,32 @@ class CreatePinModal extends React.Component {
                         'content-type': 'application/json'
                     },
                     credentials: 'include',
-                    body: JSON.stringify({ pic: { src: uploadFromURL, tags: [] } })
+                    body: JSON.stringify({ pic: { src: saveFromSiteURL, tags: [] } })
                 })
                 .then(res => {
-
+                    console.log('res after save pin:', res);
                     return res.json();
                 })
                 .then(resJson => {
-
-                    // this.setState({ uploadedImg: resJson.url })
+                    if (!resJson.matchedCount) {
+                        this.props.openMsgModal('Error!', 'Something went wrong on our side');
+                    } else if (resJson.matchedCount && resJson.modifiedCount) {
+                        this.props.openMsgModal('Pin saved!', 'Your Pin has been saved successfully.');
+                    }
                 })
                 .catch(err => console.log(err));
 
-            } else if (isValidDomain.test(uploadFromURL)) {
+            } else if (isValidDomain.test(saveFromSiteURL)) {
                 console.log('isValidDomain fetching html...');
-                // let url;
-                // if (!/https?/i.test(uploadFromURL)) {
-                //     console.log('no http(s), attaching one');
-                //     url = 'http://' + uploadFromURL;
-                // } else if (/[/]$/.test(uploadFromURL)) {
-                //     url = u
-                // }
-                // else {
-                //     url = uploadFromURL;
-                // }
-                const url = this.formatURL(uploadFromURL);
+
+                const url = this.formatURL(saveFromSiteURL);
                 const proxyurl = "https://cors-anywhere.herokuapp.com/";
-                fetch(proxyurl + url, {
-                    // headers: {
-                    //     'accept': 'text/html'
-                    // }
-                })
+                fetch(proxyurl + url)
                 .then(res => res.text())
                 .then(resTxt => {
                     console.log('res after fetching from vaildDomain:',resTxt);
                     const htmlDoc = this.parseHTML(resTxt)
                     const imgs = this.getAllImgSrcs(htmlDoc).map(img => {
-                        // const formatImgSrc = (rootDomain, src) => {
-                        //     if (/(^https?:|^[/]{2})/i.test(src)) {
-                        //         return src;
-                        //     } else if (/^[/]{1}/.test(src)) {
-                        //         return rootDomain + src;
-                        //     } else {
-                        //         return `${rootDomain}/${src}`
-                        //     }
-                        // }
 
                         if (img.src) {
                             return {
@@ -110,7 +90,8 @@ class CreatePinModal extends React.Component {
                                 tags: img.tags
                             };
                         }
-                    }); // Display imgs scraped from the URL on wall @ route: /find
+                    })
+                    // Display imgs scraped from the URL on wall @ route: /find
                     console.log('imgsArr:', imgs);
                     console.log('storeImgs triggered');
                     this.props.storeImgs(imgs);
@@ -123,10 +104,14 @@ class CreatePinModal extends React.Component {
                         body: JSON.stringify({ imgs })
                     });
                     console.log('navigating to /find');
+                    this.props.toggleModal(false);
                     this.props.history.push('/find');
-
+                    // this.props.openMsgModal('Pin saved!', 'Your Pin has been saved successfully.');
                 })
-                .catch(err => console.log(err));
+                .catch(err => {
+                    console.log(err);
+                    this.props.openMsgModal('Error!', 'Something went wrong on our side')
+                });
             }
         } else { // upload img from drag & drop component
             let formData = new FormData();
@@ -140,12 +125,15 @@ class CreatePinModal extends React.Component {
                 body: formData
             })
             .then(res => {
-
+                console.log('res after save pin from dragg & drop:', res);
                 return res.json();
             })
             .then(resJson => {
-
-                // this.setState({ uploadedImg: resJson.url })
+                if (!resJson.matchedCount) {
+                    this.props.openMsgModal('Error!', 'Something went wrong on our side');
+                } else if (resJson.matchedCount && resJson.modifiedCount) {
+                    this.props.openMsgModal('Pin saved!', 'Your Pin has been saved successfully.');
+                }
             })
             .catch(err => console.log(err));
         }
@@ -176,7 +164,7 @@ class CreatePinModal extends React.Component {
     }
     openInputTypeFile = () => this.inputTypeFile.click();
     handleTagInputChange = e => this.setState({ tempTagInput: e.target.value });
-    handleURLInputChange = e => this.setState({ uploadFromURL: e.target.value });
+    handleURLInputChange = e => this.setState({ saveFromSiteURL: e.target.value });
     removeTag = e => {
 
         const tagIndex = +e.target.id.split('#')[1];
@@ -208,15 +196,15 @@ class CreatePinModal extends React.Component {
         if (e.dataTransfer.items) {
 
                 let imgFile = e.dataTransfer.items[0].getAsFile();
-                const uploadedImg = URL.createObjectURL(imgFile);
-                this.setState({ uploadedImg, imgFile });
+                const previewImg = URL.createObjectURL(imgFile);
+                this.setState({ previewImg, imgFile, saveFromSiteURL: null });
 
                 this.removeDragData(e);
         } else {
 
                 let imgFile = e.dataTransfer.files[0];
-                const uploadedImg = URL.createObjectURL(imgFile);
-                this.setState({ uploadedImg, imgFile });
+                const previewImg = URL.createObjectURL(imgFile);
+                this.setState({ previewImg, imgFile });
 
                 this.removeDragData(e);
         }
@@ -235,10 +223,10 @@ class CreatePinModal extends React.Component {
         e.preventDefault();
     }
     clickUploadFromLocal = () => this.setState({ isUploadFromLocalClicked: true });
-    clickUploadFromUrl = () => this.setState({ isUploadFromLocalClicked: false });
+    clicksaveFromSiteURL = () => this.setState({ isUploadFromLocalClicked: false });
     clearImgFileInState = () => this.setState({ imgFile: null });
     render() {
-        const { tags, tempTagInput, isTagInputDisabled, uploadedImg, imgFile, isUploadFromLocalClicked, uploadFromURL } = this.state;
+        const { tags, tempTagInput, isTagInputDisabled, previewImg, imgFile, isUploadFromLocalClicked, saveFromSiteURL } = this.state;
         return (
             <div className="create-pin-modal-container">
 
@@ -248,7 +236,7 @@ class CreatePinModal extends React.Component {
                         <div className="drag-target-area-wrapper" onClick={this.openInputTypeFile}>
                             <div className="drag-target-area" onDrop={this.handleImgFileDrop} onDragOver={this.handleDragOver}>
 
-                                {uploadedImg ? <img className='preview-img' src={uploadedImg}/> : <div className="imgFileInputAreaDefaultImgTxt">
+                                {previewImg ? <img className='preview-img' src={previewImg}/> : <div className="imgFileInputAreaDefaultImgTxt">
                                     <div className="img-wrapper">
                                         <img src="./images/camera-icon.png"/>
                                     </div>
@@ -283,9 +271,9 @@ class CreatePinModal extends React.Component {
                     <div className="all-buttons-container">
                         <div className="toggle-buttons-container">
                             <div className={isUploadFromLocalClicked ? 'button upload-from-local clicked' : 'button upload-from-local'} onClick={this.clickUploadFromLocal}>Upload Pin</div>
-                            <div className={isUploadFromLocalClicked ? 'button upload-from-url' : 'button upload-from-url clicked'} onClick={() => {this.clickUploadFromUrl(); this.clearImgFileInState()}}>Save from site</div>
+                            <div className={isUploadFromLocalClicked ? 'button upload-from-url' : 'button upload-from-url clicked'} onClick={() => {this.clicksaveFromSiteURL(); this.clearImgFileInState()}}>Save from site</div>
                         </div>
-                        <div className={imgFile || uploadFromURL ? 'button done' : 'button done disabled'} onClick={this.submitForm}>Done</div>
+                        <div className={imgFile || saveFromSiteURL ? 'button done' : 'button done disabled'} onClick={this.submitForm}>Done</div>
                     </div>
 
                 </div>

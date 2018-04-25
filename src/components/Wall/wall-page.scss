@@ -15,10 +15,11 @@
 .wall-page-container {
     display: grid;
     grid-template-columns: repeat(11, 1fr);
-    grid-auto-rows: 60px;
+    grid-auto-rows: auto;
     height: 100vh;
+    padding-top: 2em;
     .wall {
-        margin-top: 1em;
+        // margin-top: 1em;
         display: grid;
         grid-gap: .5em;
         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));

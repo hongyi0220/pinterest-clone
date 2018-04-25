@@ -34,7 +34,7 @@ class UserPage extends React.Component {
                         {account.user.username}
                     </div>
                     <div className="profile-image-wrapepr">
-                        <img src={account.user.profileImg} alt="profile image"/>
+                        <img src={account.user.profileImg} alt="profile image" onError={e => e.target.src = './images/default-profile-image.png'}/>
                     </div>
                 </div>
                 <div className="saved-images-container">

@@ -17,6 +17,13 @@ cloudinary.config({
 
 module.exports = (app, db) => {
     const Users = db.collection('users');
+    // const newUser = {
+    //     email: 'n/a',
+    //     username: profile.username,
+    //     passpord: 'n/a',
+    //     "profileImg": "./images/default-profile-image.png",
+    //     pins: []
+    // };
 
     passport.use(new TwitterStrategy({
             consumerKey,
@@ -32,9 +39,10 @@ module.exports = (app, db) => {
                     const newUser = {
                         email: 'n/a',
                         username: profile.username,
-                        passpord: 'n/a',
+                        password: 'n/a',
                         "profileImg": "./images/default-profile-image.png",
-                        pins: []
+                        pins: [],
+                        // favs: []
                     };
                     Users.insertOne(newUser);
                     return done(null, newUser);
@@ -107,13 +115,20 @@ module.exports = (app, db) => {
         passport.authenticate('local', (err, user, info) => {
            if (err) { return console.log(err); }
            if (!user) {
+               // const newUser = {
+               //     email: 'n/a',
+               //     username: profile.username,
+               //     passpord: 'n/a',
+               //     "profileImg": "./images/default-profile-image.png",
+               //     pins: []
+               // };
                Users.insertOne({
                    email,
                    username: email.split('@')[0],
                    password,
-                   "profileImg": "./images/default-profile-image.png",
+                   profileImg: "./images/default-profile-image.png",
                    pins: [],
-
+                   // favs: []
                })
                .then(() => { //Sign user in
                     Users.findOne({ email })

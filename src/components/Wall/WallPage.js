@@ -6,7 +6,8 @@ class WallPage extends React.Component {
         pindex: null
     };
     static propTypes = {
-        storeImgs: PropTypes.func.isRequired
+        storeImgs: PropTypes.func.isRequired,
+        account: PropTypes.object.isRequired
     };
 
     highlightPin = e => {
@@ -32,6 +33,45 @@ class WallPage extends React.Component {
 
     extractPins = users => {
         return users.map(user => user.pins).reduce((currPins, nextPins) => [...currPins, ...nextPins], []);
+    }
+
+    processTags = user => {
+
+        // const accountHolder = users.filter(user => user.username === this.props.account.user.username)[0];
+
+        const aggregateTags = user => user.pins.reduce((currPin, nextPin) => [...currPin, ...nextPin.tags], []);
+
+        const beautifyTags = tags => tags.map(tag => tag.toString().trim().toLowerCase()).sort();
+
+        // This will count how many times a tag is saved
+        //     so top tags can be analyzed
+        const analyzeTags = tags => {
+            let holdIndex = 0;
+            return tags.map((tag, i, _tags) => {
+                if (tag === tags[i + 1]) {
+                    holdIndex = i;
+                    if (i === holdIndex) {
+                        return { tag, score: 2 };
+                    } else {
+                        _tags[i].score++;
+                    }
+                }
+            })
+            filter(tag => typeof tag === 'object')
+            .sort((a, b) => a.score - b.score);
+        }
+
+        return analyzeTags(beautifyTags(aggregateTags(user)));
+                // .filter(tag => tag !== null)
+                // .map(tag => {tag, score: 0});
+            // tagsWithScores.map(tagWithScore => {
+            //     tags.forEach(tag => {
+            //         if (tag === tagWithScore.tag) {
+            //             tagWithScore.score++;
+            //         }
+            //     });
+            //     return tagWithScore;
+            // })
     }
 
     shuffleArr = arr => {

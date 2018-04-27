@@ -35,44 +35,33 @@ class WallPage extends React.Component {
         return users.map(user => user.pins).reduce((currPins, nextPins) => [...currPins, ...nextPins], []);
     }
 
-    processTags = user => {
-
-        // const accountHolder = users.filter(user => user.username === this.props.account.user.username)[0];
-
-        const aggregateTags = user => user.pins.reduce((currPin, nextPin) => [...currPin, ...nextPin.tags], []);
-
-        const beautifyTags = tags => tags.map(tag => tag.toString().trim().toLowerCase()).sort();
-
-        // This will count how many times a tag is saved
-        //     so top tags can be analyzed
-        const analyzeTags = tags => {
-            let holdIndex = 0;
-            return tags.map((tag, i, _tags) => {
-                if (tag === tags[i + 1]) {
-                    holdIndex = i;
-                    if (i === holdIndex) {
-                        return { tag, score: 2 };
-                    } else {
-                        _tags[i].score++;
-                    }
-                }
-            })
-            filter(tag => typeof tag === 'object')
-            .sort((a, b) => a.score - b.score);
-        }
-
-        return analyzeTags(beautifyTags(aggregateTags(user)));
-                // .filter(tag => tag !== null)
-                // .map(tag => {tag, score: 0});
-            // tagsWithScores.map(tagWithScore => {
-            //     tags.forEach(tag => {
-            //         if (tag === tagWithScore.tag) {
-            //             tagWithScore.score++;
-            //         }
-            //     });
-            //     return tagWithScore;
-            // })
-    }
+    // processTags = user => {
+    //     console.log('processing tags');
+    //     const aggregateTags = user => user.pins.reduce((currPin, nextPin) => [...currPin, ...nextPin.tags], []);
+    //
+    //     const beautifyTags = tags => tags.map(tag => tag.toString().trim().toLowerCase()).sort();
+    //
+    //     // This will count how many times a tag is saved
+    //     //     so top tags can be analyzed
+    //     const analyzeTags = tags => {
+    //         let holdIndex = 0;
+    //         return tags.map((tag, i, _tags) => {
+    //             if (tag === tags[i + 1]) {
+    //                 holdIndex = i;
+    //                 if (i === holdIndex) {
+    //                     return { tag, score: 2 };
+    //                 } else {
+    //                     _tags[i].score++;
+    //                 }
+    //             }
+    //         })
+    //         filter(tag => typeof tag === 'object')
+    //         .sort((a, b) => a.score - b.score);
+    //     }
+    //     const result = analyzeTags(beautifyTags(aggregateTags(user)));
+    //     console.log('processing complete; result:', result);
+    //     return result;
+    // }
 
     shuffleArr = arr => {
         let result = [];
@@ -88,12 +77,40 @@ class WallPage extends React.Component {
         return result;
     };
 
+    filterPinsMatchingTopTags = pins => pins.filter(pin => {
+        // console.log('pin.tags:', pin.tags);
+        return this.props.imgs.topTags.some(topTag => {
+            // console.log('topTag:', topTag.tag);
+            // console.log('tags include topTag?', pin.tags.includes(topTag.tag));
+            return pin.tags.includes(topTag.tag);
+        });
+
+    });
+    // pins.filter(pin => this.props.imgs.topTags.some(topTag => pin.tags.includes(topTag.tag)));
+
     componentWillMount() {
-        console.log('WallPage mounted');
+        // const { imgs } = this.props.imgs;
+        console.log('WallPage will mounted');
         this.getAllUsersWithPins()
             .then(users => this.extractPins(users))
-            .then(pins => this.shuffleArr(pins))
-            .then(shuffledPins => this.props.storeImgs(shuffledPins))
+            // .then(pins => {
+            //
+            //     return pins.filter(pin => {
+            //         console.log('pin.tags:', pin.tags);
+            //         return this.props.imgs.topTags.some(topTag => {
+            //             console.log('topTag:', topTag.tag);
+            //             console.log('tags include topTag?', pin.tags.includes(topTag.tag));
+            //             return pin.tags.includes(topTag.tag);
+            //         });
+            //
+            //     });
+            // })
+            .then(pins => this.filterPinsMatchingTopTags(pins))
+            .then(topPins => {
+                console.log('topPins:', topPins);
+                return this.shuffleArr(topPins);
+            })
+            .then(curatedPins => this.props.storeImgs(curatedPins))
             .catch(err => console.log(err));
     }
 
@@ -104,8 +121,8 @@ class WallPage extends React.Component {
         return (
             <div className='wall-page-container'>
                 <div className="wall">
-                    {imgs ?
-                        imgs.map((img, i) => <div id={`pin-${i}`} key={i} className='img-container' onMouseEnter={e=>{console.log('entering'); this.highlightPin(e)}} onMouseLeave={e=>{console.log('leaving'); this.highlightPin(null)}}>
+                    {imgs.search ?
+                        imgs.search.map((img, i) => <div id={`pin-${i}`} key={i} className='img-container' onMouseEnter={e=>{console.log('entering'); this.highlightPin(e)}} onMouseLeave={e=>{console.log('leaving'); this.highlightPin(null)}}>
                             <div id={`pin-${i}`} className={pindex === `pin-${i}` ? 'img-overlay on': 'img-overlay'}>
                                 <div className="action-button">
                                     <img src="./images/pin.png" alt="" className="pin"/>

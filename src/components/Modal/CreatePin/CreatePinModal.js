@@ -46,10 +46,10 @@ class CreatePinModal extends React.Component {
         }
     }
 
-    closeModal = () => {
-        console.log('closing modal');
-        this.props.toggleModal(false);
-    }
+    // closeModal = () => {
+    //     console.log('closing modal');
+    //     this.props.toggleModal(false);
+    // }
 
     submitForm = () => {
         const { tags, imgFile, saveFromSiteURL } = this.state;

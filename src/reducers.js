@@ -5,12 +5,18 @@ const TOGGLE_HEADER_MENU = 'TOGGLE_HEADER_MENU';
 const TOGGLE_MODAL = 'TOGGLE_MODAL';
 const OPEN_MSG_MODAL = 'OPEN_MSG_MODAL';
 const CONCAT_TO_IMGSTORE = 'CONCAT_TO_IMGSTORE';
+const STORE_TOP_TAGS = 'STORE_TOP_TAGS';
 
 const initState = {
     account: {
         user: null
     },
-    imgs: null,
+    imgs: {
+        search: null,
+        topTags: null
+    },
+    // imgs: null,
+    // topTags: null,
     ui: {
         headerMenu: false,
         modalBackgroundOverlay: false,
@@ -34,10 +40,22 @@ const account = (state = initState.account, action) => {
 const imgs = (state = initState.imgs, action) => {
     switch(action.type) {
         case STORE_IMGS:
-            return action.imgs;
+            return {
+                ...state,
+                search: action.imgs
+            };
             break;
         case CONCAT_TO_IMGSTORE:
-            return [...state, ...action.imgs];
+            return {
+                ...state,
+                search: [...state.search, ...action.imgs]
+            };
+            break;
+        case STORE_TOP_TAGS:
+            return {
+                ...state,
+                topTags: action.tags
+            };
             break;
         default:
             return state;

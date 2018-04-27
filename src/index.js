@@ -6,7 +6,8 @@ import { createStore } from 'redux';
 import reducer from './reducers';
 import {
     logInUser,
-    storeImgs
+    storeImgs,
+    storeTopTags
 } from './actions';
 
 let store = createStore(reducer);
@@ -17,7 +18,8 @@ const AppContainer = connect(
     mapStateToProps,
     {
         logInUser,
-        storeImgs
+        storeImgs,
+        storeTopTags
     }
 )(App);
 

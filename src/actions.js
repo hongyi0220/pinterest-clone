@@ -27,3 +27,8 @@ export const concatToImgStore = imgs => ({
     type: 'CONCAT_TO_IMGSTORE',
     imgs
 });
+
+export const storeTopTags = tags => ({
+    type: 'STORE_TOP_TAGS',
+    tags
+});

@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/hongyi0220/pinterest-clone#readme",
   "dependencies": {
+    "babel-plugin-transform-runtime": "^6.23.0",
     "body-parser": "^1.18.2",
     "cloudinary": "^1.11.0",
     "connect-mongo": "^2.0.1",

@@ -26,26 +26,88 @@ class App extends React.Component {
         ui: PropTypes.object.isRequired
     };
 
-    getSession = () => {
-        console.log('getSession called');
+    getSessionData = () => {
+        console.log('getSessionData called');
         return fetch('/session', {credentials: 'include'})
                 .then(res => res.json())
                 .then(resJson => {
-                    console.log('session obj at getSession:', resJson);
+                    console.log('session obj at getSessionData:', resJson);
                     return resJson;
                 })
                 .catch(err => console.log(err));
     }
 
+    processTags = user => {
+        console.log('processing tags');
+        const aggregateTags = user => {
+            const result = user.pins.reduce((currPin, nextPin) => [...currPin, ...nextPin.tags], []);
+            console.log('result from aggregating tags:', result);
+            return result;
+        }
+
+        const beautifyTags = tags => {
+            const result = tags.map(tag => tag.toString().trim().toLowerCase()).sort();
+            console.log('result from beautifying tags:', result);
+            return result;
+        }
+
+        // This will count how many times a tag is saved
+        //     so top tags can be analyzed
+        const getTopThreeTags = tags => {
+            let _tags = [];
+            tags.forEach((tag, i) => {
+                // console.log('current tag:', tags[i], ' next tag:', tags[i + 1]);
+                if (tag === tags[i + 1]) {
+                    if(!i) {
+                        _tags.push({tag, score: 1});
+                    }
+
+                    _tags[_tags.length - 1].score++;
+                    // console.log('after adding to score:', _tags);
+                } else {
+                    _tags.push({ tag: tags[i + 1], score: 1});
+                }
+            });
+            const result =
+            _tags
+            .filter(tag => typeof tag === 'object')
+            .sort((a, b) => b.score - a.score).slice(0, 4);
+            // console.log('result from analyzing tags:', result);
+            return result;
+        }
+        const result = getTopThreeTags(beautifyTags(aggregateTags(user)));
+        console.log('processing complete; result:', result);
+        return result;
+    }
+
     componentWillMount() {
-        console.log('cmpWlMnt');
-        const { logInUser, storeImgs } = this.props;
-        this.getSession()
-                .then(session => {
-                    if (session.user) logInUser(session.user);
-                    if (session.imgs) storeImgs(session.imgs);
-                })
-                .catch(err => console.log(err));
+        console.log('App will mount');
+        const { logInUser, storeImgs, storeTopTags } = this.props;
+        // async () => {
+        //     try {
+        //         var sessionData = await this.getSessionData()
+        //     } catch(e) {
+        //         return console.log(e);
+        //     }
+        //     return sessionData;
+        //     if (sessionData.user) { logInUser(sessionData.user); }
+        //     if (sessionData.imgs) { storeImgs(sessionData.imgs); }
+        //     console.log('sessionData:', sessionData.user);
+        //     const topTags = this.processTags(sessionData.user);
+        //     console.log('topTags:', topTags);
+        //
+        // }
+        this.getSessionData()
+        .then(sessionData => {
+            if (sessionData.user) { logInUser(sessionData.user); }
+            if (sessionData.imgs) { storeImgs(sessionData.imgs); }
+            console.log('sessionData:', sessionData.user);
+            const topTags = this.processTags(sessionData.user);
+            console.log('topTags:', topTags);
+            storeTopTags(topTags);
+        })
+        .catch(err => console.log(err));
+
     }
 
     render() {

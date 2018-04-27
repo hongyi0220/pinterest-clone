@@ -15,9 +15,9 @@ class Header extends React.Component {
 
     searchImg = e => {
         // this.setState({ fetchingPics: true });
-        this.props.toggleFetchingPics();
+        // this.props.toggleFetchingPics();
         console.log('page:', this.state.page);
-        const { input, page, iamges } = this.state;
+        const { input, page } = this.state;
         const { storeImgs, concatImgsToStore } = this.props;
         console.log('keyDown:',e.key);
         if (!e.scroll) {
@@ -29,6 +29,7 @@ class Header extends React.Component {
         }
         const q = input.trim().replace(/\s/g, '%20');
         if (e.key === 'Enter') {
+            this.props.toggleFetchingPics();
             this.props.history.push(`/search?term=${q}`)
             fetch(`/pics?q=${q}&page=${page}`, {credentials: 'include'})
             .then(res => res.json())
@@ -61,7 +62,7 @@ class Header extends React.Component {
 
             console.log('document scrollHeight - 100:',document.documentElement.scrollHeight - 100);
 
-            if (window.pageYOffset + window.innerHeight >= document.documentElement.scrollHeight - 100 && this.state.input && window.pageYOffset >= pageYOffset && !this.state.fetchingPics) {
+            if (window.pageYOffset + window.innerHeight >= document.documentElement.scrollHeight - 100 && this.state.input && window.pageYOffset >= pageYOffset && !this.props.ui.fetchingPics) {
                 // this.setState({ fetchingPics: true });
                 console.log('lazy-loading triggered');
                 this.setState(prevState => ({ page: prevState.page += 1 }));

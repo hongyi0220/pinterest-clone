@@ -98,46 +98,50 @@
             }
         }
     }
-    .loading-icon {
-        display: none;
-    }
-    .loading-icon.on{
-        // border-top: 2px solid $pin-font-gray;
-        // border: 2px solid $pin-font-gray;
-        display: block;
-        border-radius: 100%;
-        animation: spin 1s linear infinite;
-        width: 50px;
+    .loading-icon-wrapper {
+        // border: 1px solid red;
         height: 50px;
-        margin: auto;
-        background-color: $pin-medium-gray;
-        // transform: rotate(45deg);
-        // display: inline;
-        svg {
-            // border: 1px solid red;
+        .loading-icon {
+            opacity: 0;
+        }
+        .loading-icon.on{
+            // border-top: 2px solid $pin-font-gray;
+            // border: 2px solid $pin-font-gray;
+            opacity: 1;
+            border-radius: 100%;
+            animation: spin 1s linear infinite;
             width: 50px;
             height: 50px;
-            circle {
-                fill: $pin-light-gray;
-                r: 3.5;
+            margin: auto;
+            background-color: $pin-medium-gray;
+            // transform: rotate(45deg);
+            // display: inline;
+            svg {
+                // border: 1px solid red;
+                width: 50px;
+                height: 50px;
+                circle {
+                    fill: $pin-light-gray;
+                    r: 3.5;
+                }
             }
         }
-    }
-    @keyframes spin {
-        from {
-            transform: rotate(0deg);
-        }
-        25% {
-            transform: rotate(90deg);
-        }
-        50% {
-            transform: rotate(180deg);
-        }
-        75% {
-            transform: rotate(270deg);
-        }
-        to {
-            transform: rotate(360deg);
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+            25% {
+                transform: rotate(90deg);
+            }
+            50% {
+                transform: rotate(180deg);
+            }
+            75% {
+                transform: rotate(270deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
         }
     }
 }

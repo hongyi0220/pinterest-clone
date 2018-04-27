@@ -140,13 +140,15 @@ class WallPage extends React.Component {
                         </div>) : <div className="no-imgs-msg-wrapper">No images found</div>
                     }
                 </div>
-                <div className={ui.fetchingPics ? 'loading-icon on' : 'loading-icon'} >
-                    <svg>
-                        <circle cx='35%' cy='35%'/>
-                        <circle cx='65%' cy='35%'/>
-                        <circle cx='35%' cy='65%'/>
-                        <circle cx='65%' cy='65%'/>
-                    </svg>
+                <div className="loading-icon-wrapper">
+                    <div className={ui.fetchingPics ? 'loading-icon on' : 'loading-icon'} >
+                        <svg>
+                            <circle cx='35%' cy='35%'/>
+                            <circle cx='65%' cy='35%'/>
+                            <circle cx='35%' cy='65%'/>
+                            <circle cx='65%' cy='65%'/>
+                        </svg>
+                    </div>
                 </div>
             </div>
         );

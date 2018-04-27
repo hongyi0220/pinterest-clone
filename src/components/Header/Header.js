@@ -6,7 +6,8 @@ class Header extends React.Component {
     state = {
         input: '',
         page: 1,
-        fetchingPics: false
+        fetchingPics: false,
+        pageYOffset: 0
     }
 
     searchImg = e => {
@@ -16,7 +17,11 @@ class Header extends React.Component {
         const { storeImgs, concatImgsToStore } = this.props;
         console.log('keyDown:',e.key);
         if (!e.scroll) {
-            this.setState({ page: 1 });
+            this.setState({ page: 1, pageYOffset: 0 });
+            window.scroll({
+                top: 0,
+                behavior: 'instant'
+            });
         }
         const q = input.trim().replace(/\s/g, '%20');
         if (e.key === 'Enter') {
@@ -30,6 +35,7 @@ class Header extends React.Component {
                     storeImgs(imgs);
                 }
                 this.setState({ fetchingPics: false });
+                console.log('state after fetchingPics:',this.state);
             })
             .catch(err => console.log(err));
         }
@@ -40,15 +46,18 @@ class Header extends React.Component {
     lazyLoadPics = () => {
         let pageYOffset = 0;
         document.addEventListener('scroll', () => {
-            if (window.pageYOffset > pageYOffset) {
-                pageYOffset = window.pageYOffset;
+            if (window.pageYOffset > this.state.pageYOffset) {
+                this.setState({ pageYOffset: window.pageYOffset });
+                // pageYOffset = window.pageYOffset;
             }
+            console.log('pageYOffset:', pageYOffset);
             console.log('pageYOffset:',window.pageYOffset, '+ ','window.innerHeight:',window.innerHeight, '=',window.pageYOffset + window.innerHeight)
             // console.log('window.innerHeight:', window.innerHeight);
 
             console.log('document scrollHeight - 100:',document.documentElement.scrollHeight - 100);
 
             if (window.pageYOffset + window.innerHeight >= document.documentElement.scrollHeight - 100 && this.state.input && window.pageYOffset >= pageYOffset && !this.state.fetchingPics) {
+                // this.setState({ fetchingPics: true });
                 console.log('lazy-loading triggered');
                 this.setState(prevState => ({ page: prevState.page += 1 }));
                 // this.setState({ fetchingPics: true });

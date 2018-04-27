@@ -57,7 +57,7 @@ class UserPage extends React.Component {
                                     </div>
                                     <div className="share-button"></div>
                                 </div>
-                                <img className='wall-img' src={pin.src} />
+                                <img className='wall-img' src={pin.src} onError={e => e.target.src = './images/default-no-img.jpg'}/>
                             </div>) : ''
                         }
                     </div>

@@ -5,15 +5,19 @@ import { Link } from 'react-router-dom';
 class Header extends React.Component {
     state = {
         input: '',
-        page: 1
+        page: 1,
+        fetchingPics: false
     }
 
     searchImg = e => {
+        this.setState({ fetchingPics: true });
         console.log('page:', this.state.page);
         const { input, page, iamges } = this.state;
         const { storeImgs, concatImgsToStore } = this.props;
         console.log('keyDown:',e.key);
-
+        if (!e.scroll) {
+            this.setState({ page: 1 });
+        }
         const q = input.trim().replace(/\s/g, '%20');
         if (e.key === 'Enter') {
             this.props.history.push(`/search?term=${q}`)
@@ -25,7 +29,7 @@ class Header extends React.Component {
                 } else {
                     storeImgs(imgs);
                 }
-                // console.log(imgs);
+                this.setState({ fetchingPics: false });
             })
             .catch(err => console.log(err));
         }
@@ -33,27 +37,51 @@ class Header extends React.Component {
     }
     handleInput = e => this.setState({ input: e.target.value });
 
+    lazyLoadPics = () => {
+        let pageYOffset = 0;
+        document.addEventListener('scroll', () => {
+            if (window.pageYOffset > pageYOffset) {
+                pageYOffset = window.pageYOffset;
+            }
+            console.log('pageYOffset:',window.pageYOffset, '+ ','window.innerHeight:',window.innerHeight, '=',window.pageYOffset + window.innerHeight)
+            // console.log('window.innerHeight:', window.innerHeight);
+
+            console.log('document scrollHeight - 100:',document.documentElement.scrollHeight - 100);
+
+            if (window.pageYOffset + window.innerHeight >= document.documentElement.scrollHeight - 100 && this.state.input && window.pageYOffset >= pageYOffset && !this.state.fetchingPics) {
+                console.log('lazy-loading triggered');
+                this.setState(prevState => ({ page: prevState.page += 1 }));
+                // this.setState({ fetchingPics: true });
+                this.searchImg({ key: 'Enter', scroll: true });
+            }
+        });
+    }
+
     componentWillMount() {
         console.log('Header will mount');
 
     }
     componentDidMount() {
         console.log('Header did mount');
-        console.log(document.documentElement.scrollHeight);
+        this.lazyLoadPics();
+        // console.log(document.documentElement.scrollHeight);
         // let pageYOffset = 0;
-        document.addEventListener('scroll', () => {
-
-            console.log('pageYOffset:',window.pageYOffset, '+ ','window.innerHeight:',window.innerHeight, '=',window.pageYOffset + window.innerHeight)
-            // console.log('window.innerHeight:', window.innerHeight);
-
-            console.log('document scrollHeight - 200:',document.documentElement.scrollHeight - 200);
-            // if (pageYOffset - window.pageYOffset > )
-            if (window.pageYOffset + window.innerHeight > document.documentElement.scrollHeight - 200 && this.state.input && ifpageYOffset - ) {
-                console.log('lazy-loading triggered');
-                this.setState(prevState => ({ page: prevState.page += 1 }));
-                this.searchImg({ key: 'Enter', scroll: true });
-            }
-        })
+        // document.addEventListener('scroll', () => {
+        //     if (window.pageYOffset > pageYOffset) {
+        //         pageYOffset = window.pageYOffset;
+        //     }
+        //     console.log('pageYOffset:',window.pageYOffset, '+ ','window.innerHeight:',window.innerHeight, '=',window.pageYOffset + window.innerHeight)
+        //     // console.log('window.innerHeight:', window.innerHeight);
+        //
+        //     console.log('document scrollHeight - 100:',document.documentElement.scrollHeight - 100);
+        //
+        //     if (window.pageYOffset + window.innerHeight >= document.documentElement.scrollHeight - 100 && this.state.input && window.pageYOffset >= pageYOffset && !this.state.fetchingPics) {
+        //         console.log('lazy-loading triggered');
+        //         this.setState(prevState => ({ page: prevState.page += 1 }));
+        //         // this.setState({ fetchingPics: true });
+        //         this.searchImg({ key: 'Enter', scroll: true });
+        //     }
+        // });
         // if (window.pageYOffset + window.innerHeight > document.documentElement.scrollHeight - 100 && this.state.input) {
         //     console.log('lazy-loading triggered');
         //     this.setState(prevState => ({ page: prevState.page++ }));

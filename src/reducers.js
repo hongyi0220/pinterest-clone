@@ -4,7 +4,7 @@ const STORE_IMGS = 'STORE_IMGS';
 const TOGGLE_HEADER_MENU = 'TOGGLE_HEADER_MENU';
 const TOGGLE_MODAL = 'TOGGLE_MODAL';
 const OPEN_MSG_MODAL = 'OPEN_MSG_MODAL';
-const CONCAT_TO_IMGSTORE = 'CONCAT_TO_IMGSTORE';
+const CONCAT_IMGS_TO_STORE = 'CONCAT_IMGS_TO_STORE';
 const STORE_TOP_TAGS = 'STORE_TOP_TAGS';
 
 const initState = {
@@ -45,7 +45,7 @@ const imgs = (state = initState.imgs, action) => {
                 search: action.imgs
             };
             break;
-        case CONCAT_TO_IMGSTORE:
+        case CONCAT_IMGS_TO_STORE:
             return {
                 ...state,
                 search: [...state.search, ...action.imgs]

@@ -108,6 +108,11 @@ class WallPage extends React.Component {
             .then(pins => this.filterPinsMatchingTopTags(pins))
             .then(topPins => {
                 console.log('topPins:', topPins);
+
+                // if (topPins.length < 60)
+
+
+
                 return this.shuffleArr(topPins);
             })
             .then(curatedPins => this.props.storeImgs(curatedPins))

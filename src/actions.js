@@ -23,8 +23,8 @@ export const openMsgModal = (title, msg) => ({
     }
 });
 
-export const concatToImgStore = imgs => ({
-    type: 'CONCAT_TO_IMGSTORE',
+export const concatImgsToStore = imgs => ({
+    type: 'CONCAT_IMGS_TO_STORE',
     imgs
 });
 

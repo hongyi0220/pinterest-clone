@@ -3,7 +3,8 @@ import Header from './Header';
 import {
     storeImgs,
     toggleHeaderMenu,
-    concatImgsToStore
+    concatImgsToStore,
+    toggleFetchingPics
 } from '../../actions';
 
 const mapStateToProps = state => state;
@@ -13,7 +14,8 @@ const HeaderContainer = connect(
     {
         storeImgs,
         toggleHeaderMenu,
-        concatImgsToStore
+        concatImgsToStore,
+        toggleFetchingPics
     }
 )(Header);
 

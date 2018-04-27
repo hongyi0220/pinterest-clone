@@ -6,6 +6,7 @@ const TOGGLE_MODAL = 'TOGGLE_MODAL';
 const OPEN_MSG_MODAL = 'OPEN_MSG_MODAL';
 const CONCAT_IMGS_TO_STORE = 'CONCAT_IMGS_TO_STORE';
 const STORE_TOP_TAGS = 'STORE_TOP_TAGS';
+const TOGGLE_FETCHING_PICS = 'TOGGLE_FETCHING_PICS';
 
 const initState = {
     account: {
@@ -21,7 +22,8 @@ const initState = {
         headerMenu: false,
         modalBackgroundOverlay: false,
         msgModal: false,
-        createPinModal: false
+        createPinModal: false,
+        fetchingPics: false
     }
 };
 
@@ -88,6 +90,12 @@ const ui = (state = initState.ui, action) => {
                 ...state,
                 msgModal: action.content
             }
+            break;
+        case TOGGLE_FETCHING_PICS:
+            return {
+                ...state,
+                fetchingPics: !state.fetchingPics
+            };
             break;
         default:
             return state;

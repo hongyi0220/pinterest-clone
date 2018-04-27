@@ -32,3 +32,7 @@ export const storeTopTags = tags => ({
     type: 'STORE_TOP_TAGS',
     tags
 });
+
+export const toggleFetchingPics = () => ({
+    type: 'TOGGLE_FETCHING_PICS'
+});

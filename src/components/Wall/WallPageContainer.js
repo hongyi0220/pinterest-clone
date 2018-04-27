@@ -4,10 +4,7 @@ import {
     storeImgs
 } from '../../actions';
 
-const mapStateToProps = state => ({
-    imgs: state.imgs,
-    account: state.account
-});
+const mapStateToProps = state => state;
 
 const WallPageContainer = connect(
     mapStateToProps,

@@ -6,12 +6,16 @@ class Header extends React.Component {
     state = {
         input: '',
         page: 1,
-        fetchingPics: false,
+        // fetchingPics: false,
         pageYOffset: 0
-    }
+    };
+    static propTypes = {
+        toggleFetchingPics: PropTypes.func.isRequired
+    };
 
     searchImg = e => {
-        this.setState({ fetchingPics: true });
+        // this.setState({ fetchingPics: true });
+        this.props.toggleFetchingPics();
         console.log('page:', this.state.page);
         const { input, page, iamges } = this.state;
         const { storeImgs, concatImgsToStore } = this.props;
@@ -34,7 +38,8 @@ class Header extends React.Component {
                 } else {
                     storeImgs(imgs);
                 }
-                this.setState({ fetchingPics: false });
+                // this.setState({ fetchingPics: false });
+                this.props.toggleFetchingPics();
                 console.log('state after fetchingPics:',this.state);
             })
             .catch(err => console.log(err));

@@ -7,7 +7,8 @@ class WallPage extends React.Component {
     };
     static propTypes = {
         storeImgs: PropTypes.func.isRequired,
-        account: PropTypes.object.isRequired
+        account: PropTypes.object.isRequired,
+        ui: PropTypes.object.isRequired
     };
 
     highlightPin = e => {
@@ -120,7 +121,7 @@ class WallPage extends React.Component {
     }
 
     render() {
-        const { imgs } = this.props;
+        const { imgs, ui } = this.props;
         const { pindex } = this.state;
 
         return (
@@ -138,6 +139,14 @@ class WallPage extends React.Component {
                             <img className='wall-img' src={img.src} onError={e => e.target.src = './images/default-no-img.jpg'}/>
                         </div>) : <div className="no-imgs-msg-wrapper">No images found</div>
                     }
+                </div>
+                <div className={ui.fetchingPics ? 'loading-icon on' : 'loading-icon'} >
+                    <svg>
+                        <circle cx='35%' cy='35%'/>
+                        <circle cx='65%' cy='35%'/>
+                        <circle cx='35%' cy='65%'/>
+                        <circle cx='65%' cy='65%'/>
+                    </svg>
                 </div>
             </div>
         );

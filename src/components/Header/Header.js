@@ -79,29 +79,6 @@ class Header extends React.Component {
     componentDidMount() {
         console.log('Header did mount');
         this.lazyLoadPics();
-        // console.log(document.documentElement.scrollHeight);
-        // let pageYOffset = 0;
-        // document.addEventListener('scroll', () => {
-        //     if (window.pageYOffset > pageYOffset) {
-        //         pageYOffset = window.pageYOffset;
-        //     }
-        //     console.log('pageYOffset:',window.pageYOffset, '+ ','window.innerHeight:',window.innerHeight, '=',window.pageYOffset + window.innerHeight)
-        //     // console.log('window.innerHeight:', window.innerHeight);
-        //
-        //     console.log('document scrollHeight - 100:',document.documentElement.scrollHeight - 100);
-        //
-        //     if (window.pageYOffset + window.innerHeight >= document.documentElement.scrollHeight - 100 && this.state.input && window.pageYOffset >= pageYOffset && !this.state.fetchingPics) {
-        //         console.log('lazy-loading triggered');
-        //         this.setState(prevState => ({ page: prevState.page += 1 }));
-        //         // this.setState({ fetchingPics: true });
-        //         this.searchImg({ key: 'Enter', scroll: true });
-        //     }
-        // });
-        // if (window.pageYOffset + window.innerHeight > document.documentElement.scrollHeight - 100 && this.state.input) {
-        //     console.log('lazy-loading triggered');
-        //     this.setState(prevState => ({ page: prevState.page++ }));
-        //     this.searchImg({ key: 'Enter', scroll: true });
-        // }
     }
     render() {
         const { input } = this.state;
@@ -112,11 +89,11 @@ class Header extends React.Component {
                     <img src="./images/pinterest_logo.png"/>
                 </Link>
                 <input type="text" placeholder='Search' onKeyDown={this.searchImg} onChange={this.handleInput} value={input}/>
-                <Link className="link" to='/'>
+                <Link className="link" to='/home'>
                     <div className="home">Home</div>
                 </Link>
 
-                <Link className='link' to='/user'>
+                <Link className='link' to='/user' onClick={() => this.setState({ input: '' })}>
                     <div className="user">
                         {account.user.username}
                     </div>

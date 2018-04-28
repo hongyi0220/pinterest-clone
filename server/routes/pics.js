@@ -17,10 +17,16 @@ module.exports = (app, db) => {
 
         fetch(url)
         .then(res => res.json())
-        .then(resJson => resJson.hits.map(hit => ({src: hit.webformatURL, tags: hit.tags.split(' ').slice(0, 5)})))
+        .then(resJson => resJson.hits.map(hit => ({ src: hit.webformatURL, tags: hit.tags.split(' ') })))
         .then(imgs => {
             console.log('req.session:', req.session);
-            req.session.imgs = imgs;
+            if (page === 1) {
+                req.session.page = page;
+                req.session.imgs = imgs;
+            } else {
+                req.session.page ? req.session.page++ : req.session.page = page;
+                req.session.imgs = [...req.session.imgs, ...imgs];
+            }
             console.log('req.session2:', req.session);
             res.send(imgs)
         })
@@ -78,21 +84,36 @@ module.exports = (app, db) => {
     app.route('/pin')
         .get((req, res) => {
             console.log('GET pin reached!');
-            console.log('session.id:', req.session.id);
-            console.log('req._passport.session:',req._passport.session);
-            console.log('req.user:',req.user);
-            console.log('req.isAuthenticated():',req.isAuthenticated());
-            console.log('req.session:', req.session);
+            // console.log('session.id:', req.session.id);
+            // console.log('req._passport.session:',req._passport.session);
+            // console.log('req.user:',req.user);
+            // console.log('req.isAuthenticated():',req.isAuthenticated());
+            // console.log('req.session:', req.session);
             const pindex = req.query.pindex;
             console.log(pindex);
-            console.log('req.user:',req.user);
+            const cloudinaryUploadFolderName = 'saved_images';
+            const resourceName = req.session.imgs[pindex].src.split('get/')[1];
+            const cloudinaryUploadPath = `https://res.cloudinary.com/fluffycloud/image/upload/${cloudinaryUploadFolderName}/`;
+            console.log(`${cloudinaryUploadFolderName}/${resourceName}`);
+            cloudinary.image(`${cloudinaryUploadFolderName}/${resourceName}`);
+
             Users.updateOne(
                 { email: req.user.email },
                 {
-                    $push: { pins: req.session.imgs[pindex] }
+                    $push: { pins:
+                        {
+                            src: cloudinaryUploadPath + resourceName,
+                            tags: req.session.imgs[pindex].tags
+                        }
+                    }
                 }
-            );
+            )
+            .catch(err => console.log(err));
             res.end();
+
+
+
+
         })
         .delete((req, res) => {
             console.log('DELETE pin reached!');

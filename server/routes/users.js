@@ -17,13 +17,6 @@ cloudinary.config({
 
 module.exports = (app, db) => {
     const Users = db.collection('users');
-    // const newUser = {
-    //     email: 'n/a',
-    //     username: profile.username,
-    //     passpord: 'n/a',
-    //     "profileImg": "./images/default-profile-image.png",
-    //     pins: []
-    // };
 
     passport.use(new TwitterStrategy({
             consumerKey,
@@ -105,7 +98,7 @@ module.exports = (app, db) => {
     // authentication has failed.
     app.get('/auth/twitter/callback',
         passport.authenticate('twitter', {
-            successRedirect: '/',
+            successRedirect: '/home',
             failureRedirect: '/'
         }
     ));
@@ -115,14 +108,8 @@ module.exports = (app, db) => {
         passport.authenticate('local', (err, user, info) => {
            if (err) { return console.log(err); }
            if (!user) {
-               // const newUser = {
-               //     email: 'n/a',
-               //     username: profile.username,
-               //     passpord: 'n/a',
-               //     "profileImg": "./images/default-profile-image.png",
-               //     pins: []
-               // };
-               Users.insertOne({
+
+               Users.insertOne({ // Create new user
                    email,
                    username: email.split('@')[0],
                    password,
@@ -139,19 +126,21 @@ module.exports = (app, db) => {
                                     error: info
                                 });
                             }
-                            return res.redirect('/');
+                            return res.redirect('/home');
                         });
                     })
                     .catch(err => console.log(err))
                });
            } else {
+               console.log('recovered session, logging user in');
                req.login(user, err => {
                    if (err) {
                        return res.status(500).json({
                            error: info
                        });
                    }
-                   return res.redirect('/');
+                   console.log('no err, redirect to /home');
+                   return res.redirect('/home');
                });
            }
          })(req, res);

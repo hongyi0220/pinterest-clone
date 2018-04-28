@@ -51,7 +51,7 @@ class CreatePinModal extends React.Component {
     //     this.props.toggleModal(false);
     // }
 
-    submitForm = () => {
+    handleCreatePinClick = () => {
         const { tags, imgFile, saveFromSiteURL } = this.state;
 
         if (saveFromSiteURL) {
@@ -248,9 +248,9 @@ class CreatePinModal extends React.Component {
         e.preventDefault();
     }
 
-    clickUploadFromLocal = () => this.setState({ isSaveFromSiteClicked: true });
+    handleUploadFromLocalClick = () => this.setState({ isSaveFromSiteClicked: true });
 
-    clicksaveFromSiteURL = () => this.setState({ isSaveFromSiteClicked: false });
+    handleSaveFromSiteClick = () => this.setState({ isSaveFromSiteClicked: false });
 
     clearImgFileInState = () => this.setState({ imgFile: null });
 
@@ -308,10 +308,10 @@ class CreatePinModal extends React.Component {
                 <div className="modal-controls-container">
                     <div className="all-buttons-container">
                         <div className="toggle-buttons-container">
-                            <div className={isSaveFromSiteClicked ? 'button upload-from-local clicked' : 'button upload-from-local'} onClick={this.clickUploadFromLocal}>Upload Pin</div>
-                            <div className={isSaveFromSiteClicked ? 'button upload-from-url' : 'button upload-from-url clicked'} onClick={() => {this.clicksaveFromSiteURL(); this.clearImgFileInState()}}>Save from site</div>
+                            <div className={isSaveFromSiteClicked ? 'button upload-from-local clicked' : 'button upload-from-local'} onClick={this.handleUploadFromLocalClick}>Upload Pin</div>
+                            <div className={isSaveFromSiteClicked ? 'button upload-from-url' : 'button upload-from-url clicked'} onClick={() => {this.handleSaveFromSiteClick(); this.clearImgFileInState()}}>Save from site</div>
                         </div>
-                        <div className={imgFile || saveFromSiteURL ? 'button done' : 'button done disabled'} onClick={this.submitForm}>Done</div>
+                        <div className={imgFile || saveFromSiteURL ? 'button done' : 'button done disabled'} onClick={this.handleCreatePinClick}>Done</div>
                     </div>
 
                 </div>

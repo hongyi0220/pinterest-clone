@@ -83,20 +83,7 @@ class App extends React.Component {
     componentWillMount() {
         console.log('App will mount');
         const { logInUser, storeImgs, storeTopTags } = this.props;
-        // async () => {
-        //     try {
-        //         var sessionData = await this.getSessionData()
-        //     } catch(e) {
-        //         return console.log(e);
-        //     }
-        //     return sessionData;
-        //     if (sessionData.user) { logInUser(sessionData.user); }
-        //     if (sessionData.imgs) { storeImgs(sessionData.imgs); }
-        //     console.log('sessionData:', sessionData.user);
-        //     const topTags = this.processTags(sessionData.user);
-        //     console.log('topTags:', topTags);
-        //
-        // }
+
         this.getSessionData()
         .then(sessionData => {
             if (sessionData.user) { logInUser(sessionData.user); }
@@ -116,23 +103,21 @@ class App extends React.Component {
             <Router>
                 <div className="app-container">
                     {account.user ?
-                        <Route path='/' component={HeaderContainer} /> :
+                        <Route component={HeaderContainer} /> :
                         <Route exact path='/' component={AuthPageContainer} />
                     }
                     {ui.headerMenu ?
-                        <Route path='/' component={HeaderMenu} /> :
-                        ''
+                        <Route component={HeaderMenu} /> : ''
                     }
                     {account.user ?
-                            <Route exact path='/user' component={UserPageContainer} /> :
-                            ''
+                            <Route exact path='/user' component={UserPageContainer} /> : ''
                     }
 
                     {
                         ui.modalBackgroundOverlay ? <Route component={ModalBackgroundOverlayContainer} /> : ''
                     }
                     <Route exact path='/settings' component={SettingsPageContainer}/>
-                    <Route exact path='/(|search|find)' component={WallPageContainer} />
+                    <Route exact path='/(|home|search|find)' component={WallPageContainer} />
                 </div>
             </Router>
         );

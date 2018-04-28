@@ -56,16 +56,14 @@
 
 .wall-page-container {
   display: grid;
-  grid-template-columns: repeat(11, 1fr);
-  grid-auto-rows: auto;
-  height: 100vh;
   padding-top: 2em; }
   .wall-page-container .wall {
+    width: 90%;
+    margin: auto;
     display: grid;
     grid-gap: .5em;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    grid-auto-rows: 400px;
-    grid-column: 2/11; }
+    grid-auto-rows: 400px; }
     .wall-page-container .wall .img-container {
       position: relative;
       border-radius: 10px;
@@ -122,13 +120,43 @@
         object-fit: cover;
         position: relative;
         margin: 3% 3% 5% 3%; }
+  .wall-page-container .loading-icon-wrapper {
+    height: 50px; }
+    .wall-page-container .loading-icon-wrapper .loading-icon {
+      opacity: 0; }
+    .wall-page-container .loading-icon-wrapper .loading-icon.on {
+      opacity: 1;
+      border-radius: 100%;
+      animation: spin 1s linear infinite;
+      width: 50px;
+      height: 50px;
+      margin: auto;
+      background-color: #B5B5B5; }
+      .wall-page-container .loading-icon-wrapper .loading-icon.on svg {
+        width: 50px;
+        height: 50px; }
+        .wall-page-container .loading-icon-wrapper .loading-icon.on svg circle {
+          fill: #EFEFEF;
+          r: 3.5; }
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg); }
+  25% {
+    transform: rotate(90deg); }
+  50% {
+    transform: rotate(180deg); }
+  75% {
+    transform: rotate(270deg); }
+  to {
+    transform: rotate(360deg); } }
 
 .header {
   display: flex;
   flex-direction: row;
   position: fixed;
   width: 100%;
-  z-index: 2;
+  z-index: 3;
   box-shadow: 0 1px 1px #EFEFEF;
   background-color: white; }
   .header .link {

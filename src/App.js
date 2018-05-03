@@ -15,16 +15,13 @@ import {
 } from './components';
 
 class App extends React.Component {
-  // state = {
-  //asfd
-  // };
-  
   static propTypes = {
     logInUser: PropTypes.func.isRequired,
     account: PropTypes.object.isRequired,
     ui: PropTypes.object.isRequired,
     storeImgs: PropTypes.func.isRequired,
     storeTopTags: PropTypes.func.isRequired,
+    imgs: PropTypes.shape({ topTags: [] }).isRequired,
   };
 
   getSessionData = () => {
@@ -81,20 +78,93 @@ class App extends React.Component {
     return result;
   }
 
+  getAllUsersWithPins = () => {
+    return fetch('/pins',{
+      method: 'GET',
+      credentials: 'include',
+    })
+      .then(res => res.json())
+      .then(resJson => resJson)
+      .catch(err => console.log(err));
+  }
+
+  extractAllPins = users => {
+    const result = users.map((user) =>
+      user.pins.map((pin) => ({
+        src: pin.src,
+        tags: pin.tags,
+        username: user.username,
+        profileImg: user.profileImg,
+      })
+    ))
+      .reduce((currUserPins, nextUserPins) => [...currUserPins, ...nextUserPins], []);
+    console.log('extracted pins:',result);
+    return result;
+  }
+
+  shuffleArr = arr => {
+    let result = [];
+    let ns = [...arr];
+    const helper = ns => {
+      if (!ns.length) { return; }
+      const randomIndex = Math.floor(Math.random() * ns.length);
+      result.push(ns[randomIndex]);
+      ns.splice(randomIndex, 1);
+      helper(ns);
+    };
+    helper(ns);
+    return result;
+  };
+
+  filterPinsMatchingTopTags = pins => pins.filter(pin => {
+    // console.log('pin.tags:', pin.tags);
+    return this.props.imgs.topTags.some(topTag => {
+      // console.log('topTag:', topTag.tag);
+      // console.log('tags include topTag?', pin.tags.includes(topTag.tag));
+      return pin.tags.includes(topTag.tag);
+    });
+
+  });
+
   componentWillMount() {
     console.log('App will mount');
-    const { logInUser, storeImgs, storeTopTags } = this.props;
+    // const { logInUser, storeImgs, storeTopTags } = this.props;
 
     this.getSessionData()
-    .then(sessionData => {
-      if (sessionData.user) { logInUser(sessionData.user); }
-      if (sessionData.imgs) { storeImgs(sessionData.imgs); }
-      console.log('sessionData:', sessionData.user);
-      const topTags = this.processTags(sessionData.user);
-      console.log('topTags:', topTags);
-      storeTopTags(topTags);
-    })
-    .catch(err => console.log(err));
+      .then(sessionData => {
+        if (sessionData.user) { this.props.logInUser(sessionData.user); }
+        if (sessionData.imgs) { this.props.storeImgs(sessionData.imgs); }
+        console.log('sessionData:', sessionData.user);
+        const topTags = this.processTags(sessionData.user);
+        console.log('topTags:', topTags);
+        this.props.storeTopTags(topTags);
+      })
+      .catch(err => console.log(err));
+
+    // Pin: { src: http://example.com/resource, tags: ['a', 'b', 'c'] }
+
+    this.getAllUsersWithPins()
+      .then(users => this.extractAllPins(users))
+      .then(pins => this.filterPinsMatchingTopTags(pins))
+      .then(topPins => {
+        console.log('topPins:', topPins);
+        // if (topPins.length < 60)
+        return this.shuffleArr(topPins);
+      })
+      .then(curatedPins => {
+        // this.props.storeImgs(imgs);
+        this.props.storeImgs(curatedPins);
+        // Save curatedPins in session
+        fetch('/session', {
+          method: 'post',
+          credentials: 'include',
+          headers: {
+            'content-type': 'application/json'
+          },
+          body: JSON.stringify({ curatedPins }),
+        });
+      })
+      .catch(err => console.log(err));
 
   }
 
@@ -111,7 +181,7 @@ class App extends React.Component {
             <Route component={HeaderMenu} /> : ''
           }
           {account.user ?
-            <Route exact path='/user' component={UserPageContainer} /> : ''
+            <Route path='/user' component={UserPageContainer} /> : ''
           }
 
           {

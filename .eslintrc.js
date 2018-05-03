@@ -32,6 +32,11 @@ module.exports = {
             "error",
             "always"
         ],
-        "no-console": "off"
+        "no-console": "off",
+    },
+    "globals": {
+        "require": false,
+        "module": false,
+        "process": false,
     }
 };

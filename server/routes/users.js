@@ -33,7 +33,7 @@ module.exports = (app, db) => {
                         email: 'n/a',
                         username: profile.username,
                         password: 'n/a',
-                        "profileImg": "./images/default-profile-image.png",
+                        'profileImg': './images/default-profile-image.png',
                         pins: [],
                         // favs: []
                     };
@@ -113,7 +113,7 @@ module.exports = (app, db) => {
                    email,
                    username: email.split('@')[0],
                    password,
-                   profileImg: "./images/default-profile-image.png",
+                   profileImg: './images/default-profile-image.png',
                    pins: [],
                    // favs: []
                })
@@ -129,7 +129,7 @@ module.exports = (app, db) => {
                             return res.redirect('/home');
                         });
                     })
-                    .catch(err => console.log(err))
+                    .catch(err => console.log(err));
                });
            } else {
                console.log('recovered session, logging user in');
@@ -156,7 +156,6 @@ module.exports = (app, db) => {
         const { email, username, previewImg } = req.body;
         console.log('req.body:',req.body);
         console.log('email, username, uploadedImg:',email, username, previewImg);
-
 
         Users.updateOne(
             { username: req.user.username },
@@ -202,4 +201,17 @@ module.exports = (app, db) => {
         })
         .catch(err => console.log(err));
     });
-}
+
+    app.get('/user', (req, res, next) => {
+      const { username } = req.query;
+      if (!username) {
+        next();
+      }
+      console.log('username at /user:', username);
+      Users.findOne({ username }, { _id: 0, password: 0, email: 0, })
+        .then(user => {
+          console.log(user);
+          res.send(user);
+        });
+    });
+};

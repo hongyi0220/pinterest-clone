@@ -4,7 +4,8 @@ import {
     storeImgs,
     toggleHeaderMenu,
     concatImgsToStore,
-    toggleFetchingPics
+    toggleFetchingPics,
+    storeOtherUserInfo,
 } from '../../actions';
 
 const mapStateToProps = state => state;
@@ -15,7 +16,8 @@ const HeaderContainer = connect(
         storeImgs,
         toggleHeaderMenu,
         concatImgsToStore,
-        toggleFetchingPics
+        toggleFetchingPics,
+        storeOtherUserInfo,
     }
 )(Header);
 

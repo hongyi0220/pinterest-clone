@@ -7,21 +7,22 @@ const OPEN_MSG_MODAL = 'OPEN_MSG_MODAL';
 const CONCAT_IMGS_TO_STORE = 'CONCAT_IMGS_TO_STORE';
 const STORE_TOP_TAGS = 'STORE_TOP_TAGS';
 const TOGGLE_FETCHING_PICS = 'TOGGLE_FETCHING_PICS';
-
+const STORE_OTHER_USER_INFO = 'STORE_OTHER_USER_INFO';
 const initState = {
   account: {
-    user: null
+    user: null,
+    otherUser: null,
   },
   imgs: {
     search: null,
-    topTags: null
+    topTags: null,
   },
   ui: {
     headerMenu: false,
     modalBackgroundOverlay: false,
     msgModal: false,
     createPinModal: false,
-    fetchingPics: false
+    fetchingPics: false,
   },
 };
 
@@ -32,7 +33,13 @@ const account = (state = initState.account, action) => {
         ...state,
         user: action.user
       };
-      break;
+
+    case STORE_OTHER_USER_INFO:
+      return {
+        ...state,
+        otherUser: action.otherUser
+      };
+
     default:
     return state;
   }
@@ -44,19 +51,19 @@ const imgs = (state = initState.imgs, action) => {
         ...state,
         search: action.imgs
       };
-      break;
+
     case CONCAT_IMGS_TO_STORE:
       return {
         ...state,
         search: [...state.search, ...action.imgs]
       };
-      break;
+
     case STORE_TOP_TAGS:
       return {
         ...state,
         topTags: action.tags
       };
-      break;
+
     default:
     return state;
   }
@@ -70,25 +77,25 @@ const ui = (state = initState.ui, action) => {
         ...state,
         headerMenu: !state.headerMenu
       };
-      break;
+
     case TOGGLE_MODAL:
       return {
         ...state,
         modalBackgroundOverlay: action.open
       };
-      break;
+
     case OPEN_MSG_MODAL:
       return {
         ...state,
         msgModal: action.content
       };
-      break;
+
     case TOGGLE_FETCHING_PICS:
       return {
         ...state,
         fetchingPics: !state.fetchingPics
       };
-      break;
+
     default:
     return state;
   }

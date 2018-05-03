@@ -18,6 +18,7 @@ class Header extends React.Component {
     ui: PropTypes.shape({ fetchingPics: PropTypes.bool }).isRequired,
     account: PropTypes.shape({ }).isRequired,
     toggleHeaderMenu: PropTypes.func.isRequired,
+    storeOtherUserInfo: PropTypes.func.isRequired,
   };
 
   searchImg = e => {
@@ -97,26 +98,26 @@ class Header extends React.Component {
     return (
       <div className="header">
         <Link className="link" to='/'>
-        <img src="./images/pinterest_logo.png"/>
-      </Link>
-      <input type="text" placeholder='Search' onKeyDown={this.searchImg} onChange={this.handleInput} value={input}/>
-      <Link className="link" to='/home'>
-      <div className="home">Home</div>
-    </Link>
+          <img src="./images/pinterest_logo.png"/>
+        </Link>
+        <input type="text" placeholder='Search' onKeyDown={this.searchImg} onChange={this.handleInput} value={input}/>
+        <Link className="link" to='/home'>
+          <div className="home">Home</div>
+        </Link>
 
-    <Link className='link' to='/user' onClick={() => this.setState({ input: '' })}>
-    <div className="user">
-      {account.user.username}
-    </div>
-  </Link>
+        <Link className='link' to={`/user/${account.user.username}`} onClick={() => {this.setState({ input: '' }); this.props.storeOtherUserInfo(null);} }>
+          <div className="user">
+            {account.user.username}
+          </div>
+        </Link>
 
-  <div className="options" onClick={toggleHeaderMenu}>
-    <svg>
-      {[...'ccc'].map((c, i) => <circle key={i} cx={12 + (i * 8)}/>)}
-    </svg>
-  </div>
-</div>
-);
-}
+        <div className="options" onClick={toggleHeaderMenu}>
+          <svg>
+            {[...'ccc'].map((c, i) => <circle key={i} cx={12 + (i * 8)}/>)}
+          </svg>
+        </div>
+      </div>
+    );
+  }
 }
 export default Header;

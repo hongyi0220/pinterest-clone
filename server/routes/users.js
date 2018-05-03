@@ -165,7 +165,9 @@ module.exports = (app, db) => {
                 profileImg: previewImg || './images/default-profile-image.png'
             }}
         )
+        .then(() => res.end())
         .catch(err => console.log(err));
+
     });
 
     app.post('/profile-img', upload.single('imgFile'), (req, res) => {
@@ -202,16 +204,48 @@ module.exports = (app, db) => {
         .catch(err => console.log(err));
     });
 
-    app.get('/user', (req, res, next) => {
-      const { username } = req.query;
-      if (!username) {
+    // app.get('/user', (req, res) => {
+    //   console.log('/user reached!');
+    //   const { username } = req.query;
+    // })
+
+    app.get('/user/:username', (req, res, next) => {
+      console.log('/user reached!');
+      // console.log('/user/* reached! req.url:', req.url);
+      // console.log('/user/* reached! req.url.split:', req.url.split('/'));
+      //
+      // const username = req.url.split('/')[2];
+      // const { username } = req.query;
+      const username = req.params.username;
+
+      if (username) {
+        console.log('req.params at /user/:username :', username);
+        // if (username === req.session.user.username) {
+        //   next();
+        // }
+        Users.findOne({ username }, { _id: 0, password: 0, email: 0, })
+          .then(user => {
+            console.log(user);
+            res.send(user);
+          })
+          .catch(err => console.log(err));
+      } else {
+        console.log('!username; next()');
         next();
       }
-      console.log('username at /user:', username);
-      Users.findOne({ username }, { _id: 0, password: 0, email: 0, })
-        .then(user => {
-          console.log(user);
-          res.send(user);
-        });
+
     });
+
+    // app.get('/otherUser', (req, res, next) => {
+    //   const { username } = req.query;
+    //   if (!username) {
+    //     next();
+    //   }
+    //   console.log('username at /user:', username);
+    //   Users.findOne({ username }, { _id: 0, password: 0, email: 0, })
+    //     .then(user => {
+    //       console.log(user);
+    //       res.send(user);
+    //     });
+    // });
 };

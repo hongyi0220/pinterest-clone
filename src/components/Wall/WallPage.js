@@ -3,7 +3,8 @@ import PropTypes from 'prop-types';
 
 class WallPage extends React.Component {
   state = {
-    pindex: null
+    pindex: null,
+    // otherUser: null,
   };
   static propTypes = {
     storeImgs: PropTypes.func.isRequired,
@@ -12,6 +13,7 @@ class WallPage extends React.Component {
     imgs: PropTypes.shape({ topTags: [] }).isRequired,
     logInUser: PropTypes.func.isRequired,
     history: PropTypes.shape({ push: history.push }).isRequired,
+    storeOtherUserInfo: PropTypes.func.isRequired,
   };
 
   highlightPin = e => {
@@ -32,15 +34,16 @@ class WallPage extends React.Component {
   handleUserProfileImgClick = e => {
     console.log('handle User Profile Img Clicked:',e.target.dataset.username);
     const username = e.target.dataset.username;
-    fetch(`/user?username=${username}`, {
+    fetch(`/user/${username}`, {
       method: 'GET',
       credentials: 'include',
     })
       .then(res => res.json())
-      .then(user => {
-        console.log('res from /user:', user);
-        this.props.logInUser(user);
-        this.props.history.push(`/user/${username}`);
+      .then(otherUser => {
+        console.log('res from /user:', otherUser);
+        // this.props.logInUser(user);
+        this.props.storeOtherUserInfo(otherUser);
+        this.props.history.push(`/user/${otherUser.username}`);
       })
       .catch(err => console.log(err));
   }

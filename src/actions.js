@@ -36,3 +36,8 @@ export const storeTopTags = tags => ({
 export const toggleFetchingPics = () => ({
     type: 'TOGGLE_FETCHING_PICS'
 });
+
+export const storeOtherUserInfo = otherUser => ({
+  type: 'STORE_OTHER_USER_INFO',
+  otherUser
+});

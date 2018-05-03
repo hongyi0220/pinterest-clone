@@ -142,6 +142,10 @@ module.exports = (app, db) => {
           $size: 1
         }
       }
+    }, {
+      _id: 0,
+      email: 0,
+      password: 0,
     })
     .toArray((err, docs) => {
       if (err) { console.log(err); }

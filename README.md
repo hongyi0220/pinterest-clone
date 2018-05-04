@@ -25,8 +25,9 @@ Live demo: not yet deployed.
 
 * **Redux**: front-end state management.
 * **multer**: enable temporary storage of formData type.
-* Others useful tools: **React Router (v4)**, **passport** and **ESLint**.
+* Other useful tools: **React Router (v4)**, **passport** and **ESLint**.
 
 ## APIs used:
-* Cloudinary: store and manage media data.
-* Pixabay: enable image search.
+* **Cloudinary**: store and manage media data.
+* **Pixabay**: enable image search.
+* **Tiwtter**: authentication and sharing.

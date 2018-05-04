@@ -66,7 +66,9 @@ class WallPage extends React.Component {
                 <img src="./images/pin.png" alt="action button" className="pin"/>
                 <div className='action-button-text' onClick={this.savePin}>Save</div>
               </div>
-              <div className="share-button"></div>
+              <div className="share-button" onClick={() => window.open(`https://twitter.com/intent/tweet?via=pinterest-clone&text=`, '', 'top=,left=,height=,width=')}>
+                <img src="./images/tweet.png" alt="tweet"/>
+              </div>
               <div className="userProfileImgWrapper" onClick={this.handleUserProfileImgClick}>
                 <img data-username={img.username ? img.username : ''} src={img.profileImg ? img.profileImg : './images/default-profile-image.png'} alt="user profile"/>
               </div>

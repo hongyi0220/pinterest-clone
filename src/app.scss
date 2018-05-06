@@ -1,3 +1,7 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+}
 @import './components/Auth/auth-page';
 @import './components/Wall/wall-page';
 @import './components/Header/header';
@@ -8,7 +12,4 @@
 @import './components/Modal/Msg/msg-modal';
 @import './components/Modal/CreatePin/create-pin-modal';
 @import './components/Modal/BackgroundOverlay/modal-background-overlay';
-* {
-    box-sizing: border-box;
-    margin: 0;
-}
+@import './components/Pin/pin-page';

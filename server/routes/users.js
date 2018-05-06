@@ -236,16 +236,4 @@ module.exports = (app, db) => {
 
     });
 
-    // app.get('/otherUser', (req, res, next) => {
-    //   const { username } = req.query;
-    //   if (!username) {
-    //     next();
-    //   }
-    //   console.log('username at /user:', username);
-    //   Users.findOne({ username }, { _id: 0, password: 0, email: 0, })
-    //     .then(user => {
-    //       console.log(user);
-    //       res.send(user);
-    //     });
-    // });
 };

@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 class WallPage extends React.Component {
   state = {
     pindex: null,
-    // otherUser: null,
   };
   static propTypes = {
     storeImgs: PropTypes.func.isRequired,
@@ -14,24 +13,28 @@ class WallPage extends React.Component {
     logInUser: PropTypes.func.isRequired,
     history: PropTypes.shape({ push: history.push }).isRequired,
     storeOtherUserInfo: PropTypes.func.isRequired,
+    storeMagnifiedPinInfo: PropTypes.func.isRequired,
+    similarPicsKeyword: PropTypes.string,
   };
 
-  highlightPin = e => {
-    if (e) console.log(e.target.id);
-    this.setState({ pindex: e ? e.target.id : null });
+  handlePinOnMouseOver = e => {
+    console.log('pindex:', e ? e.target.dataset.pindex : '');
+    this.setState({ pindex: e ? Number(e.target.dataset.pindex) : null });
   }
 
-  savePin = () => {
-    const { pindex } = this.state;
-    console.log(`/save-pindex/${pindex.split('-')[1]}`);
-    fetch(`/pin?pindex=${pindex.split('-')[1]}`, {
-      method: 'GET',
+  savePin = e => {
+    e.stopPropagation();
+    // const { pindex } = this.state;
+    console.log(`saving pin/${this.state.pindex}`);
+    fetch(`/pin?pindex=${this.state.pindex}`, {
+      method: 'PUT',
       credentials: 'include',
     })
       .catch(err => console.log(err));
   }
 
   handleUserProfileImgClick = e => {
+    e.stopPropagation();
     console.log('handle User Profile Img Clicked:',e.target.dataset.username);
     const username = e.target.dataset.username;
     fetch(`/user/${username}`, {
@@ -47,28 +50,53 @@ class WallPage extends React.Component {
       })
       .catch(err => console.log(err));
   }
+  handleMagnifyPinClick = () => {
+    console.log('handleMagnifyPinClick triggered');
+    this.props.storeMagnifiedPinInfo(this.state.pindex);
+  }
 
   componentWillMount() {
     console.log('WallPage will mount');
+    if (this.props.similarPicsKeyword) {
+      const q = this.props.similarPicsKeyword;
+      const page = 1;
+      fetch(`/pics?q=${q}&page=${page}`, {
+        method: 'GET',
+        credentials: 'include',
+      })
+        .then(res => res.json())
+        .then(imgs => {
+          // if (e.scroll) {
+          //   this.props.concatImgsToStore(imgs);
+          // } else {
+          //   this.props.storeImgs(imgs);
+          // }
+          // // this.setState({ fetchingPics: false });
+          // this.props.toggleFetchingPics();
+          // console.log('state after fetchingPics:',this.state);
+          this.props.storeImgs(imgs);
+        })
+        .catch(err => console.log(err));
+    }
   }
 
   render() {
     const { imgs, ui } = this.props;
-    const { pindex } = this.state;
+    // const { pindex } = this.state;
 
     return (
       <div className='wall-page-container'>
         <div className="wall">
         {imgs.search ?
-          imgs.search.map((img, i) => <div id={`pin-${i}`} key={i} className='img-container' onMouseEnter={e=>{console.log('entering'); this.highlightPin(e);}} onMouseLeave={()=>{console.log('leaving'); this.highlightPin(null);}}>
-            <div id={`pin-${i}`} className={pindex === `pin-${i}` ? 'img-overlay on': 'img-overlay'}>
+          imgs.search.map((img, i) => <div data-pindex={i} key={i} className='img-container' onMouseEnter={e=>{console.log('entering'); this.handlePinOnMouseOver(e);}} onMouseLeave={()=>{console.log('leaving'); this.handlePinOnMouseOver(null);}}>
+            <div data-pindex={i} className={this.state.pindex === i ? 'img-overlay on': 'img-overlay'} onClick={() => {this.handleMagnifyPinClick(); this.props.history.push(`/pin/${i}`); }}>
               <div className="action-button">
                 <img src="./images/pin.png" alt="action button" className="pin"/>
                 <div className='action-button-text' onClick={this.savePin}>Save</div>
               </div>
               <div className="share-button"></div>
               <div className="userProfileImgWrapper" onClick={this.handleUserProfileImgClick}>
-                <img data-username={img.username ? img.username : ''} src={img.profileImg ? img.profileImg : './images/default-profile-image.png'} alt="user profile"/>
+                <img data-username={img.username ? img.username : ''} src={img.profileImg ? img.profileImg : './images/default-profile-image.png'} alt="user profile" />
               </div>
             </div>
             <img className='wall-img' src={img.src} onError={e => e.target.src = './images/default-no-img.jpg'}/>

@@ -41,3 +41,8 @@ export const storeOtherUserInfo = otherUser => ({
   type: 'STORE_OTHER_USER_INFO',
   otherUser
 });
+
+export const storeMagnifiedPinInfo = pindex => ({
+  type: 'STORE_MAGNIFIED_PIN_INFO',
+  pindex,
+});

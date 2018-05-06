@@ -1,0 +1,97 @@
+@import '../../styles-assets/mixins';
+@import '../../styles-assets/variables';
+
+.pin-page-background {
+  background-color: $pin-page-bg-gray;
+  // min-height: 200vh;
+  position: absolute;
+  .pin-page-container {
+    // position: absolute;
+    // border: 2.5px solid black;
+    width: 80%;
+    margin: auto;
+    margin-top: 2em;
+    border-radius: 5px;
+    background-color: white;
+    .pin-header {
+      // border: 2px solid red;
+      padding: .5em 0;
+      position: sticky;
+      top: 0;
+      // margin-top: 2em;
+      height: 55px;
+      border-radius: 5px;
+      background-color: white;
+      .button {
+        @include pinterest-gray-button;
+        display: inline-block;
+        margin: 0 1em;
+        // line-height: calc(45px + 1em);
+      }
+      .button.share-button-container {
+        float: right;
+      }
+      .button.save-button-container {
+        float: right;
+        margin-right: 0;
+        background-color: $pin-red;
+        color: white;
+        &:hover {
+          background-color: $pin-red-hover;
+        }
+      }
+      .button.home-button-container {
+        float: left;
+      }
+    }
+    .pin-container {
+      // border: 2px solid blue;
+
+      .img-wrapper {
+        display: inline-block;
+        width: 70%;
+        padding: 1em;
+        img {
+
+          max-width: 100%;
+          max-height: 100%;
+          border-radius: 10px;
+        }
+      }
+      .comments-container {
+        padding: 1em;
+        // border: 1.5px dotted green;
+        display: inline-block;
+        width: 30%;
+        vertical-align: top;
+        .comment-section-title-wrapper {
+          h2 {
+
+          }
+        }
+        label {
+          display: block;
+        }
+        textarea {
+          border: 1px solid $pin-medium-gray;
+          border-radius: 5px;
+          height: 60px;
+          width: 90%;
+          // margin: auto;
+        }
+      }
+    }
+  }
+  .more-like-this-text-wrapper {
+    display: block;
+    width: 80%;
+    margin: auto;
+    h2 {
+
+    }
+  }
+  .more-like-this-container {
+    // border: 2px solid purple;
+    display: block;
+  }
+}

@@ -5,6 +5,7 @@ import HeaderContainer from './Header/HeaderContainer';
 import HeaderMenu from './Menu/HeaderMenu';
 import SettingsPageContainer from './Settings/SettingsPageContainer';
 import ModalBackgroundOverlayContainer from './Modal/BackgroundOverlay/ModalBackgroundOverlay';
+import PinPageContainer from './Pin/PinPage';
 
 export {
     AuthPageContainer,
@@ -13,5 +14,6 @@ export {
     HeaderContainer,
     HeaderMenu,
     SettingsPageContainer,
-    ModalBackgroundOverlayContainer
-}
+    ModalBackgroundOverlayContainer,
+    PinPageContainer,
+};

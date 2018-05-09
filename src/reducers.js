@@ -8,6 +8,7 @@ const CONCAT_IMGS_TO_STORE = 'CONCAT_IMGS_TO_STORE';
 const STORE_TOP_TAGS = 'STORE_TOP_TAGS';
 const TOGGLE_FETCHING_PICS = 'TOGGLE_FETCHING_PICS';
 const STORE_OTHER_USER_INFO = 'STORE_OTHER_USER_INFO';
+const STORE_MAGNIFIED_PIN_INFO = 'STORE_MAGNIFIED_PIN_INFO';
 const initState = {
   account: {
     user: null,
@@ -16,6 +17,7 @@ const initState = {
   imgs: {
     search: null,
     topTags: null,
+    magnifiedPin: null,
   },
   ui: {
     headerMenu: false,
@@ -25,8 +27,9 @@ const initState = {
     fetchingPics: false,
   },
 };
-
+console.log('initState:',initState);
 const account = (state = initState.account, action) => {
+  console.log(action);
   switch(action.type) {
     case LOG_IN_USER:
       return {
@@ -45,6 +48,7 @@ const account = (state = initState.account, action) => {
   }
 };
 const imgs = (state = initState.imgs, action) => {
+  console.log(action);
   switch(action.type) {
     case STORE_IMGS:
       return {
@@ -63,7 +67,11 @@ const imgs = (state = initState.imgs, action) => {
         ...state,
         topTags: action.tags
       };
-
+    case STORE_MAGNIFIED_PIN_INFO:
+      return {
+        ...state,
+        magnifiedPin: state.search[action.pindex],
+      };
     default:
     return state;
   }

@@ -1,14 +1,15 @@
 const apiKey = process.env.PIXABAY_API_KEY;
-// const http = require('https');
 const fetch = require('node-fetch');
 const multer = require('multer');
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 const cloudinary = require('cloudinary');
+const ObjectId = require('mongodb').ObjectId;
 
 module.exports = (app, db) => {
   const Users = db.collection('users');
-  app.get('/pics', (req, res) => {
+  const Pins = db.collection('pins');
+  app.get('/pics', (req, res) => { // search pics
     console.log('/images route reached!');
     console.log('session.id:', req.session.id);
     let { page, q } = req.query;
@@ -37,7 +38,7 @@ module.exports = (app, db) => {
       .catch(err => console.log(err));
   });
 
-  app.route('/pic')
+  app.route('/pic') // from drag & drop
   .post(upload.single('imgFile'), (req, res) => {
     let { tags } = req.body;
     tags = tags.split(',');
@@ -65,7 +66,7 @@ module.exports = (app, db) => {
     }).end(req.file.buffer);
 
   })
-  .put((req, res) => {
+  .put((req, res) => { // save from site URL
     console.log('PUT /pic reached');
     const { pic } = req.body;
     console.log('pic:', pic);
@@ -86,7 +87,7 @@ module.exports = (app, db) => {
   });
 
   app.route('/pin')
-    .get((req, res) => {
+    .put((req, res) => { // save pic as Pin
       console.log('GET pin reached!');
       // console.log('session.id:', req.session.id);
       // console.log('req._passport.session:',req._passport.session);
@@ -116,7 +117,7 @@ module.exports = (app, db) => {
       res.end();
 
     })
-    .delete((req, res) => {
+    .delete((req, res) => { // delete a Pin
       console.log('DELETE pin reached!');
 
       const pindex = req.query.pindex;
@@ -131,10 +132,43 @@ module.exports = (app, db) => {
       .then(() => Users.updateOne({ email: req.user.email }, { $pull: {pins: null}}))
       .catch(err => console.log(err));
       res.end();
+    })
+    .post((req, res) => { // share, save a Pin on pin-page or comment on a Pin
+      console.log('POST /pin route reached!!');
+      let { pin } = req.body;
+      const shouldSave = req.query.save === 'true' ? true : false;
+      pin.comments = [];
+      Pins.update(
+        {
+          src: pin.src,
+        },
+        {
+          $set: {
+            comments: pin.comments,
+          }
+        },
+        { upsert: true }
+      )
+        .then(() => {
+          if (shouldSave) {
+            Users.updateOne(
+              { username: req.user.username },
+              {
+                $push: {
+                  pins: pin
+                }
+              },
+            )
+              .then(() => res.end());
+          } else {
+            res.end();
+          }
+        })
+        .catch(err => console.log(err));
     });
 
   app.route('/pins')
-  .get((req, res) => {
+  .get((req, res) => { // get all Pins from all users
     console.log('GET /pins reached');
     Users.find({
       'pins': {
@@ -154,5 +188,18 @@ module.exports = (app, db) => {
 
     });
   });
+
+  app.route('/pin/:id')
+    .get((req, res) => {
+      const id = req.params.id;
+      console.log(`route /pin/:id (${id}) reached `);
+      Pins.findOne(
+        {
+          '_id': new ObjectId(id),
+        }
+      )
+        .then(pin => res.send(pin))
+        .catch(err => console.log(err));
+    });
 
 };

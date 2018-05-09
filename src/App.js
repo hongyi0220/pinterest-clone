@@ -1,7 +1,8 @@
 import React from 'react';
 import {
   BrowserRouter as Router,
-  Route
+  Route,
+  Switch,
 } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import {
@@ -11,7 +12,8 @@ import {
   UserPageContainer,
   HeaderMenu,
   SettingsPageContainer,
-  ModalBackgroundOverlayContainer
+  ModalBackgroundOverlayContainer,
+  PinPageContainer,
 } from './components';
 
 class App extends React.Component {
@@ -173,20 +175,24 @@ class App extends React.Component {
     return (
       <Router>
         <div className="app-container">
-          {account.user ?
-            <Route component={HeaderContainer} /> :
-            <Route exact path='/' component={AuthPageContainer} />
-          }
-          {ui.headerMenu ?
-            <Route component={HeaderMenu} /> : ''
-          }
-          {account.user ?
-            <Route path='/user' component={UserPageContainer} /> : ''
-          }
+          <Switch>
+            <Route path='/pin/*' component={PinPageContainer}/>
+            {account.user ?
+              <Route component={HeaderContainer} /> :
+              <Route exact path='/' component={AuthPageContainer} />}  
+          </Switch>
 
-          {
-            ui.modalBackgroundOverlay ? <Route component={ModalBackgroundOverlayContainer} /> : ''
-          }
+
+          {ui.headerMenu ?
+            <Route component={HeaderMenu} /> : ''}
+
+          {account.user ?
+            <Route path='/user' component={UserPageContainer} /> : ''}
+
+          {ui.modalBackgroundOverlay ?
+            <Route component={ModalBackgroundOverlayContainer} /> : ''}
+
+
           <Route exact path='/settings' component={SettingsPageContainer}/>
           <Route exact path='/(|home|search|find)' component={WallPageContainer} />
         </div>

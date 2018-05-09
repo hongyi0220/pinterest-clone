@@ -4,6 +4,7 @@ import {
     storeImgs,
     logInUser,
     storeOtherUserInfo,
+    storeMagnifiedPinInfo
 } from '../../actions';
 
 const mapStateToProps = state => state;
@@ -13,7 +14,8 @@ const WallPageContainer = connect(
     {
         storeImgs,
         logInUser,
-        storeOtherUserInfo
+        storeOtherUserInfo,
+        storeMagnifiedPinInfo,
     }
 )(WallPage);
 

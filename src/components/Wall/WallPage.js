@@ -4,12 +4,14 @@ import PropTypes from 'prop-types';
 class WallPage extends React.Component {
   state = {
     pindex: null,
+    clientHeight: null,
+    clientWidth: null,
   };
   static propTypes = {
     storeImgs: PropTypes.func.isRequired,
     account: PropTypes.object.isRequired,
     ui: PropTypes.object.isRequired,
-    imgs: PropTypes.shape({ topTags: [] }).isRequired,
+    imgs: PropTypes.shape({ topTags: [], search: [], }).isRequired,
     logInUser: PropTypes.func.isRequired,
     history: PropTypes.shape({ push: history.push }).isRequired,
     storeOtherUserInfo: PropTypes.func.isRequired,
@@ -52,11 +54,16 @@ class WallPage extends React.Component {
   }
   handleMagnifyPinClick = () => {
     console.log('handleMagnifyPinClick triggered');
-    this.props.storeMagnifiedPinInfo(this.state.pindex);
+    this.props.storeMagnifiedPinInfo(this.props.imgs.search[this.state.pindex]);
+  }
+
+  handleShareButtonClick = () => {
+
   }
 
   componentWillMount() {
     console.log('WallPage will mount');
+    
     if (this.props.similarPicsKeyword) {
       const q = this.props.similarPicsKeyword;
       const page = 1;
@@ -66,18 +73,12 @@ class WallPage extends React.Component {
       })
         .then(res => res.json())
         .then(imgs => {
-          // if (e.scroll) {
-          //   this.props.concatImgsToStore(imgs);
-          // } else {
-          //   this.props.storeImgs(imgs);
-          // }
-          // // this.setState({ fetchingPics: false });
-          // this.props.toggleFetchingPics();
-          // console.log('state after fetchingPics:',this.state);
           this.props.storeImgs(imgs);
         })
         .catch(err => console.log(err));
     }
+    this.setState({ clientWidth: window.innerWidth, clientHeight: window.innerHeight });
+
   }
 
   render() {
@@ -94,7 +95,7 @@ class WallPage extends React.Component {
                 <img src="./images/pin.png" alt="action button" className="pin"/>
                 <div className='action-button-text' onClick={this.savePin}>Save</div>
               </div>
-              <div className="share-button" onClick={() => window.open(`https://twitter.com/intent/tweet?via=pinterest-clone&text=`, '', 'top=,left=,height=,width=')}>
+              <div className="share-button" onClick={e => {e.stopPropagation(); window.open(`https://twitter.com/intent/tweet?via=pinterest-clone&text=${img.src}`, '', `top=${(this.state.clientHeight / 2) - (200 / 2)},left=${(this.state.clientWidth / 2) - (300 / 2)},height=200,width=300`);}}>
                 <img src="./images/tweet.png" alt="tweet"/>
               </div>
               <div className="userProfileImgWrapper" onClick={this.handleUserProfileImgClick}>

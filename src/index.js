@@ -7,7 +7,8 @@ import reducer from './reducers';
 import {
     logInUser,
     storeImgs,
-    storeTopTags
+    storeTopTags,
+    storeMagnifiedPinInfo,
 } from './actions';
 
 let store = createStore(reducer);
@@ -19,7 +20,8 @@ const AppContainer = connect(
     {
         logInUser,
         storeImgs,
-        storeTopTags
+        storeTopTags,
+        storeMagnifiedPinInfo,
     }
 )(App);
 

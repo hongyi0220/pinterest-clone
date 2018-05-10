@@ -21,9 +21,9 @@ console.log('server loading');
 // const cloudinary = require('cloudinary');
 
 app.use(require('webpack-dev-middleware')(compiler, {
-    publicPath: webpackConfig.output.publicPath
+  publicPath: webpackConfig.output.publicPath
 }));
-app.use(require("webpack-hot-middleware")(compiler));
+app.use(require('webpack-hot-middleware')(compiler));
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -31,42 +31,43 @@ app.use(bodyParser.json());
 app.use(express.static('build'));
 
 MongoClient.connect(dbUrl, (err, database) => {
-    if (err) return console.log(err);
+  if (err) return console.log(err);
 
-    app.use(session({
-        store: new MongoStore({ db: database }),
-        secret: 'old-dudes-walker',
-        resave: false,
-        saveUninitialized: false,
-        unset: 'destroy'
-    }));
+  app.use(session({
+    store: new MongoStore({ db: database }),
+    secret: 'old-dudes-walker',
+    resave: false,
+    saveUninitialized: false,
+    unset: 'destroy'
+  }));
 
-    require('./routes')(app, database);
+  require('./routes')(app, database);
 
-    app.route('/session')
-        .get((req, res) => {
-            console.log('/session route');
-            console.log('session.id:', req.session.id);
-            console.log('req._passport.session:',req._passport.session);
-            console.log('req.user:',req.user);
-            console.log('req.isAuthenticated():',req.isAuthenticated());
-            console.log('req.session:', req.session);
+  app.route('/session')
+  .get((req, res) => {
+    console.log('/session route');
+    // console.log('session.id:', req.session.id);
+    // console.log('req._passport.session:',req._passport.session);
+    console.log('req.user:',req.user);
+    // console.log('req.isAuthenticated():',req.isAuthenticated());
+    console.log('req.session:', req.session);
 
-            res.send(
-                {
-                    user: req.user,
-                    imgs: req.session.imgs
-                }
-            );
-        })
-        .post((req, res) => {
-            req.session.imgs = req.body.imgs;
-            res.end();
-        });
+    res.send(
+      {
+        user: req.user,
+        imgs: req.session.imgs
+      }
+    );
+  })
+  .post((req, res) => {
+    console.log('POST /session reached; req.body.imgs:', req.body.imgs);
+    req.session.imgs = req.body.imgs;
+    res.end();
+  });
 
-    app.get('*', (req, res) => {
-        res.sendFile(path.resolve(__dirname, '../build/index.html'));
-    });
+  app.get('*', (req, res) => {
+    res.sendFile(path.resolve(__dirname, '../build/index.html'));
+  });
 
-    http.listen(port, () => console.log(`Connected to port ${port}`));
+  http.listen(port, () => console.log(`Connected to port ${port}`));
 });

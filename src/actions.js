@@ -42,7 +42,7 @@ export const storeOtherUserInfo = otherUser => ({
   otherUser
 });
 
-export const storeMagnifiedPinInfo = pindex => ({
+export const storeMagnifiedPinInfo = magnifiedPin => ({
   type: 'STORE_MAGNIFIED_PIN_INFO',
-  pindex,
+  magnifiedPin,
 });

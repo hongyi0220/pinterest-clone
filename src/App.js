@@ -24,6 +24,7 @@ class App extends React.Component {
     storeImgs: PropTypes.func.isRequired,
     storeTopTags: PropTypes.func.isRequired,
     imgs: PropTypes.shape({ topTags: [] }).isRequired,
+    storeMagnifiedPinInfo: PropTypes.func.isRequired,
   };
 
   getSessionData = () => {
@@ -131,6 +132,13 @@ class App extends React.Component {
   componentWillMount() {
     console.log('App will mount');
     // const { logInUser, storeImgs, storeTopTags } = this.props;
+    fetch('/shared-pin', {
+      method: 'GET',
+      credentials: 'include',
+    })
+      .then(res => res.json())
+      .then(resJson => this.props.storeMagnifiedPinInfo(resJson))
+      .catch(err => console.log(err));
 
     this.getSessionData()
       .then(sessionData => {
@@ -158,12 +166,12 @@ class App extends React.Component {
         this.props.storeImgs(curatedPins);
         // Save curatedPins in session
         fetch('/session', {
-          method: 'post',
+          method: 'POST',
           credentials: 'include',
           headers: {
             'content-type': 'application/json'
           },
-          body: JSON.stringify({ curatedPins }),
+          body: JSON.stringify({ imgs: curatedPins }),
         });
       })
       .catch(err => console.log(err));
@@ -179,7 +187,7 @@ class App extends React.Component {
             <Route path='/pin/*' component={PinPageContainer}/>
             {account.user ?
               <Route component={HeaderContainer} /> :
-              <Route exact path='/' component={AuthPageContainer} />}  
+              <Route exact path='/' component={AuthPageContainer} />}
           </Switch>
 
 

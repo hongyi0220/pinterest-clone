@@ -70,7 +70,7 @@ const imgs = (state = initState.imgs, action) => {
     case STORE_MAGNIFIED_PIN_INFO:
       return {
         ...state,
-        magnifiedPin: state.search[action.pindex],
+        magnifiedPin: action.magnifiedPin,
       };
     default:
     return state;

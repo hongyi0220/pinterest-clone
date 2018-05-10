@@ -46,6 +46,9 @@
         .userProfileImgWrapper {
           display: none;
         }
+        .share-button {
+          display: none;
+        }
       }
       .img-overlay.on {
         background-color: rgba(255,255,255,.3);
@@ -95,6 +98,16 @@
           img {
             width: 70px;
             border-radius: 100%;
+          }
+          &:hover {
+            cursor: pointer;
+          }
+        }
+        .share-button {
+          display: inline-block;
+          width: 50px;
+          img {
+            width: 50px;
           }
           &:hover {
             cursor: pointer;

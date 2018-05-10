@@ -13,10 +13,19 @@ class PinPage extends React.Component {
 
   state = {
     comment: '',
+    pinID: null,
   };
 
   componentWillMoun() {
     console.log('PinPage will mount!');
+    fetch('/shared-pin', {
+      method: 'GET',
+      credentials: 'include',
+    })
+      .then(res => res.json())
+      .then(pin => this.setState({ pin }))
+      .catch(err => console.log(err));
+
   }
 
   handleCommentInputChange = e => {
@@ -27,26 +36,42 @@ class PinPage extends React.Component {
     fetch('/pin?save=true', {
       method: 'POST',
       credentials: 'include',
+      headers: {
+        'content-type': 'application/json'
+      },
       body: JSON.stringify({ pin: this.props.imgs.magnifiedPin }),
     })
       .catch(err => console.log(err));
   }
 
-  handleShareOrCommentButtonClick = e => {
+  handleShareOrCommentButtonClick = () => {
     console.log('handleShareOrCommentButtonClick triggered!');
-    console.log('e:', e);
+    // console.log('e:', e);
     console.log('keyboard key ENTER or mouseclick detected');
-    return fetch('/pin?save=false', {
+    console.log('magnifiedPin:', this.props.imgs.magnifiedPin);
+    // const body = JSON.stringify(this.props.imgs.magnifiedPin);
+    fetch('/pin?save=false', {
       method: 'POST',
       credentials: 'include',
-      body: JSON.stringify({ pin: this.props.imgs.magnifiedPin }),
+      headers: {
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({ pin: JSON.stringify(this.props.imgs.magnifiedPin) }),
     })
+      .then(res => res.json())
+      .then(resJson => {
+        console.log('pinID from res:', resJson.pinID);
+        this.setState({ pinID: resJson.pinID });
+      })
+      .then(() => {
+        window.open(`https://twitter.com/intent/tweet?via=pinterest-clone&text=${`http://localhost:3000/pin/${this.state.pinID}`}`, '', `top=${(this.state.clientHeight / 2) - (200 / 2)},left=${(this.state.clientWidth / 2) - (300 / 2)},height=200,width=300`);
+      })
       .catch(err => console.log(err));
-
   }
+
   render() {
     const { imgs } = this.props;
-    console.log('similarPicsKeyword:', imgs.magnifiedPin.tags[0]);
+    console.log('similarPicsKeyword:',imgs.magnifiedPin ? imgs.magnifiedPin.tags[0] : '');
     return (
       <div className="pin-page-background">
         <div className="pin-page-container">
@@ -69,7 +94,7 @@ class PinPage extends React.Component {
           </div>
           <div className="pin-container">
             <div className="img-wrapper">
-              <img src={imgs.magnifiedPin.src} alt={`a pic of ${imgs.magnifiedPin.tags}.join(',')`}/>
+              <img src={imgs.magnifiedPin ? imgs.magnifiedPin.src : ''} alt={`a pic of ${imgs.magnifiedPin ? imgs.magnifiedPin.tags : ''}.join(',')`}/>
             </div>
             <div className='comments-container'>
               {/* {poll ? poll.comments.map((comment, i) =>
@@ -95,7 +120,7 @@ class PinPage extends React.Component {
         </div>
         <div className="more-like-this-container">
 
-          <WallPageContainer similarPicsKeyword={imgs.magnifiedPin.tags[0]} />
+          <WallPageContainer similarPicsKeyword={imgs.magnifiedPin ? imgs.magnifiedPin.tags[0] : ''} />
         </div>
 
       </div>

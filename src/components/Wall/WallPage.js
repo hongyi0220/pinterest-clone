@@ -6,6 +6,7 @@ class WallPage extends React.Component {
     pindex: null,
     clientHeight: null,
     clientWidth: null,
+    // username: '',
   };
   static propTypes = {
     storeImgs: PropTypes.func.isRequired,
@@ -21,7 +22,20 @@ class WallPage extends React.Component {
 
   handlePinOnMouseOver = e => {
     console.log('pindex:', e ? e.target.dataset.pindex : '');
-    this.setState({ pindex: e ? Number(e.target.dataset.pindex) : null });
+    const eTarget = e ? e.target : null;
+    if (e === null) {
+      return this.setState({ pindex: null });
+    }
+    if (this.state.pindex !== Number(eTarget.dataset.pindex)) {
+      this.setState({
+          pindex: Number(eTarget.dataset.pindex)
+      });
+    }
+    // this.setState(prevState =>
+    //   ({
+    //     pindex: (e && prevState.pindex !== Number(eTarget.dataset.pindex)) ? Number(eTarget.dataset.pindex) : prevState.pindex
+    //   })
+    // );
   }
 
   savePin = e => {
@@ -39,10 +53,16 @@ class WallPage extends React.Component {
     e.stopPropagation();
     console.log('handle User Profile Img Clicked:',e.target.dataset.username);
     const username = e.target.dataset.username;
-    fetch(`/user/${username}`, {
+
+    fetch(`/user/${username}?external=true`, {
       method: 'GET',
       credentials: 'include',
     })
+      // .then(() => {
+      //   this.setState({ username });
+      //   this.props.history.push(`/user/${username}`);
+      // })
+
       .then(res => res.json())
       .then(otherUser => {
         console.log('res from /user:', otherUser);
@@ -63,7 +83,7 @@ class WallPage extends React.Component {
 
   componentWillMount() {
     console.log('WallPage will mount');
-    
+
     if (this.props.similarPicsKeyword) {
       const q = this.props.similarPicsKeyword;
       const page = 1;
@@ -83,27 +103,34 @@ class WallPage extends React.Component {
 
   render() {
     const { imgs, ui } = this.props;
-    // const { pindex } = this.state;
 
     return (
       <div className='wall-page-container'>
         <div className="wall">
         {imgs.search ?
-          imgs.search.map((img, i) => <div data-pindex={i} key={i} className='img-container' onMouseEnter={e=>{console.log('entering'); this.handlePinOnMouseOver(e);}} onMouseLeave={()=>{console.log('leaving'); this.handlePinOnMouseOver(null);}}>
+          imgs.search.map((img, i) =>
+          <div data-pindex={i} key={i} className='img-container' onMouseEnter={e=>{console.log('entering'); this.handlePinOnMouseOver(e);}} onMouseLeave={()=>{console.log('leaving'); this.handlePinOnMouseOver(null);}} onMouseOver={e => this.handlePinOnMouseOver(e)}>
+
             <div data-pindex={i} className={this.state.pindex === i ? 'img-overlay on': 'img-overlay'} onClick={() => {this.handleMagnifyPinClick(); this.props.history.push(`/pin/${i}`); }}>
-              <div className="action-button">
-                <img src="./images/pin.png" alt="action button" className="pin"/>
+
+              <div className="action-button" onMouseOver={e => e.stopPropagation()}>
+                <img src="/images/pin.png" alt="action button" className="pin"/>
                 <div className='action-button-text' onClick={this.savePin}>Save</div>
               </div>
-              <div className="share-button" onClick={e => {e.stopPropagation(); window.open(`https://twitter.com/intent/tweet?via=pinterest-clone&text=${img.src}`, '', `top=${(this.state.clientHeight / 2) - (200 / 2)},left=${(this.state.clientWidth / 2) - (300 / 2)},height=200,width=300`);}}>
-                <img src="./images/tweet.png" alt="tweet"/>
+
+              <div className="share-button" onMouseOver={e => e.stopPropagation()} onClick={e => {e.stopPropagation(); window.open(`https://twitter.com/intent/tweet?via=pinterest-clone&text=${img.src}`, '', `top=${(this.state.clientHeight / 2) - (200 / 2)},left=${(this.state.clientWidth / 2) - (300 / 2)},height=200,width=300`);}}>
+                <img src="/images/tweet.png" alt="tweet"/>
               </div>
-              <div className="userProfileImgWrapper" onClick={this.handleUserProfileImgClick}>
-                <img data-username={img.username ? img.username : ''} src={img.profileImg ? img.profileImg : './images/default-profile-image.png'} alt="user profile" />
+
+              <div className="userProfileImgWrapper" onMouseOver={e => e.stopPropagation()} onClick={this.handleUserProfileImgClick}>
+                <img data-username={img.username ? img.username : ''} src={img.profileImg ? img.profileImg : '/images/default-profile-image.png'} alt="user profile" />
               </div>
+
             </div>
-            <img className='wall-img' src={img.src} onError={e => e.target.src = './images/default-no-img.jpg'}/>
-          </div>) : <div className="no-imgs-msg-wrapper">No images found</div>
+
+            <img className='wall-img' src={img.src} onError={e => e.target.src = '/images/default-no-img.jpg'}/>
+          </div>)
+          : <div className="no-imgs-msg-wrapper">No images found</div>
         }
         </div>
         <div className="loading-icon-wrapper">

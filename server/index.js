@@ -6,7 +6,6 @@ const mongo = require('mongodb');
 const MongoClient = mongo.MongoClient;
 require('dotenv').config();
 const dbUrl = process.env.MONGOLAB_URI;
-// const apiKey = process.env.API_KEY
 const port = 3000;
 const session = require('express-session');
 const bodyParser = require('body-parser');
@@ -15,10 +14,6 @@ const webpack = require('webpack');
 const webpackConfig = require('../webpack/webpack.dev.js');
 const compiler = webpack(webpackConfig);
 console.log('server loading');
-// const multer = require('multer');
-// const storage = multer.memoryStorage();
-// const upload = multer({ storage });
-// const cloudinary = require('cloudinary');
 
 app.use(require('webpack-dev-middleware')(compiler, {
   publicPath: webpackConfig.output.publicPath
@@ -55,7 +50,9 @@ MongoClient.connect(dbUrl, (err, database) => {
     res.send(
       {
         user: req.user,
-        imgs: req.session.imgs
+        imgs: req.session.imgs,
+        otherUser: req.session.otherUser,
+        sharedImg: req.session.sharedImg,
       }
     );
   })

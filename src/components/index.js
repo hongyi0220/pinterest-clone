@@ -2,7 +2,7 @@ import AuthPageContainer from './Auth/AuthPageContainer';
 import WallPageContainer from './Wall/WallPageContainer';
 import UserPageContainer from './User/UserPageContainer';
 import HeaderContainer from './Header/HeaderContainer';
-import HeaderMenu from './Menu/HeaderMenu';
+import HeaderMenuContainer from './Menu/HeaderMenu';
 import SettingsPageContainer from './Settings/SettingsPageContainer';
 import ModalBackgroundOverlayContainer from './Modal/BackgroundOverlay/ModalBackgroundOverlay';
 import PinPageContainer from './Pin/PinPage';
@@ -12,7 +12,7 @@ export {
     WallPageContainer,
     UserPageContainer,
     HeaderContainer,
-    HeaderMenu,
+    HeaderMenuContainer,
     SettingsPageContainer,
     ModalBackgroundOverlayContainer,
     PinPageContainer,

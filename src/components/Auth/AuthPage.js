@@ -19,7 +19,7 @@ class AuthPage extends React.Component {
         return (
             <div className='auth-page-container'>
                 <form className='auth-form' method='post' action='/auth'>
-                    <img src='./images/pinterest_logo.png'/>
+                    <img src='/images/pinterest_logo.png'/>
                     <h1>Welcome to Pinterest</h1>
                     <p>Find new ideas to try</p>
                     <div className='input-container'>

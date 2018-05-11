@@ -10,7 +10,7 @@ import {
   WallPageContainer,
   HeaderContainer,
   UserPageContainer,
-  HeaderMenu,
+  HeaderMenuContainer,
   SettingsPageContainer,
   ModalBackgroundOverlayContainer,
   PinPageContainer,
@@ -25,11 +25,12 @@ class App extends React.Component {
     storeTopTags: PropTypes.func.isRequired,
     imgs: PropTypes.shape({ topTags: [] }).isRequired,
     storeMagnifiedPinInfo: PropTypes.func.isRequired,
+    storeOtherUserInfo: PropTypes.func.isRequired,
   };
 
   getSessionData = () => {
     console.log('getSessionData called');
-    return fetch('/session', {credentials: 'include'})
+    return fetch('/session', { credentials: 'include' })
     .then(res => res.json())
     .then(resJson => {
       console.log('session obj at getSessionData:', resJson);
@@ -131,19 +132,16 @@ class App extends React.Component {
 
   componentWillMount() {
     console.log('App will mount');
-    // const { logInUser, storeImgs, storeTopTags } = this.props;
-    fetch('/shared-pin', {
-      method: 'GET',
-      credentials: 'include',
-    })
-      .then(res => res.json())
-      .then(resJson => this.props.storeMagnifiedPinInfo(resJson))
-      .catch(err => console.log(err));
 
     this.getSessionData()
       .then(sessionData => {
         if (sessionData.user) { this.props.logInUser(sessionData.user); }
         if (sessionData.imgs) { this.props.storeImgs(sessionData.imgs); }
+        if (sessionData.otherUser) {
+          console.log('otherUser from session:', sessionData.otherUser);
+          this.props.storeOtherUserInfo(sessionData.otherUser);
+        }
+        if (sessionData.sharedImg) { this.props.storeMagnifiedPinInfo(sessionData.sharedImg); }
         console.log('sessionData:', sessionData.user);
         const topTags = this.processTags(sessionData.user);
         console.log('topTags:', topTags);
@@ -192,7 +190,7 @@ class App extends React.Component {
 
 
           {ui.headerMenu ?
-            <Route component={HeaderMenu} /> : ''}
+            <Route component={HeaderMenuContainer} /> : ''}
 
           {account.user ?
             <Route path='/user' component={UserPageContainer} /> : ''}

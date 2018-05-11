@@ -219,15 +219,15 @@ module.exports = (app, db) => {
         }
       )
         .then(pin => {
-          req.session.img = pin;
+          req.session.sharedImg = pin;
           next();
         })
         .catch(err => console.log(err));
     });
 
-  app.route('/shared-pin')
-    .get((req, res) => {
-      console.log('/shared-pin reached! req.session.img:', req.session.img);
-      res.send(req.session.img);
-    });
+  // app.route('/shared-pin')
+  //   .get((req, res) => {
+  //     console.log('/shared-pin reached! req.session.img:', req.session.img);
+  //     res.send(req.session.img);
+  //   });
 };

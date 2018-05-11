@@ -9,6 +9,7 @@ import {
     storeImgs,
     storeTopTags,
     storeMagnifiedPinInfo,
+    storeOtherUserInfo,
 } from './actions';
 
 let store = createStore(reducer);
@@ -22,6 +23,7 @@ const AppContainer = connect(
         storeImgs,
         storeTopTags,
         storeMagnifiedPinInfo,
+        storeOtherUserInfo,
     }
 )(App);
 

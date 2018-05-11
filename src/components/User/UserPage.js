@@ -44,7 +44,7 @@ class UserPage extends React.Component {
             {account.otherUser ? account.otherUser.username : account.user.username}
           </div>
           <div className="profile-image-wrapepr">
-            <img src={account.otherUser ? account.otherUser.profileImg : account.user.profileImg} alt="profile image" onError={e => e.target.src = './images/default-profile-image.png'}/>
+            <img src={account.otherUser ? account.otherUser.profileImg : account.user.profileImg} alt="profile image" onError={e => e.target.src = '/images/default-profile-image.png'}/>
           </div>
         </div>
         <div className="saved-images-container">
@@ -54,7 +54,7 @@ class UserPage extends React.Component {
             <div className='create-pin-button' onMouseEnter={this.highlightCreatePinButton} onMouseLeave={this.highlightCreatePinButton} onClick={() => toggleModal(true)}>
               <div className={isCreatePinButtonHiglighted ? 'img-overlay on': 'img-overlay'}>
                 <div className="action-button">
-                  <img src="./images/create-pin.png"/>
+                  <img src={'/images/create-pin.png'}/>
                 </div>
               </div>
               <div className='wall-img'></div>
@@ -62,13 +62,14 @@ class UserPage extends React.Component {
 
             {pins.map((pin, i) => <div id={`pin-${i}`} key={i} className='img-container' onMouseEnter={e=>{console.log('entering'); this.highlightPin(e);}} onMouseLeave={()=>{console.log('leaving'); this.highlightPin(null);}}>
                 <div id={`pin-${i}`} className={pindex === `pin-${i}` ? 'img-overlay on': 'img-overlay'}>
-                  <div className="action-button">
-                    <img src="./images/pin.png" alt="" className="pin"/>
+                  {account.otherUser ? '' : <div className="action-button">
+                    <img src="/images/pin.png" alt="" className="pin"/>
                     <div className='action-button-text' onClick={this.deletePin}>Delete</div>
-                  </div>
+                  </div>}
+
                   <div className="share-button"></div>
                 </div>
-                <img className='wall-img' src={pin.src} onError={e => e.target.src = './images/default-no-img.jpg'}/>
+                <img className='wall-img' src={pin.src} onError={e => e.target.src = '/images/default-no-img.jpg'}/>
               </div>)
             }
           </div>

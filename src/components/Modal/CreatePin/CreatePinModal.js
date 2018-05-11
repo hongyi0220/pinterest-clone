@@ -277,7 +277,7 @@ class CreatePinModal extends React.Component {
 
         {previewImg ? <img className='preview-img' src={previewImg}/> : <div className="imgFileInputAreaDefaultImgTxt">
         <div className="img-wrapper">
-        <img src="./images/camera-icon.png"/>
+        <img src="/images/camera-icon.png"/>
         </div>
         <div className="text-wrapper">
         Drag and drop <span>OR</span> click to upload
@@ -293,7 +293,7 @@ class CreatePinModal extends React.Component {
         <input type="text" id='tags' className={isTagInputDisabled ? 'enough-tags' : ''} placeholder="Tab to create a new tag" onChange={this.handleTagInputChange} onKeyDown={this.createTag} value={tempTagInput} disabled={isTagInputDisabled} />
         <div className="tags-overlay-container">
         {tags.map((t, i) => <div key={i} className="tag">
-        {t} <div id={`tag#${i}`} className="remove-tag-button" onClick={this.removeTag}><img id={`tag#${i}`} src="./images/create-pin.png"/></div>
+        {t} <div id={`tag#${i}`} className="remove-tag-button" onClick={this.removeTag}><img id={`tag#${i}`} src="/images/create-pin.png"/></div>
         </div>)}
         </div>
 

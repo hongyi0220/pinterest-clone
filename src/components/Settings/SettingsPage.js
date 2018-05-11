@@ -31,15 +31,15 @@ class SettingsPage extends React.Component {
       credentials: 'include',
       body: formData
     })
-    .then(res => {
-      console.log('res from /profile-img:', res);
-      return res.json();
-    })
-    .then(resJson => {
-      console.log('resJson from /profile-img:',resJson);
-      this.setState({ previewImg: resJson.url });
-    })
-    .catch(err => console.log(err));
+      .then(res => {
+        console.log('res from /profile-img:', res);
+        return res.json();
+      })
+      .then(resJson => {
+        console.log('resJson from /profile-img:',resJson);
+        this.setState({ previewImg: resJson.url });
+      })
+      .catch(err => console.log(err));
   }
   submitForm = () => {
     console.log('submitForm clicked');
@@ -54,24 +54,21 @@ class SettingsPage extends React.Component {
       credentials: 'include',
       body
     })
-    .catch(err => console.log(err));
+      .catch(err => console.log(err));
   }
 
   handleEmailInputChange = e => this.setState({ email: e.target.value });
+
   handleUsernameInputChange = e => this.setState({ username: e.target.value });
 
   componentWillMount() {
     console.log('SettingsPage componentWillMount');
-    this.setState({
-      previewImg: this.props.account.user.profileImg,
-      email: this.props.account.user.email,
-      username: this.props.account.user.username
-    });
-    this.props.toggleHeaderMenu();
   }
 
   render() {
     const { previewImg, email, username } = this.state;
+    const { account } = this.props;
+
     return (
       <div className="settings-page-container">
         <div className="settings-list-container">
@@ -88,7 +85,7 @@ class SettingsPage extends React.Component {
           <div className="account-settings-container">
             <div className="input-field-container email">
               <label htmlFor="email" className='label'>Email Address</label>
-              <input type="email" id='email' name='email' value={email} onChange={this.handleEmailInputChange}/>
+              <input type="email" id='email' name='email' value={email} placeholder={account.user ? account.user.email : ''} onChange={this.handleEmailInputChange}/>
             </div>
             <label className='label'>Password</label>
             <div className="change-password-button" onClick={() => this.props.toggleModal(true)}>
@@ -99,12 +96,12 @@ class SettingsPage extends React.Component {
           <div className="profile-settings-container">
             <div className="input-field-container username">
               <label htmlFor="username" className='label'>Username</label>
-              <input type="username" id='username' name='username' value={username} onChange={this.handleUsernameInputChange}/>
+              <input type="username" id='username' name='username' value={username} placeholder={account.user ? account.user.username : ''} onChange={this.handleUsernameInputChange}/>
             </div>
             <label className='label'>Picture</label>
             <div className="picture-container">
               <div className="profile-img-wrapper">
-                <img src={previewImg} alt="profile image" className="profile-img"/>
+                <img src={previewImg} alt="profile image" className="profile-img" onError={e => e.target.src = account.user ? account.user.profileImg : ''}/>
               </div>
               <div className='input-field-container file'>
                 <label htmlFor="profile-img" className='change-picture-button'>Change picture</label>

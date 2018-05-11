@@ -98,7 +98,7 @@ class Header extends React.Component {
     return (
       <div className="header">
         <Link className="link" to='/'>
-          <img src="./images/pinterest_logo.png"/>
+          <img src="/images/pinterest_logo.png"/>
         </Link>
         <input type="text" placeholder='Search' onKeyDown={this.searchImg} onChange={this.handleInput} value={input}/>
         <Link className="link" to='/home'>

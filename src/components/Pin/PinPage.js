@@ -18,13 +18,13 @@ class PinPage extends React.Component {
 
   componentWillMoun() {
     console.log('PinPage will mount!');
-    fetch('/shared-pin', {
-      method: 'GET',
-      credentials: 'include',
-    })
-      .then(res => res.json())
-      .then(pin => this.setState({ pin }))
-      .catch(err => console.log(err));
+    // fetch('/shared-pin', {
+    //   method: 'GET',
+    //   credentials: 'include',
+    // })
+    //   .then(res => res.json())
+    //   .then(pin => this.setState({ pin }))
+    //   .catch(err => console.log(err));
 
   }
 
@@ -39,7 +39,7 @@ class PinPage extends React.Component {
       headers: {
         'content-type': 'application/json'
       },
-      body: JSON.stringify({ pin: this.props.imgs.magnifiedPin }),
+      body: JSON.stringify({ pin: JSON.stringify(this.props.imgs.magnifiedPin) }),
     })
       .catch(err => console.log(err));
   }

@@ -5,36 +5,70 @@ class UserPage extends React.Component {
   state = {
     pindex: null,
     isCreatePinButtonHiglighted: false
-  }
+  };
   static propTypes = {
-    account: PropTypes.shape({ }).isRequired,
+    account: PropTypes.shape({
+      otherUser: PropTypes.shape({
+        pins: PropTypes.shape([ ]),
+      }),
+    }).isRequired,
     toggleModal: PropTypes.func.isRequired,
-  }
+    history: PropTypes.shape({ push: PropTypes.func }).isRequired,
+    storeMagnifiedPinInfo: PropTypes.func.isRequired,
+  };
 
   componentWillMount() {
     console.log('Userpage will mount');
   }
 
-  highlightPin = e => {
-    if (e) console.log(e.target.id);
-    this.setState({ pindex: e ? e.target.id : null });
+  handlePinOnMouseOver = e => {
+    console.log('pindex:', e ? e.target.dataset.pindex : '');
+    const eTarget = e ? e.target : null;
+    if (e === null) {
+      return this.setState({ pindex: null });
+    }
+    if (this.state.pindex !== Number(eTarget.dataset.pindex)) {
+      this.setState({
+          pindex: Number(eTarget.dataset.pindex)
+      });
+    }
   }
 
   highlightCreatePinButton = () => this.setState(prevState => ({ isCreatePinButtonHiglighted: !prevState.isCreatePinButtonHiglighted }));
 
   deletePin = () => {
-    const { pindex } = this.state;
-    console.log(`/delete-pin?${pindex.split('-')[1]}`);
-    fetch(`/pin?pindex=${pindex.split('-')[1]}`, {
-      method: 'delete',
+    // const { pindex } = this.state;
+    console.log(`delete /pin? ${this.state.pindex}`);
+    fetch(`/pin?pindex=${this.state.pindex}`, {
+      method: 'DELETE',
       credentials: 'include'
     })
       .catch(err => console.log(err));
   }
 
+  savePin = e => {
+    e.stopPropagation();
+    // const { pindex } = this.state;
+    console.log(`saving pin/${this.state.pindex}`);
+    fetch(`/pin?pindex=${this.state.pindex}&fromotheruserpage=true`, {
+      method: 'PUT',
+      credentials: 'include',
+    })
+      .catch(err => console.log(err));
+  }
+
+  handleMagnifyPinClick = () => {
+    console.log('handleMagnifyPinClick triggered');
+    const { account } = this.props;
+    const { pindex } = this.state;
+    this.props.storeMagnifiedPinInfo(account.otherUser ?
+      account.otherUser.pins[pindex] : account.user.pins[pindex]);
+    console.log('magnifiedPinInfo after handleMagnifyPinClick @ UserPage:', this.props.imgs.magnifiedPin);
+  }
+
   render() {
     const { account, toggleModal } = this.props;
-    const { pindex, isCreatePinButtonHiglighted } = this.state;
+    const { isCreatePinButtonHiglighted } = this.state;
     console.log('account.user:',account.user);
     const pins = account.otherUser ? account.otherUser.pins : account.user.pins;
     return (
@@ -60,12 +94,20 @@ class UserPage extends React.Component {
               <div className='wall-img'></div>
             </div>}
 
-            {pins.map((pin, i) => <div id={`pin-${i}`} key={i} className='img-container' onMouseEnter={e=>{console.log('entering'); this.highlightPin(e);}} onMouseLeave={()=>{console.log('leaving'); this.highlightPin(null);}}>
-                <div id={`pin-${i}`} className={pindex === `pin-${i}` ? 'img-overlay on': 'img-overlay'}>
-                  {account.otherUser ? '' : <div className="action-button">
-                    <img src="/images/pin.png" alt="" className="pin"/>
-                    <div className='action-button-text' onClick={this.deletePin}>Delete</div>
-                  </div>}
+            {pins.map((pin, i) =>
+              <div data-pindex={i} key={i} className='img-container' onMouseEnter={e=>{console.log('entering'); this.handlePinOnMouseOver(e);}} onMouseLeave={()=>{console.log('leaving'); this.handlePinOnMouseOver(null);}}>
+
+                <div data-pindex={i} className={this.state.pindex === i ? 'img-overlay on': 'img-overlay'} onClick={() => {this.handleMagnifyPinClick(); this.props.history.push(`/pin/${i}`); }}>
+                  {account.otherUser ?
+                    <div className="action-button" onMouseOver={e => e.stopPropagation()}>
+                      <img src="/images/pin.png" alt="action button" className="pin"/>
+                    <div className='action-button-text' onClick={this.savePin}>Save</div>
+                    </div> :
+                    <div className="action-button">
+                      <img src="/images/pin.png" alt="" className="pin"/>
+                      <div className='action-button-text' onClick={this.deletePin}>Delete</div>
+                    </div>
+                  }
 
                   <div className="share-button"></div>
                 </div>

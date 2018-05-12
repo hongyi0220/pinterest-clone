@@ -89,26 +89,42 @@ module.exports = (app, db) => {
   app.route('/pin')
     .put((req, res) => { // save pic as Pin
       console.log('PUT pin reached!');
+
       // console.log('req.user:',req.user);
       // console.log('req.session:', req.session);
-      const pindex = req.query.pindex;
-      console.log(pindex);
-      const cloudinaryUploadFolderName = 'saved_images';
-      const resourceName = req.session.imgs[pindex].src.split('get/')[1];
-      const isResourceFromPixabay = req.session.imgs[pindex].src.includes('https://pixabay.com/get/');
-      const cloudinaryUploadPath = `https://res.cloudinary.com/fluffycloud/image/upload/${cloudinaryUploadFolderName}/`;
+      const { pindex, fromotheruserpage } = req.query;
+      console.log('pindex:',pindex);
+      let src, tags;
+      if (fromotheruserpage === 'true' ? true : false) {
+        console.log('req.session @ PUT /pin fromotheruserpage:',req.session);
+        src = req.session.otherUser.pins[pindex].src;
+        tags = req.session.otherUser.pins[pindex].tags;
+      } else {
 
-      console.log(`${cloudinaryUploadFolderName}/${resourceName}`);
+        const cloudinaryUploadFolderName = 'saved_images';
+        const resourceName = req.session.imgs[pindex].src.split('get/')[1];
+        const isResourceFromPixabay = req.session.imgs[pindex].src.includes('https://pixabay.com/get/');
+        const cloudinaryUploadPath = `https://res.cloudinary.com/fluffycloud/image/upload/${cloudinaryUploadFolderName}/`;
 
-      isResourceFromPixabay ? cloudinary.image(`${cloudinaryUploadFolderName}/${resourceName}`) : '';
+        console.log(`${cloudinaryUploadFolderName}/${resourceName}`);
+        if (isResourceFromPixabay) {
+          cloudinary.image(`${cloudinaryUploadFolderName}/${resourceName}`);
+          src = cloudinaryUploadPath + resourceName;
+          tags = req.session.imgs[pindex].tags;
+        } else {
+          src = req.session.imgs[pindex].src;
+          tags = req.session.imgs[pindex].tags;
+        }
+      }
+
 
       Users.updateOne(
         { email: req.user.email },
         {
           $push: { pins:
             {
-              src: isResourceFromPixabay ? cloudinaryUploadPath + resourceName : req.session.imgs[pindex].src,
-              tags: req.session.imgs[pindex].tags
+              src,
+              tags,
             }
           }
         }
@@ -138,7 +154,7 @@ module.exports = (app, db) => {
       console.log('req.body:', req.body);
       let { pin } = req.body;
       pin = JSON.parse(pin);
-      const shouldSave = req.query.save === 'true' ? true : false;
+      const shouldSave = req.query.save === 'true';
       console.log('pin:', pin);
       if (!pin.comments) {
         pin.comments = [];

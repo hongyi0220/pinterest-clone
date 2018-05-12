@@ -1,15 +1,15 @@
 import { connect } from 'react-redux';
 import UserPage from './UserPage';
 import {
-    toggleModal
+    toggleModal,
+    storeMagnifiedPinInfo,
 } from '../../actions';
 
-const mapStateToProps = state => state;
-
 const UserPageContainer = connect(
-    mapStateToProps,
+    state => state,
     {
-        toggleModal
+        toggleModal,
+        storeMagnifiedPinInfo,
     }
 )(UserPage);
 export default UserPageContainer;

@@ -14,7 +14,7 @@ class WallPage extends React.Component {
     ui: PropTypes.object.isRequired,
     imgs: PropTypes.shape({ topTags: [], search: [], }).isRequired,
     logInUser: PropTypes.func.isRequired,
-    history: PropTypes.shape({ push: history.push }).isRequired,
+    history: PropTypes.shape({ push: history.push }),
     storeOtherUserInfo: PropTypes.func.isRequired,
     storeMagnifiedPinInfo: PropTypes.func.isRequired,
     similarPicsKeyword: PropTypes.string,
@@ -54,7 +54,7 @@ class WallPage extends React.Component {
     console.log('handle User Profile Img Clicked:',e.target.dataset.username);
     const username = e.target.dataset.username;
 
-    fetch(`/user/${username}?external=true`, {
+    fetch(`/user/${username}?externalapi=false`, {
       method: 'GET',
       credentials: 'include',
     })
@@ -72,6 +72,7 @@ class WallPage extends React.Component {
       })
       .catch(err => console.log(err));
   }
+
   handleMagnifyPinClick = () => {
     console.log('handleMagnifyPinClick triggered');
     this.props.storeMagnifiedPinInfo(this.props.imgs.search[this.state.pindex]);

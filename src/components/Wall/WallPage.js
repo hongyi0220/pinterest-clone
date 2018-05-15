@@ -6,13 +6,12 @@ class WallPage extends React.Component {
     pindex: null,
     clientHeight: null,
     clientWidth: null,
-    // username: '',
   };
   static propTypes = {
     storeImgs: PropTypes.func.isRequired,
     account: PropTypes.object.isRequired,
     ui: PropTypes.object.isRequired,
-    imgs: PropTypes.shape({ topTags: [], search: [], }).isRequired,
+    imgs: PropTypes.shape({ topTags: [], search: [], magnifiedPin: {} }).isRequired,
     logInUser: PropTypes.func.isRequired,
     history: PropTypes.shape({ push: history.push }),
     storeOtherUserInfo: PropTypes.func.isRequired,
@@ -22,6 +21,7 @@ class WallPage extends React.Component {
 
   handlePinOnMouseOver = e => {
     console.log('pindex:', e ? e.target.dataset.pindex : '');
+
     const eTarget = e ? e.target : null;
     if (e === null) {
       return this.setState({ pindex: null });
@@ -29,7 +29,7 @@ class WallPage extends React.Component {
     if (this.state.pindex !== Number(eTarget.dataset.pindex)) {
       this.setState({
           pindex: Number(eTarget.dataset.pindex)
-      });
+      }, () => this.props.storeMagnifiedPinInfo(this.props.imgs.search[this.state.pindex]));
     }
     // this.setState(prevState =>
     //   ({
@@ -73,9 +73,35 @@ class WallPage extends React.Component {
       .catch(err => console.log(err));
   }
 
-  handleMagnifyPinClick = () => {
+  handleMagnifyPinClick = (e) => {
     console.log('handleMagnifyPinClick triggered');
-    this.props.storeMagnifiedPinInfo(this.props.imgs.search[this.state.pindex]);
+    console.log('this.state:', this.state);
+    console.log('who triggered handleMagnifyPinClick?', e.target);
+    // this.props.storeMagnifiedPinInfo(this.props.imgs.search[this.state.pindex]);
+    console.log('magnifiedPin:',this.props.imgs.magnifiedPin);
+    // setTimeout(()=> {console.log('magnifiedPin:',this.props.imgs.magnifiedPin);}, 5000);
+
+    fetch(`/pin?save=false&pindex=${this.state.pindex}`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({ pin: JSON.stringify(this.props.imgs.magnifiedPin) }),
+    })
+      .then(res => res.json())
+      .then(resJson => {
+        console.log('pinID from res:', resJson.pinID);
+        this.props.history.push(`/pin/${resJson.pinID}`);
+        window.scroll({
+          top: 0,
+          behavior: 'instant'
+        });
+        // this.setState({ pinID: resJson.pinID });
+      })
+      .catch(err => console.log(err));
+
+
   }
 
   handleShareButtonClick = () => {
@@ -84,7 +110,7 @@ class WallPage extends React.Component {
 
   componentWillMount() {
     console.log('WallPage will mount');
-
+    this.setState({ clientWidth: window.innerWidth, clientHeight: window.innerHeight });
     if (this.props.similarPicsKeyword) {
       const q = this.props.similarPicsKeyword;
       const page = 1;
@@ -98,8 +124,6 @@ class WallPage extends React.Component {
         })
         .catch(err => console.log(err));
     }
-    this.setState({ clientWidth: window.innerWidth, clientHeight: window.innerHeight });
-
   }
 
   render() {
@@ -112,7 +136,7 @@ class WallPage extends React.Component {
           imgs.search.map((img, i) =>
           <div data-pindex={i} key={i} className='img-container' onMouseEnter={e=>{console.log('entering'); this.handlePinOnMouseOver(e);}} onMouseLeave={()=>{console.log('leaving'); this.handlePinOnMouseOver(null);}} onMouseOver={e => this.handlePinOnMouseOver(e)}>
 
-            <div data-pindex={i} className={this.state.pindex === i ? 'img-overlay on': 'img-overlay'} onClick={() => {this.handleMagnifyPinClick(); this.props.history.push(`/pin/${i}`); }}>
+            <div data-pindex={i} className={this.state.pindex === i ? 'img-overlay on': 'img-overlay'} onClick={e => {e.stopPropagation(); this.handleMagnifyPinClick(e);}}>
 
               <div className="action-button" onMouseOver={e => e.stopPropagation()}>
                 <img src="/images/pin.png" alt="action button" className="pin"/>

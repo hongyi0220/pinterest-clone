@@ -44,7 +44,7 @@ const account = (state = initState.account, action) => {
       };
 
     default:
-    return state;
+      return state;
   }
 };
 const imgs = (state = initState.imgs, action) => {
@@ -55,7 +55,6 @@ const imgs = (state = initState.imgs, action) => {
         ...state,
         search: action.imgs
       };
-
     case CONCAT_IMGS_TO_STORE:
       return {
         ...state,
@@ -73,7 +72,7 @@ const imgs = (state = initState.imgs, action) => {
         magnifiedPin: action.magnifiedPin,
       };
     default:
-    return state;
+      return state;
   }
 };
 
@@ -105,7 +104,7 @@ const ui = (state = initState.ui, action) => {
       };
 
     default:
-    return state;
+      return state;
   }
 };
 const reducer = combineReducers(

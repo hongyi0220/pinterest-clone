@@ -92,11 +92,11 @@ module.exports = (app, db) => {
 
       // console.log('req.user:',req.user);
       // console.log('req.session:', req.session);
-      const { pindex, fromotheruserpage } = req.query;
+      const { pindex, fromotheruser } = req.query;
       console.log('pindex:',pindex);
       let src, tags;
-      if (fromotheruserpage === 'true' ? true : false) {
-        console.log('req.session @ PUT /pin fromotheruserpage:',req.session);
+      if (fromotheruser === 'true') {
+        console.log('req.session @ PUT /pin fromotheruser:',req.session);
         src = req.session.otherUser.pins[pindex].src;
         tags = req.session.otherUser.pins[pindex].tags;
       } else {
@@ -153,21 +153,39 @@ module.exports = (app, db) => {
       console.log('POST /pin route reached!!');
       console.log('req.body:', req.body);
       let { pin } = req.body;
+      let src;
+      const { save, pindex } = req.query;
       pin = JSON.parse(pin);
-      const shouldSave = req.query.save === 'true';
+      const shouldSave = save === 'true';
       console.log('pin:', pin);
-      if (!pin.comments) {
-        pin.comments = [];
+      const isResourceFromPixabay = pin.src.includes('https://pixabay.com/get/');
+
+      // console.log(`${cloudinaryUploadFolderName}/${resourceName}`);
+      if (isResourceFromPixabay) {
+        console.log('rsc from pixabay');
+        const cloudinaryUploadFolderName = 'saved_images';
+        const cloudinaryUploadPath = `https://res.cloudinary.com/fluffycloud/image/upload/${cloudinaryUploadFolderName}/`;
+        const resourceName = pin.src.split('get/')[1];
+
+        cloudinary.image(`${cloudinaryUploadFolderName}/${resourceName}`);
+        src = cloudinaryUploadPath + resourceName;
+      } else {
+        console.log('rsc NOT from pixabay; using existing src');
+        src = pin.src;
       }
+      pin.src = src;
+
+      req.session.imgs[pindex] = pin;
+
       Pins.findOneAndUpdate(
         {
-          src: pin.src,
+          src,
         },
         {
           $set: {
-            src: pin.src,
+            src,
             tags: pin.tags,
-            comments: pin.comments,
+            comments: pin.comments ? pin.comments : [],
           }
         },
         {
@@ -195,7 +213,10 @@ module.exports = (app, db) => {
                 res.send({ pinID: doc.value._id });
               });
           } else {
-            const pinID = doc.value ? doc.value._id : doc.upserted;
+            console.log('doc:', doc);
+            const pinID = doc.value ? doc.value._id : doc.lastErrorObject.upserted;
+            console.log('doc.upserted:', doc.upserted);
+            console.log('pinID:', pinID);
             res.send({ pinID });
           }
         })

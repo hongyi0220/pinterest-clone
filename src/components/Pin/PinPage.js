@@ -9,11 +9,16 @@ import WallPageContainer from '../Wall/WallPageContainer';
 class PinPage extends React.Component {
   static propTypes = {
     imgs: PropTypes.shape({ magnifiedPin: {} }).isRequired,
-    account: PropTypes.shape({ }).isRequired,
+    account: PropTypes.shape({ user: PropTypes.shape({ username: PropTypes.string }) }).isRequired,
+    history: PropTypes.shape({
+      location: PropTypes.shape({
+        pathname: PropTypes.string
+      })
+    }).isRequired,
   };
 
   state = {
-    comments: [],
+    comments: null,
     comment: '',
     pinID: null,
     clientHeight: null,
@@ -26,13 +31,15 @@ class PinPage extends React.Component {
       clientWidth: window.innerWidth,
       clientHeight: window.innerHeight,
       comments: this.props.imgs.magnifiedPin.comments || [],
+      pinID: this.props.history.location.pathname.split('pin/')[1],
     });
   }
 
   handleCommentInputChange = e => {
     // const { comments } = this.state;
     // comments.push(e.target.value);
-    this.setState({ comment: e.target.value });
+    const eTarget = e.target;
+    this.setState({ comment: eTarget.value });
 
     // const eTarget = e.target.value;
     // this.setState(prevState =>
@@ -41,47 +48,50 @@ class PinPage extends React.Component {
   }
 
   handleSaveButtonClick = () => {
-    fetch('/pin?save=true', {
-      method: 'POST',
+    fetch('/pin', {
+      method: 'PUT',
       credentials: 'include',
-      headers: {
-        'content-type': 'application/json'
-      },
-      body: JSON.stringify({ pin: JSON.stringify(this.props.imgs.magnifiedPin) }),
+      // headers: {
+      //   'content-type': 'application/json'
+      // },
+      // body: JSON.stringify({ pinID: this.state.pinID }),
     })
       .catch(err => console.log(err));
   }
 
-  handleShareOrCommentButtonClick = () => {
-    console.log('handleShareOrCommentButtonClick triggered!');
+  handleShareButtonClick = () => {
+    // console.log(this.props.history);
+    window.open(`https://twitter.com/intent/tweet?via=pinterest-clone&text=${`http://localhost:3000${this.props.history.location.pathname}`}`, '', `top=${(this.state.clientHeight / 2) - (200 / 2)},left=${(this.state.clientWidth / 2) - (300 / 2)},height=200,width=300`);
+  }
+
+  handleCommentOnKeyDown = e => {
+    console.log('handleCommentKeyDown triggered!');
     // console.log('e:', e);
-    console.log('keyboard key ENTER or mouseclick detected');
-    console.log('magnifiedPin:', this.props.imgs.magnifiedPin);
+    // console.log('magnifiedPin:', this.props.imgs.magnifiedPin);
     // const body = JSON.stringify(this.props.imgs.magnifiedPin);
-    fetch('/pin?save=false', {
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        'content-type': 'application/json',
-      },
-      body: JSON.stringify({
-        pin: JSON.stringify(this.props.imgs.magnifiedPin),
-        comments: this.state.comments,
-      }),
-    })
-      .then(res => res.json())
-      .then(resJson => {
-        console.log('pinID from res:', resJson.pinID);
-        this.setState({ pinID: resJson.pinID });
-      })
-      .then(() => {
-        window.open(`https://twitter.com/intent/tweet?via=pinterest-clone&text=${`http://localhost:3000/pin/${this.state.pinID}`}`, '', `top=${(this.state.clientHeight / 2) - (200 / 2)},left=${(this.state.clientWidth / 2) - (300 / 2)},height=200,width=300`);
-      })
-      .catch(err => console.log(err));
+
+    if (e.key === 'Enter') {
+      this.setState(prevState => ({
+        ...prevState,
+        comments: [...prevState.comments, [this.props.account.user.username, prevState.comment]],
+        comment: '',
+      }), () => {
+        fetch('/pin', {
+          method: 'PUT',
+          credentials: 'include',
+          headers: {
+            'content-type': 'application/json',
+          },
+          body: JSON.stringify({ comments: this.state.comments }),
+        })
+          .catch(err => console.log(err));
+      });
+
+    }
   }
 
   render() {
-    const { imgs, account, } = this.props;
+    const { imgs, } = this.props;
     const { comments, } = this.state;
     console.log('similarPicsKeyword:',imgs.magnifiedPin ? imgs.magnifiedPin.tags[0] : '');
     return (
@@ -93,7 +103,7 @@ class PinPage extends React.Component {
                 Home
               </div>
             </div>
-            <div className="button share-button-container" onClick={this.handleShareOrCommentButtonClick}>
+            <div className="button share-button-container" onClick={this.handleShareButtonClick}>
               <div className="share-button-text-wrapper">
                 Share
               </div>
@@ -109,17 +119,18 @@ class PinPage extends React.Component {
               <img src={imgs.magnifiedPin ? imgs.magnifiedPin.src : ''} alt={`a pic of ${imgs.magnifiedPin ? imgs.magnifiedPin.tags : ''}.join(',')`}/>
             </div>
             <div className='comments-container'>
-              {comments ? comments.map((cmt, i) =>
-                  <div key={i} className='comment'>
-                      {`${account.user.username}: ${cmt}`}
-                  </div>
-              ) : ''}
-              <div className="comment-section-title-wrapper"><h2>Comments</h2></div>
+
+              <div className="comment-form-title-wrapper"><h2>Comments</h2></div>
               <div className='comment-form-container'>
-                  <label htmlFor='comment'>
-                    Share feedback, ask a question or give a high five
-                  </label>
-                  <textarea className='comment-box' name='comment' onChange={this.handleCommentInputChange} value={this.state.comment} placeholder='add comment' onKeyDown={e => e.key === 'Enter' ? this.handleShareOrCommentButtonClick(e) : ''}>
+                {comments.length ? comments.map((cmt, i) =>
+                    <div key={i} className='comment-wrapper'>
+                        {`${cmt[0]}: ${cmt[1]}`}
+                    </div>
+                ) : <label htmlFor='comment'>
+                  Share feedback, ask a question or give a high five
+                </label>}
+
+                  <textarea name='comment' onChange={this.handleCommentInputChange} value={this.state.comment} placeholder='add comment' onKeyDown={this.handleCommentOnKeyDown}>
                   </textarea>
               </div>
               <hr />

@@ -64,6 +64,10 @@
         display: inline-block;
         width: 30%;
         vertical-align: top;
+
+        .comment-wrapper {
+          
+        }
         .comment-section-title-wrapper {
           h2 {
 
@@ -86,7 +90,7 @@
           border-radius: 100%;
         }
         span {
-          
+
         }
       }
     }

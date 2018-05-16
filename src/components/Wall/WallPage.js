@@ -44,7 +44,7 @@ class WallPage extends React.Component {
     // const { pindex } = this.state;
     console.log(`saving pin/${this.state.pindex}`);
     fetch(`/pin?pindex=${this.state.pindex}`, {
-      method: 'PUT',
+      method: 'GET',
       credentials: 'include',
     })
       .catch(err => console.log(err));
@@ -88,7 +88,7 @@ class WallPage extends React.Component {
       headers: {
         'content-type': 'application/json',
       },
-      body: JSON.stringify({ pin: JSON.stringify(this.props.imgs.magnifiedPin) }),
+      body: JSON.stringify({ pindex: this.state.pindex }),
     })
       .then(res => res.json())
       .then(resJson => {

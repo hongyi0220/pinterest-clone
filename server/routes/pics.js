@@ -9,7 +9,7 @@ const ObjectId = require('mongodb').ObjectId;
 module.exports = (app, db) => {
   const Users = db.collection('users');
   const Pins = db.collection('pins');
-  
+
   app.get('/pics', (req, res) => { // search pics
     console.log('/images route reached!');
     console.log('session.id:', req.session.id);
@@ -88,8 +88,8 @@ module.exports = (app, db) => {
     });
 
   app.route('/pin')
-    .put((req, res) => { // save pic as Pin
-      console.log('PUT pin reached!');
+    .get((req, res) => { // save pic as Pin
+      console.log('GET pin reached!');
 
       // console.log('req.user:',req.user);
       // console.log('req.session:', req.session);
@@ -97,7 +97,7 @@ module.exports = (app, db) => {
       console.log('pindex:',pindex);
       let src, tags;
       if (fromotheruser === 'true') {
-        console.log('req.session @ PUT /pin fromotheruser:',req.session);
+        console.log('req.session @ GET /pin fromotheruser:',req.session);
         src = req.session.otherUser.pins[pindex].src;
         tags = req.session.otherUser.pins[pindex].tags;
       } else {
@@ -151,11 +151,12 @@ module.exports = (app, db) => {
     .post((req, res) => { // share, save a Pin on pin-page or comment on a Pin
       console.log('POST /pin route reached!!');
       console.log('req.body:', req.body);
-      let { pin } = req.body;
-      let src;
-      const { save, pindex } = req.query;
-      pin = JSON.parse(pin);
-      const shouldSave = save === 'true';
+      // let { pin } = req.body;
+      // let src;
+      // const { save, pindex } = req.query;
+      // pin = JSON.parse(pin);
+      // const shouldSave = save === 'true';
+      const pin = req.session.imgs[req.body.pindex];
       console.log('pin:', pin);
       const isResourceFromPixabay = pin.src.includes('https://pixabay.com/get/');
 
@@ -167,25 +168,28 @@ module.exports = (app, db) => {
         const resourceName = pin.src.split('get/')[1];
 
         cloudinary.image(`${cloudinaryUploadFolderName}/${resourceName}`);
-        src = cloudinaryUploadPath + resourceName;
-      } else {
-        console.log('rsc NOT from pixabay; using existing src');
-        src = pin.src;
+        pin.src = cloudinaryUploadPath + resourceName;
       }
-      pin.src = src;
+      // else {
+      //   console.log('rsc NOT from pixabay; using existing src');
+      //   pin.src = pin.src;
+      // }
+      // pin.src = src;
 
-      req.session.imgs[pindex] = pin;
+      // req.session.imgs[req.body.pindex] = pin;
 
       Pins.findOneAndUpdate(
         {
-          src,
+          src: pin.src,
+          tags: pin.tags[0],
         },
         {
-          $set: {
-            src,
-            tags: pin.tags,
-            comments: pin.comments ? pin.comments : [],
-          }
+          $set: pin
+          // {
+          //   src,
+          //   tags: pin.tags,
+          //   comments: pin.comments ? pin.comments : [],
+          // }
         },
         {
           projection: { _id: 1 },
@@ -194,32 +198,83 @@ module.exports = (app, db) => {
       )
         .then(doc => {
           console.log('doc returned from findOneAndUpdate:', doc);
-          if (shouldSave) {
-            Users.findOneAndUpdate(
-              { username: req.user.username },
-              {
-                $push: {
-                  pins: pin
-                }
-              },
-              {
-                projection: { _id: 1 },
-                upsert: false,
-              }
-            )
-              .then(() => {
-                console.log('pinID after saving Pin at pin-page:', doc.value._id);
-                res.send({ pinID: doc.value._id });
-              });
-          } else {
-            console.log('doc:', doc);
-            const pinID = doc.value ? doc.value._id : doc.lastErrorObject.upserted;
-            console.log('doc.upserted:', doc.upserted);
+          const pinID = doc.value ? doc.value._id : doc.lastErrorObject.upserted;
+            // console.log('doc.upserted:', doc.upserted);
             console.log('pinID:', pinID);
+            req.session.magnifiedPin = pin;
             res.send({ pinID });
-          }
+          // if (shouldSave) {
+          //   Users.findOneAndUpdate(
+          //     { username: req.user.username },
+          //     {
+          //       $push: {
+          //         pins: pin
+          //       }
+          //     },
+          //     {
+          //       projection: { _id: 1 },
+          //       upsert: false,
+          //     }
+          //   )
+          //     .then(() => {
+          //       console.log('pinID after saving Pin at pin-page:', doc.value._id);
+          //       res.send({ pinID: doc.value._id });
+          //     });
+          // } else {
+          //   console.log('doc:', doc);
+          //   const pinID = doc.value ? doc.value._id : doc.lastErrorObject.upserted;
+          //   console.log('doc.upserted:', doc.upserted);
+          //   console.log('pinID:', pinID);
+          //   res.send({ pinID });
+          // }
         })
         .catch(err => console.log(err));
+    })
+    .put(async (req, res) => {
+      const { comments } = req.body;
+      let pin = req.session.magnifiedPin;
+      if (comments) {
+        pin.comments = comments;
+      }
+
+      const p1 = new Promise((resolve, reject) => {
+        Users.findOneAndUpdate(
+          { username: req.user.username },
+          {
+            $push: {
+              pins: pin
+            }
+          },
+          {
+            // projection: { _id: 1 },
+            upsert: false,
+          }
+        )
+          .then(() => resolve())
+          .catch(() => reject());
+      });
+      const p2 = new Promise((resolve, reject) => {
+        Pins.findOneAndUpdate(
+          {
+            src: pin.src,
+            tags: pin.tags[0],
+          },
+          {
+            $set: pin
+          },
+          {
+            // projection: { _id: 1 },
+            upsert: true,
+          }
+        )
+          .then(() => resolve())
+          .catch(() => reject());
+      });
+      Promise.all([p1, p2])
+        .then(() => res.end())
+        .catch(err => console.log(err));
+
+
     });
 
   app.route('/pins')

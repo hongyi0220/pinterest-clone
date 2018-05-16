@@ -122,7 +122,13 @@ class PinPage extends React.Component {
                   <textarea className='comment-box' name='comment' onChange={this.handleCommentInputChange} value={this.state.comment} placeholder='add comment' onKeyDown={e => e.key === 'Enter' ? this.handleShareOrCommentButtonClick(e) : ''}>
                   </textarea>
               </div>
+              <hr />
+              <div className="pin-owner-info-container">
+                <img src={imgs.magnifiedPin.profileImg ? imgs.magnifiedPin.profileImg : '/images/default-profile-image.png'} alt='user profile'/>
+                <span>saved this Pin</span>
+              </div>
             </div>
+
           </div>
 
         </div>

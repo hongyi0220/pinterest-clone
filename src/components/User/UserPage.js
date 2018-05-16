@@ -50,7 +50,7 @@ class UserPage extends React.Component {
     e.stopPropagation();
     // const { pindex } = this.state;
     console.log(`saving pin/${this.state.pindex}`);
-    fetch(`/pin?pindex=${this.state.pindex}&fromotheruserpage=true`, {
+    fetch(`/pin?pindex=${this.state.pindex}&fromotheruser=true`, {
       method: 'PUT',
       credentials: 'include',
     })

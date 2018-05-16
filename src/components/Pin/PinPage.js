@@ -9,27 +9,35 @@ import WallPageContainer from '../Wall/WallPageContainer';
 class PinPage extends React.Component {
   static propTypes = {
     imgs: PropTypes.shape({ magnifiedPin: {} }).isRequired,
+    account: PropTypes.shape({ }).isRequired,
   };
 
   state = {
+    comments: [],
     comment: '',
     pinID: null,
+    clientHeight: null,
+    clientWidth: null,
   };
 
-  componentWillMoun() {
+  componentWillMount() {
     console.log('PinPage will mount!');
-    // fetch('/shared-pin', {
-    //   method: 'GET',
-    //   credentials: 'include',
-    // })
-    //   .then(res => res.json())
-    //   .then(pin => this.setState({ pin }))
-    //   .catch(err => console.log(err));
-
+    this.setState({
+      clientWidth: window.innerWidth,
+      clientHeight: window.innerHeight,
+      comments: this.props.imgs.magnifiedPin.comments || [],
+    });
   }
 
   handleCommentInputChange = e => {
+    // const { comments } = this.state;
+    // comments.push(e.target.value);
     this.setState({ comment: e.target.value });
+
+    // const eTarget = e.target.value;
+    // this.setState(prevState =>
+    //   ({ comments: [...prevState.comments, eTarget.value] })
+    // );
   }
 
   handleSaveButtonClick = () => {
@@ -56,7 +64,10 @@ class PinPage extends React.Component {
       headers: {
         'content-type': 'application/json',
       },
-      body: JSON.stringify({ pin: JSON.stringify(this.props.imgs.magnifiedPin) }),
+      body: JSON.stringify({
+        pin: JSON.stringify(this.props.imgs.magnifiedPin),
+        comments: this.state.comments,
+      }),
     })
       .then(res => res.json())
       .then(resJson => {
@@ -70,7 +81,8 @@ class PinPage extends React.Component {
   }
 
   render() {
-    const { imgs } = this.props;
+    const { imgs, account, } = this.props;
+    const { comments, } = this.state;
     console.log('similarPicsKeyword:',imgs.magnifiedPin ? imgs.magnifiedPin.tags[0] : '');
     return (
       <div className="pin-page-background">
@@ -97,18 +109,17 @@ class PinPage extends React.Component {
               <img src={imgs.magnifiedPin ? imgs.magnifiedPin.src : ''} alt={`a pic of ${imgs.magnifiedPin ? imgs.magnifiedPin.tags : ''}.join(',')`}/>
             </div>
             <div className='comments-container'>
-              {/* {poll ? poll.comments.map((comment, i) =>
+              {comments ? comments.map((cmt, i) =>
                   <div key={i} className='comment'>
-                      {`${comment[0]}: ${comment[1]}`}
-                      <Route path='polls/poll/comment/posted' render={() => <div></div>}/>
+                      {`${account.user.username}: ${cmt}`}
                   </div>
-              ) : ''} */}
+              ) : ''}
               <div className="comment-section-title-wrapper"><h2>Comments</h2></div>
               <div className='comment-form-container'>
                   <label htmlFor='comment'>
                     Share feedback, ask a question or give a high five
                   </label>
-                  <textarea className='comment-box' name='comment' onChange={this.handleCommentInputChange} value={this.state.comment} defaultValue='add comment' onKeyDown={e => e.key === 'Enter' ? this.handleShareOrCommentButtonClick(e) : ''}>
+                  <textarea className='comment-box' name='comment' onChange={this.handleCommentInputChange} value={this.state.comment} placeholder='add comment' onKeyDown={e => e.key === 'Enter' ? this.handleShareOrCommentButtonClick(e) : ''}>
                   </textarea>
               </div>
             </div>
@@ -130,7 +141,7 @@ class PinPage extends React.Component {
 }
 
  const PinPageContainer = connect(
-  state => ({ imgs: state.imgs }),
+  state => ({ imgs: state.imgs, account: state.account }),
   {
     storeMagnifiedPinInfo,
   }

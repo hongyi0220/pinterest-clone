@@ -9,6 +9,7 @@ const ObjectId = require('mongodb').ObjectId;
 module.exports = (app, db) => {
   const Users = db.collection('users');
   const Pins = db.collection('pins');
+  
   app.get('/pics', (req, res) => { // search pics
     console.log('/images route reached!');
     console.log('session.id:', req.session.id);
@@ -116,8 +117,6 @@ module.exports = (app, db) => {
           tags = req.session.imgs[pindex].tags;
         }
       }
-
-
       Users.updateOne(
         { email: req.user.email },
         {

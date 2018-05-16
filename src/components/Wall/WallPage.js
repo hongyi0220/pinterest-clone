@@ -6,7 +6,7 @@ class WallPage extends React.Component {
     pindex: null,
     clientHeight: null,
     clientWidth: null,
-    // username: '',
+
   };
   static propTypes = {
     storeImgs: PropTypes.func.isRequired,

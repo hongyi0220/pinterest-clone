@@ -40,7 +40,8 @@ class UserPage extends React.Component {
     }
   }
 
-  highlightCreatePinButton = () => this.setState(prevState => ({ isCreatePinButtonHiglighted: !prevState.isCreatePinButtonHiglighted }));
+  highlightCreatePinButton = () => this.setState(prevState => ({
+    isCreatePinButtonHiglighted: !prevState.isCreatePinButtonHiglighted }));
 
   deletePin = e => {
     // const { pindex } = this.state;
@@ -53,7 +54,7 @@ class UserPage extends React.Component {
       .catch(err => console.log(err));
   }
 
-  savePin = e => {
+  handleSaveButtonClick = e => {
     e.stopPropagation();
     // const { pindex } = this.state;
     console.log(`saving pin/${this.state.pindex}`);
@@ -70,7 +71,11 @@ class UserPage extends React.Component {
     const { pindex } = this.state;
     this.props.storeMagnifiedPinInfo(account.otherUser ?
       account.otherUser.pins[pindex] : account.user.pins[pindex]);
-    console.log('magnifiedPinInfo after handleMagnifyPinClick @ UserPage:', this.props.imgs.magnifiedPin);
+    console.log('magnifiedPinInfo after handleMagnifyPinClick @ UserPage:', this.props.imgs.magnifiedPin); // eslint-disable-line react/prop-types
+    window.scroll({
+      top: 0,
+      behavior: 'instant'
+    });
   }
 
   render() {
@@ -108,7 +113,7 @@ class UserPage extends React.Component {
                   {account.otherUser ?
                     <div className="action-button" onMouseOver={e => e.stopPropagation()}>
                       <img src="/images/pin.png" alt="save button" className="pin"/>
-                    <div className='action-button-text' onClick={this.savePin}>Save</div>
+                    <div className='action-button-text' onClick={this.handleSaveButtonClick}>Save</div>
                     </div> :
                     <div className="action-button">
                       <img src="/images/pin.png" alt="delete button" className="pin"/>

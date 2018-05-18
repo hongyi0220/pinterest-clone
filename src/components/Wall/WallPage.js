@@ -56,7 +56,7 @@ class WallPage extends React.Component {
     // );
   }
 
-  savePin = e => {
+  handleSaveButtonClick = e => {
     e.stopPropagation();
     // const { pindex } = this.state;
     console.log(`saving pin/${this.state.pindex}?fromotheruser=false`);
@@ -90,13 +90,13 @@ class WallPage extends React.Component {
   //     .catch(err => console.log(err));
   // }
 
-  handleMagnifyPinClick = e => {
+  handleMagnifyPinClick = (goToPinPage = true) => {
     console.log('handleMagnifyPinClick triggered');
-    console.log('this.state:', this.state);
-    console.log('who triggered handleMagnifyPinClick?', e.target);
-    console.log('magnifiedPin:',this.props.imgs.magnifiedPin);
+    // console.log('this.state:', this.state);
+    // console.log('who triggered handleMagnifyPinClick?', e.target);
+    // console.log('magnifiedPin:',this.props.imgs.magnifiedPin);
 
-    fetch(`/pin?&pindex=${this.state.pindex}`, {
+    return fetch(`/pin?&pindex=${this.state.pindex}`, {
       method: 'POST',
       credentials: 'include',
       headers: {
@@ -106,18 +106,23 @@ class WallPage extends React.Component {
     })
       .then(res => res.json())
       .then(resJson => {
-        console.log('pinID from res:', resJson.pinID);
-        this.props.history.push(`/pin/${resJson.pinID}`);
-        window.scroll({
-          top: 0,
-          behavior: 'instant'
-        });
+        console.log('pinId from res:', resJson.pinId);
+        if (goToPinPage) {
+          this.props.history.push(`/pin/${resJson.pinId}`);
+          window.scroll({
+            top: 0,
+            behavior: 'instant'
+          });
+        }
+        return resJson.pinId;
       })
       .catch(err => console.log(err));
   }
 
-  handleShareButtonClick = () => {
-
+  handleShareButtonClick = async e => {
+    e.stopPropagation();
+    const pinId = await this.handleMagnifyPinClick(false);
+    window.open(`https://twitter.com/intent/tweet?via=pinterest-clone&text=${pinId}`, '', `top=${(this.state.clientHeight / 2) - (200 / 2)},left=${(this.state.clientWidth / 2) - (300 / 2)},height=200,width=300`);
   }
 
   render() {
@@ -134,10 +139,10 @@ class WallPage extends React.Component {
 
               <div className="action-button" onMouseOver={e => e.stopPropagation()}>
                 <img src="/images/pin.png" alt="action button" className="pin"/>
-                <div className='action-button-text' onClick={this.savePin}>Save</div>
+                <div className='action-button-text' onClick={this.handleSaveButtonClick}>Save</div>
               </div>
 
-              <div className="share-button" onMouseOver={e => e.stopPropagation()} onClick={e => {e.stopPropagation(); window.open(`https://twitter.com/intent/tweet?via=pinterest-clone&text=${img.src}`, '', `top=${(this.state.clientHeight / 2) - (200 / 2)},left=${(this.state.clientWidth / 2) - (300 / 2)},height=200,width=300`);}}>
+              <div className="share-button" onMouseOver={e => e.stopPropagation()} onClick={this.handleShareButtonClick}>
                 <img src="/images/tweet.png" alt="tweet"/>
               </div>
 

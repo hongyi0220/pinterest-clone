@@ -10,10 +10,20 @@ class SettingsPage extends React.Component {
   state = {
     previewImg: '',
     email: '',
-    username: ''
+    username: '',
   };
 
   formSubmitButton = null;
+
+  componentWillMount() {
+    console.log('SettingsPage componentWillMount');
+  }
+
+  handleCancelButtonClick = () => this.setState({
+    previewImg: '',
+    email: '',
+    username: '',
+  })
 
   handleImageUpload = e => {
     console.log('handling ImageUplaod');
@@ -61,10 +71,6 @@ class SettingsPage extends React.Component {
 
   handleUsernameInputChange = e => this.setState({ username: e.target.value });
 
-  componentWillMount() {
-    console.log('SettingsPage componentWillMount');
-  }
-
   render() {
     const { previewImg, email, username } = this.state;
     const { account } = this.props;
@@ -81,44 +87,44 @@ class SettingsPage extends React.Component {
         </div>
         <div className="settings-form-wrapper">
           <form method='post' action="/profile">
-          <div className="list-title-wrapper">Account Basics</div>
-          <div className="account-settings-container">
-            <div className="input-field-container email">
-              <label htmlFor="email" className='label'>Email Address</label>
-              <input type="email" id='email' name='email' value={email} placeholder={account.user ? account.user.email : ''} onChange={this.handleEmailInputChange}/>
-            </div>
-            <label className='label'>Password</label>
-            <div className="change-password-button" onClick={() => this.props.toggleModal(true)}>
-              Change your password
-            </div>
-          </div>
-          <div className="list-title-wrapper">Profile</div>
-          <div className="profile-settings-container">
-            <div className="input-field-container username">
-              <label htmlFor="username" className='label'>Username</label>
-              <input type="username" id='username' name='username' value={username} placeholder={account.user ? account.user.username : ''} onChange={this.handleUsernameInputChange}/>
-            </div>
-            <label className='label'>Picture</label>
-            <div className="picture-container">
-              <div className="profile-img-wrapper">
-                <img src={previewImg} alt="profile image" className="profile-img" onError={e => e.target.src = account.user ? account.user.profileImg : ''}/>
+            <div className="list-title-wrapper">Account Basics</div>
+            <div className="account-settings-container">
+              <div className="input-field-container email">
+                <label htmlFor="email" className='label'>Email Address</label>
+                <input type="email" id='email' name='email' value={email} placeholder={account.user ? account.user.email : ''} onChange={this.handleEmailInputChange}/>
               </div>
-              <div className='input-field-container file'>
-                <label htmlFor="profile-img" className='change-picture-button'>Change picture</label>
-                <input type="file" id='profile-img' accept='image/*' name='profileImg' onChange={this.handleImageUpload}/>
+              <label className='label'>Password</label>
+              <div className="change-password-button" onClick={() => this.props.toggleModal(true)}>
+                Change your password
               </div>
             </div>
-          </div>
-          <button className='invisible' ref={el => this.formSubmitButton = el} type='submit'></button>
-        </form>
+            <div className="list-title-wrapper">Profile</div>
+            <div className="profile-settings-container">
+              <div className="input-field-container username">
+                <label htmlFor="username" className='label'>Username</label>
+                <input type="username" id='username' name='username' value={username} placeholder={account.user ? account.user.username : ''} onChange={this.handleUsernameInputChange}/>
+              </div>
+              <label className='label'>Picture</label>
+              <div className="picture-container">
+                <div className="profile-img-wrapper">
+                  <img src={previewImg} alt="profile image" className="profile-img" onError={e => e.target.src = account.user ? account.user.profileImg : ''}/>
+                </div>
+                <div className='input-field-container file'>
+                  <label htmlFor="profile-img" className='change-picture-button'>Change picture</label>
+                  <input type="file" id='profile-img' accept='image/*' name='profileImg' onChange={this.handleImageUpload}/>
+                </div>
+              </div>
+            </div>
+            <button className='invisible' ref={el => this.formSubmitButton = el} type='submit'></button>
+          </form>
+        </div>
+        <div className="settings-footer">
+          <div className="settings-footer-button save" onClick={this.submitForm}>Save settings</div>
+          <div className="settings-footer-button cancel" onClick={this.handleCancelButtonClick}>Cancel</div>
+        </div>
       </div>
-      <div className="settings-footer">
-        <div className="settings-footer-button save" onClick={this.submitForm}>Save settings</div>
-        <div className="settings-footer-button cancel">Cancel</div>
-      </div>
-    </div>
-  );
-}
+    );
+  }
 }
 
 export default SettingsPage;

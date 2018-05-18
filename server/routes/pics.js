@@ -171,7 +171,8 @@ module.exports = (app, db) => {
     .post((req, res) => { // This sends back objectId of the Pin magnified
       console.log('POST /pin route reached!!');
       console.log('req.body:', req.body);
-      const pin = req.session.imgs[req.body.pindex];
+      const { pindex } = req.body;
+      const pin = req.session.imgs[pindex];
       console.log('pin:', pin);
       const isResourceFromPixabay = pin.src.includes('https://pixabay.com/get/');
 
@@ -179,6 +180,7 @@ module.exports = (app, db) => {
         console.log('rsc is from pixabay');
 
         pin.src = uploadPixabayImgToCloudinary(pin);
+        req.session.imgs[pindex] = pin;
       }
 
       delete pin._id;
@@ -197,11 +199,11 @@ module.exports = (app, db) => {
       )
         .then(doc => {
           console.log('doc returned from findOneAndUpdate:', doc);
-          const pinID = doc.value ? doc.value._id : doc.lastErrorObject.upserted;
+          const pinId = doc.value ? doc.value._id : doc.lastErrorObject.upserted;
             // console.log('doc.upserted:', doc.upserted);
-            console.log('pinID:', pinID);
+            console.log('pinId:', pinId);
             req.session.magnifiedPin = pin;
-            res.send({ pinID });
+            res.send({ pinId });
         })
         .catch(err => console.log(err));
     })

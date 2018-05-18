@@ -13,14 +13,15 @@ class PinPage extends React.Component {
     history: PropTypes.shape({
       location: PropTypes.shape({
         pathname: PropTypes.string
-      })
+      }),
+      push: PropTypes.func,
     }).isRequired,
   };
 
   state = {
     comments: null,
     comment: '',
-    pinID: null,
+    pinId: null,
     clientHeight: null,
     clientWidth: null,
   };
@@ -31,7 +32,7 @@ class PinPage extends React.Component {
       clientWidth: window.innerWidth,
       clientHeight: window.innerHeight,
       comments: this.props.imgs.magnifiedPin ? this.props.imgs.magnifiedPin.comments : [],
-      pinID: this.props.history.location.pathname.split('pin/')[1],
+      pinId: this.props.history.location.pathname.split('pin/')[1],
     });
   }
 
@@ -82,6 +83,8 @@ class PinPage extends React.Component {
     }
   }
 
+  handleHomeButtonClick = () => this.props.history.push('/home');
+
   render() {
     const { imgs, } = this.props;
     const { comments, } = this.state;
@@ -90,7 +93,7 @@ class PinPage extends React.Component {
       <div className="pin-page-background">
         <div className="pin-page-container">
           <div className="pin-header">
-            <div className="button home-button-container">
+            <div className="button home-button-container" onClick={this.handleHomeButtonClick}>
               <div className="home-button-text-wrapper">
                 Home
               </div>

@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import isValidDomain from 'is-valid-domain';
 
 class CreatePinModal extends React.Component {
   state = {
@@ -9,12 +10,14 @@ class CreatePinModal extends React.Component {
     previewImg: null,
     imgFile: null,
     isSaveFromSiteClicked: true,
-    saveFromSiteURL: ''
+    siteUrl: ''
   };
   static propTypes = {
     history: PropTypes.object.isRequired,
     toggleModal: PropTypes.func.isRequired,
     openMsgModal: PropTypes.func.isRequired,
+    storeImgs: PropTypes.func.isRequired,
+    account: PropTypes.shape({ user: PropTypes.shape({ username: PropTypes.string }) }),
   };
   inputTypeFile = null;
 
@@ -47,52 +50,54 @@ class CreatePinModal extends React.Component {
     }
   }
 
-  // closeModal = () => {
-  //     console.log('closing modal');
-  //     this.props.toggleModal(false);
-  // }
-
   handleCreatePinClick = () => {
-    const { tags, imgFile, saveFromSiteURL } = this.state;
+    const { tags, imgFile, siteUrl } = this.state;
 
-    if (saveFromSiteURL) {
-      console.log('saveFromSiteURL:',saveFromSiteURL);
-      const isValidDomain = /\.{1}(?=\w{2,})/i;
-      const isValidImgFile = /\.{1}(?=jpg|jpeg|png|gif)^/i;
+    if (siteUrl) {
+      console.log('siteUrl:',siteUrl);
+      // const isValidDomain = /\.{1}(\w{2,})/i;
+      const isValidImgFile = /\.{1}(jpg|jpeg|png|gif)$/i;
 
-      if (isValidImgFile.test(saveFromSiteURL)) {
+      if (isValidImgFile.test(siteUrl)) {
         console.log('isValidImgFile');
         fetch('/pic', {
-          method: 'put',
+          method: 'PUT',
           headers: {
             'content-type': 'application/json'
           },
           credentials: 'include',
-          body: JSON.stringify({ pic: { src: saveFromSiteURL, tags: [] } })
+          body: JSON.stringify({ pic:
+            {
+              src: siteUrl,
+              tags: [],
+              comments: [],
+              users: [this.props.account.user.username]
+            }
+          }),
         })
-        .then(res => {
-          console.log('res after save pin:', res);
-          return res.json();
-        })
-        .then(resJson => {
-          if (!resJson.matchedCount) {
-            this.props.openMsgModal('Error!', 'Something went wrong on our side');
-          } else if (resJson.matchedCount && resJson.modifiedCount) {
-            this.props.openMsgModal('Pin saved!', 'Your Pin has been saved successfully.');
-          }
-        })
-        .catch(err => console.log(err));
+          .then(res => {
+            console.log('res after save pin:', res);
+            return res.json();
+          })
+          .then(resJson => {
+            if (!resJson.matchedCount) {
+              this.props.openMsgModal('Error!', 'Something went wrong on our side');
+            } else if (resJson.matchedCount && resJson.modifiedCount) {
+              this.props.openMsgModal('Pin saved!', 'Your Pin has been saved successfully.');
+            }
+          })
+          .catch(err => console.log(err));
 
-      } else if (isValidDomain.test(saveFromSiteURL)) {
+      } else if (isValidDomain(siteUrl)) {
         console.log('isValidDomain fetching html...');
 
-        const url = this.formatURL(saveFromSiteURL);
-        const proxyurl = "https://cors-anywhere.herokuapp.com/";
+        const url = this.formatURL(siteUrl);
+        const proxyurl = 'https://cors-anywhere.herokuapp.com/';
         fetch(proxyurl + url)
         .then(res => res.text())
         .then(resTxt => {
           console.log('res after fetching from vaildDomain:',resTxt);
-          const htmlDoc = this.parseHTML(resTxt)
+          const htmlDoc = this.parseHTML(resTxt);
           const imgs = this.getAllImgSrcs(htmlDoc).map(img => {
 
             if (img.src) {
@@ -101,13 +106,13 @@ class CreatePinModal extends React.Component {
                 tags: img.tags
               };
             }
-          })
+          });
           // Display imgs scraped from the URL on wall @ route: /find
           console.log('imgsArr:', imgs);
           console.log('storeImgs triggered');
           this.props.storeImgs(imgs);
           fetch('/session', {
-            method: 'post',
+            method: 'POST',
             credentials: 'include',
             headers: {
               'content-type': 'application/json'
@@ -118,7 +123,6 @@ class CreatePinModal extends React.Component {
           console.log('this :', this);
           console.log('navigating to /find');
           this.props.history.push('/find');
-          // this.closeModal(); 
           this.props.toggleModal(false);
           console.log('toggling modal..');
           // this.props.openMsgModal('Pin saved!', 'Your Pin has been saved successfully.');
@@ -126,32 +130,32 @@ class CreatePinModal extends React.Component {
         .catch(err => {
           console.log(err);
           // console.log('this :', this)
-          this.props.openMsgModal('Error!', 'Something went wrong on our side')
+          this.props.openMsgModal('Error!', 'Something went wrong on our side');
         });
       }
-    } else { // upload img from drag & drop component
+    } else { // Upload img with drag & drop
       let formData = new FormData();
       formData.append('imgFile', imgFile);
-      formData.append('tags', tags)
+      formData.append('tags', tags);
 
 
       fetch('/pic', {
-        method: 'post',
+        method: 'POST',
         credentials: 'include',
         body: formData
       })
-      .then(res => {
-        console.log('res after save pin from dragg & drop:', res);
-        return res.json();
-      })
-      .then(resJson => {
-        if (!resJson.matchedCount) {
-          this.props.openMsgModal('Error!', 'Something went wrong on our side');
-        } else if (resJson.matchedCount && resJson.modifiedCount) {
-          this.props.openMsgModal('Pin saved!', 'Your Pin has been saved successfully.');
-        }
-      })
-      .catch(err => console.log(err));
+        .then(res => {
+          console.log('res after save pin from dragg & drop:', res);
+          return res.json();
+        })
+        .then(resJson => {
+          if (!resJson.insertedId) {
+            this.props.openMsgModal('Error!', 'Something went wrong on our side');
+          } else {
+            this.props.openMsgModal('Pin saved!', 'Your Pin has been saved successfully.');
+          }
+        })
+        .catch(err => console.log(err));
     }
   }
 
@@ -174,7 +178,7 @@ class CreatePinModal extends React.Component {
         return {
           src: img.attributes.src.value,
           tags: img.attributes.alt ? [img.attributes.alt.value] : []
-        }
+        };
       } else {
         return null;
       }
@@ -185,7 +189,7 @@ class CreatePinModal extends React.Component {
 
   handleTagInputChange = e => this.setState({ tempTagInput: e.target.value });
 
-  handleURLInputChange = e => this.setState({ saveFromSiteURL: e.target.value });
+  handleURLInputChange = e => this.setState({ siteUrl: e.target.value });
 
   removeTag = e => {
 
@@ -221,7 +225,7 @@ class CreatePinModal extends React.Component {
 
       let imgFile = e.dataTransfer.items[0].getAsFile();
       const previewImg = URL.createObjectURL(imgFile);
-      this.setState({ previewImg, imgFile, saveFromSiteURL: null });
+      this.setState({ previewImg, imgFile, siteUrl: null });
 
       this.removeDragData(e);
     } else {
@@ -265,7 +269,7 @@ class CreatePinModal extends React.Component {
 
   render() {
     console.log('CreatePinModal rendered');
-    const { tags, tempTagInput, isTagInputDisabled, previewImg, imgFile, isSaveFromSiteClicked, saveFromSiteURL } = this.state;
+    const { tags, tempTagInput, isTagInputDisabled, previewImg, imgFile, isSaveFromSiteClicked, siteUrl } = this.state;
     return (
       <div className="create-pin-modal-container">
 
@@ -310,9 +314,9 @@ class CreatePinModal extends React.Component {
       <div className="all-buttons-container">
       <div className="toggle-buttons-container">
       <div className={isSaveFromSiteClicked ? 'button upload-from-local clicked' : 'button upload-from-local'} onClick={this.handleUploadFromLocalClick}>Upload Pin</div>
-      <div className={isSaveFromSiteClicked ? 'button upload-from-url' : 'button upload-from-url clicked'} onClick={() => {this.handleSaveFromSiteClick(); this.clearImgFileInState()}}>Save from site</div>
+      <div className={isSaveFromSiteClicked ? 'button upload-from-url' : 'button upload-from-url clicked'} onClick={() => {this.handleSaveFromSiteClick(); this.clearImgFileInState();}}>Save from site</div>
       </div>
-      <div className={imgFile || saveFromSiteURL ? 'button done' : 'button done disabled'} onClick={this.handleCreatePinClick}>Done</div>
+      <div className={imgFile || siteUrl ? 'button done' : 'button done disabled'} onClick={this.handleCreatePinClick}>Done</div>
       </div>
 
       </div>

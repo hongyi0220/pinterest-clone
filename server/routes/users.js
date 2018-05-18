@@ -29,11 +29,10 @@ module.exports = (app, db) => {
       .then(user => {
         if (!user) {
           const newUser = {
-            email: 'n/a',
+            email: '',
             username: profile.username,
-            password: 'n/a',
-            'profileImg': './images/default-profile-image.png',
-            pins: [],
+            password: '',
+            'profileImg': '/images/default-profile-image.png',
           };
           Users.insertOne(newUser);
           return done(null, newUser);
@@ -111,9 +110,7 @@ module.exports = (app, db) => {
           email,
           username: email.split('@')[0],
           password,
-          profileImg: './images/default-profile-image.png',
-          pins: [],
-          // favs: []
+          profileImg: '/images/default-profile-image.png',
         })
         .then(() => { //Sign user in
           Users.findOne({ email })
@@ -176,6 +173,7 @@ module.exports = (app, db) => {
   });
 
   app.post('/profile-img', upload.single('imgFile'), (req, res) => {
+    console.log('POST /profile-img reached;');
     cloudinary.v2.uploader.upload_stream({ resource_type: 'raw' }, (err, result) => {
       if (err) console.log(err);
       console.log('result:', result);
@@ -215,27 +213,28 @@ module.exports = (app, db) => {
   // })
 
   app.get('/user/:username', (req, res, next) => {
-    console.log('/user/:username reached!!');
+
     // console.log('/user/* reached! req.url:', req.url);
     // console.log('/user/* reached! req.url.split:', req.url.split('/'));
-    //
     // const username = req.url.split('/')[2];
     const { externalapi } = req.query;
     const username = req.params.username;
-
+    console.log('/user/:username reached!!');
     if (username) {
       console.log('req.params at /user/:username :', username);
+      const pins = req.session.pins.filter(pin => pin.users.includes(username));
       Users.findOne(
         { username },
         { _id: 0, password: 0, email: 0, }
       )
-        .then(user => {
-          console.log('user @ /user/:username:', user);
+        .then(otherUser => {
+          console.log('user @ /user/:username:', otherUser);
+          otherUser.pins = pins;
           if (externalapi === 'false') {
-            req.session.otherUser = user;
-            res.send(user);
+            req.session.otherUser = otherUser;
+            res.send(otherUser);
           } else {
-            req.session.otherUser = user;
+            req.session.otherUser = otherUser;
             next();
           }
         })
@@ -244,7 +243,5 @@ module.exports = (app, db) => {
       console.log('!username; next()');
       next();
     }
-
   });
-
 };

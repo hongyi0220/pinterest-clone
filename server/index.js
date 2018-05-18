@@ -39,31 +39,31 @@ MongoClient.connect(dbUrl, (err, database) => {
   require('./routes')(app, database);
 
   app.route('/session')
-  .get((req, res) => {
-    console.log('/session route');
-    // console.log('session.id:', req.session.id);
-    // console.log('req._passport.session:',req._passport.session);
-    console.log('req.user:',req.user);
-    // console.log('req.isAuthenticated():',req.isAuthenticated());
-    console.log('req.session:', req.session);
-
-    res.send(
-      {
-        user: req.user,
-        imgs: req.session.imgs,
-        otherUser: req.session.otherUser,
-        sharedImg: req.session.sharedImg,
-      }
-    );
-  })
-  .post((req, res) => {
-    console.log('POST /session reached; req.body.imgs:', req.body.imgs);
-    req.session.imgs = req.body.imgs;
-    res.end();
-  });
+    .get((req, res) => {
+      console.log('GET /session route reached!');
+      // console.log('session.id:', req.session.id);
+      // console.log('req._passport.session:',req._passport.session);
+      console.log('req.user:',req.user);
+      // console.log('req.isAuthenticated():',req.isAuthenticated());
+      console.log('req.session:', req.session);
+      req.user.pins = req.session.pins.filter(pin => pin.users.includes(req.user.username));
+      res.send(
+        {
+          user: req.user,
+          imgs: req.session.imgs,
+          otherUser: req.session.otherUser,
+          magnifiedPin: req.session.magnifiedPin,
+        }
+      );
+    })
+    .post((req, res) => {
+      console.log('POST /session reached; req.body.imgs:', req.body.imgs);
+      req.session.imgs = req.body.imgs;
+      res.end();
+    });
 
   app.get('*', (req, res) => {
-    res.sendFile(path.resolve(__dirname, '../build/index.html'));
+    res.sendFile(path.resolve(__dirname, '../build/index.html')); // eslint-disable-line no-undef
   });
 
   http.listen(port, () => console.log(`Connected to port ${port}`));

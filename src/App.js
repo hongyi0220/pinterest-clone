@@ -28,6 +28,64 @@ class App extends React.Component {
     storeOtherUserInfo: PropTypes.func.isRequired,
   };
 
+  componentWillMount() {
+    console.log('App will mount');
+    // const username = this.props.account.user.username;
+    this.getSessionData()
+      .then(sessionData => {
+        if (sessionData.user) { this.props.logInUser(sessionData.user); }
+        if (sessionData.imgs) { this.props.storeImgs(sessionData.imgs); }
+        if (sessionData.otherUser) {
+          console.log('otherUser from session:', sessionData.otherUser);
+          this.props.storeOtherUserInfo(sessionData.otherUser);
+        }
+        if (sessionData.magnifiedPin) { this.props.storeMagnifiedPinInfo(sessionData.magnifiedPin); }
+        // console.log('sessionData:', sessionData.user);
+        // const topTags = this.getTopTags(sessionData.user);
+        // console.log('topTags:', topTags);
+        // this.props.storeTopTags(topTags);
+      })
+      .catch(err => console.log(err));
+    this.getAllPins()
+      .then(pins => {
+        const myPins = pins.filter(pin => {
+          // console.log('this:', this);
+          return pin.users.includes(this.props.account.user.username);
+        });
+        const topTags = this.getTopTags(myPins);
+        console.log('topTags:', topTags);
+        this.props.storeTopTags(topTags);
+        console.log('All Pins:', pins);
+        return pins;
+      })
+      // .then(pins => {
+      //   const topTags = this.getTopTags(pins);
+      //   console.log('topTags:', topTags);
+      //   this.props.storeTopTags(topTags);
+      //   return pins;
+      // })
+      .then(pins => this.filterPinsMatchingTopTags(pins))
+      .then(topPins => {
+        console.log('topPins:', topPins);
+        // if (topPins.length < 60)
+        return this.shuffleArr(topPins);
+      })
+      .then(curatedPins => {
+        // this.props.storeImgs(imgs);
+        this.props.storeImgs(curatedPins);
+        // Save curatedPins in session
+        fetch('/session', {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            'content-type': 'application/json'
+          },
+          body: JSON.stringify({ imgs: curatedPins }),
+        });
+      })
+      .catch(err => console.log(err));
+  }
+
   getSessionData = () => {
     console.log('getSessionData called');
     return fetch('/session', { credentials: 'include' })
@@ -39,16 +97,26 @@ class App extends React.Component {
     .catch(err => console.log(err));
   }
 
-  processTags = user => {
-    console.log('processing tags');
-    const aggregateTags = user => {
-      const result = user.pins.reduce((currPin, nextPin) => [...currPin, ...nextPin.tags], []);
+  getAllPins = () => {
+    return fetch('/pins',{
+      method: 'GET',
+      credentials: 'include',
+    })
+      .then(res => res.json())
+      .then(resJson => resJson)
+      .catch(err => console.log(err));
+  }
+
+  getTopTags = pins => {
+    console.log('getting top-tags');
+    const aggregateTags = pins => {
+      const result = pins.reduce((currPin, nextPin) => [...currPin, ...nextPin.tags], []);
       console.log('result from aggregating tags:', result);
       return result;
     };
 
     const beautifyTags = tags => {
-      const result = tags.map(tag => tag.toString().trim().toLowerCase()).sort();
+      const result = tags.map(tag => tag.toString().trim().toLowerCase().replace(',', '').replace(/[-_]/g, ' ')).sort();
       console.log('result from beautifying tags:', result);
       return result;
     };
@@ -72,37 +140,13 @@ class App extends React.Component {
       });
       const result =
       _tags
-      .filter(tag => typeof tag === 'object')
-      .sort((a, b) => b.score - a.score).slice(0, 4);
+      .filter(tag => typeof tag === 'object' && typeof tag.tag === 'string')
+      .sort((a, b) => b.score - a.score);
       // console.log('result from analyzing tags:', result);
       return result;
     };
-    const result = getTopThreeTags(beautifyTags(aggregateTags(user)));
+    const result = getTopThreeTags(beautifyTags(aggregateTags(pins)));
     console.log('processing complete; result:', result);
-    return result;
-  }
-
-  getAllUsersWithPins = () => {
-    return fetch('/pins',{
-      method: 'GET',
-      credentials: 'include',
-    })
-      .then(res => res.json())
-      .then(resJson => resJson)
-      .catch(err => console.log(err));
-  }
-
-  extractAllPins = users => {
-    const result = users.map((user) =>
-      user.pins.map((pin) => ({
-        src: pin.src,
-        tags: pin.tags,
-        username: user.username,
-        profileImg: user.profileImg,
-      })
-    ))
-      .reduce((currUserPins, nextUserPins) => [...currUserPins, ...nextUserPins], []);
-    console.log('extracted pins:',result);
     return result;
   }
 
@@ -121,60 +165,15 @@ class App extends React.Component {
   };
 
   filterPinsMatchingTopTags = pins => pins.filter(pin => {
-    // console.log('pin.tags:', pin.tags);
+    console.log('pin.tags:', pin.tags);
     return this.props.imgs.topTags.some(topTag => {
-      // console.log('topTag:', topTag.tag);
-      // console.log('tags include topTag?', pin.tags.includes(topTag.tag));
+      console.log('pin.tags:',pin.tags);
+      console.log('topTag:', topTag.tag);
+      console.log('tags include topTag?', pin.tags.includes(topTag.tag));
       return pin.tags.includes(topTag.tag);
     });
 
   });
-
-  componentWillMount() {
-    console.log('App will mount');
-
-    this.getSessionData()
-      .then(sessionData => {
-        if (sessionData.user) { this.props.logInUser(sessionData.user); }
-        if (sessionData.imgs) { this.props.storeImgs(sessionData.imgs); }
-        if (sessionData.otherUser) {
-          console.log('otherUser from session:', sessionData.otherUser);
-          this.props.storeOtherUserInfo(sessionData.otherUser);
-        }
-        if (sessionData.sharedImg) { this.props.storeMagnifiedPinInfo(sessionData.sharedImg); }
-        console.log('sessionData:', sessionData.user);
-        const topTags = this.processTags(sessionData.user);
-        console.log('topTags:', topTags);
-        this.props.storeTopTags(topTags);
-      })
-      .catch(err => console.log(err));
-
-    // Pin: { src: http://example.com/resource, tags: ['a', 'b', 'c'] }
-
-    this.getAllUsersWithPins()
-      .then(users => this.extractAllPins(users))
-      .then(pins => this.filterPinsMatchingTopTags(pins))
-      .then(topPins => {
-        console.log('topPins:', topPins);
-        // if (topPins.length < 60)
-        return this.shuffleArr(topPins);
-      })
-      .then(curatedPins => {
-        // this.props.storeImgs(imgs);
-        this.props.storeImgs(curatedPins);
-        // Save curatedPins in session
-        fetch('/session', {
-          method: 'POST',
-          credentials: 'include',
-          headers: {
-            'content-type': 'application/json'
-          },
-          body: JSON.stringify({ imgs: curatedPins }),
-        });
-      })
-      .catch(err => console.log(err));
-
-  }
 
   render() {
     const { account, ui } = this.props;

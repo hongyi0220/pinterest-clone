@@ -15,7 +15,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 });
 
 const CreatePinModalContainer = connect(
-    state => ({ ui: state.ui }),
+    state => ({ ui: state.ui, account: state.account, }),
     mapDispatchToProps
     // {
     //     toggleModal,

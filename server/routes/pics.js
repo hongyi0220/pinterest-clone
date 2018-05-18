@@ -7,22 +7,55 @@ const cloudinary = require('cloudinary');
 const ObjectId = require('mongodb').ObjectId;
 
 module.exports = (app, db) => {
-  const Users = db.collection('users');
+  // const Users = db.collection('users');
   const Pins = db.collection('pins');
+  const uploadPixabayImgToCloudinary = img => {
+      console.log('rsc from pixabay');
+      const cloudinaryUploadFolderName = 'saved_images';
+      const resourceName = img.src.split('get/')[1];
+      cloudinary.image(`${cloudinaryUploadFolderName}/${resourceName}`);
+
+      const uploadedResourceLocationOnCloudinary = `https://res.cloudinary.com/fluffycloud/image/upload/${cloudinaryUploadFolderName}/${resourceName}`;
+      return uploadedResourceLocationOnCloudinary;
+  };
+
+  const beautifyTags = tags => {
+    const result = tags.map(tag => tag.toString().trim().toLowerCase().replace(',', '').replace(/[-_]/g, ' ')).sort();
+    console.log('result from beautifying tags:', result);
+    return result;
+  };
 
   app.get('/pics', (req, res) => { // search pics
-    console.log('/images route reached!');
+    console.log('GET /pics route reached!');
     console.log('session.id:', req.session.id);
     let { page, q } = req.query;
     page = +page;
     const url = `https://pixabay.com/api?key=${apiKey}&q=${q}&safesearch=true&page=${page}`;
     console.log(url);
 
+    const removeDuplicates = items => {
+      let len = items.length; // eslint-disable-line no-unused-vars
+      for (let i = 0; i < items.length; i++ ) {
+          if ([...items.slice(0, i), ...items.slice(i + 1)].includes(items[i])) {
+              items.splice(i, 1);
+              i--;
+              len--;
+          }
+          continue;
+      }
+      return items;
+    };
+
+
     fetch(url)
       .then(res => res.json())
-      .then(resJson => resJson.hits.map(hit => ({
-        src: hit.webformatURL,
-        tags: hit.tags.split(' ') })
+      .then(resJson =>
+        resJson.hits.map(hit => ({
+          src: hit.webformatURL,
+          tags: beautifyTags(removeDuplicates(hit.tags.split(' '))),
+          comments: [],
+          users: [],
+        })
       ))
       .then(imgs => {
         console.log('req.session:', req.session);
@@ -39,157 +72,123 @@ module.exports = (app, db) => {
       .catch(err => console.log(err));
   });
 
-  app.route('/pic') // from drag & drop
+  app.route('/pic') // from drag & drop pic
     .post(upload.single('imgFile'), (req, res) => {
+      console.log('POST /pic reached; processing drag & drop pic');
+      // console.log('req.session.user:',req.session.user );
       let { tags } = req.body;
-      tags = tags.split(',');
+      tags = beautifyTags(tags.split(','));
       cloudinary.v2.uploader.upload_stream({ resource_type: 'raw'}, (err, result) => {
         if (err) { console.log(err); }
-        Users.updateOne(
-          { username: req.user.username },
-          {
-            $push: {
-              pins: {
-                src: result.secure_url,
-                tags
-              }
-            }
-          }
+        const pic = {
+          src: result.secure_url,
+          tags,
+          comments: [],
+          users: [req.user.username],
+        };
+        Pins.insertOne(
+         pic,
         )
-        .then(response => {
-          const { matchedCount, modifiedCount } = response;
-          res.send({
-            matchedCount,
-            modifiedCount
-          });
-        })
-        .catch(err => console.log(err));
+          .then(response => {
+            const { insertedId } = response;
+            res.send({ insertedId });
+          })
+          .catch(err => console.log(err));
       }).end(req.file.buffer);
 
     })
-    .put((req, res) => { // save from site URL
+    .put((req, res) => { // Save pic from site URL
       console.log('PUT /pic reached');
       const { pic } = req.body;
       console.log('pic:', pic);
-      Users.updateOne(
-        { username: req.user.username },
-        {
-          $push: { pins: pic }
-        }
+      Pins.insertOne(
+       pic,
       )
         .then(response => {
-          const { matchedCount, modifiedCount } = response;
-          res.send({
-            matchedCount,
-            modifiedCount
-          });
+          const { insertedId } = response;
+          res.send({ insertedId });
         })
-        .catch(err => res.status(500).json({ err }));
+        .catch(err => console.log(err));
     });
 
   app.route('/pin')
-    .get((req, res) => { // save pic as Pin
+    .get((req, res) => { // Save pic as Pin
       console.log('GET pin reached!');
 
       // console.log('req.user:',req.user);
       // console.log('req.session:', req.session);
-      const { pindex, fromotheruser } = req.query;
+      const { pindex, fromotheruser, magnified } = req.query;
+      let pin;
+      let isResourceFromPixabay = false;
       console.log('pindex:',pindex);
-      let src, tags;
+      if (pindex) {
+        pin = req.session.imgs[pindex];
+        isResourceFromPixabay = pin.src.includes('https://pixabay.com/get/');
+      }
+
       if (fromotheruser === 'true') {
         console.log('req.session @ GET /pin fromotheruser:',req.session);
-        src = req.session.otherUser.pins[pindex].src;
-        tags = req.session.otherUser.pins[pindex].tags;
-      } else {
-
-        const cloudinaryUploadFolderName = 'saved_images';
-        const resourceName = req.session.imgs[pindex].src.split('get/')[1];
-        const isResourceFromPixabay = req.session.imgs[pindex].src.includes('https://pixabay.com/get/');
-        const cloudinaryUploadPath = `https://res.cloudinary.com/fluffycloud/image/upload/${cloudinaryUploadFolderName}/`;
-
-        console.log(`${cloudinaryUploadFolderName}/${resourceName}`);
-        if (isResourceFromPixabay) {
-          cloudinary.image(`${cloudinaryUploadFolderName}/${resourceName}`);
-          src = cloudinaryUploadPath + resourceName;
-          tags = req.session.imgs[pindex].tags;
-        } else {
-          src = req.session.imgs[pindex].src;
-          tags = req.session.imgs[pindex].tags;
-        }
+        pin = req.session.otherUser.pins[pindex];
+      } else if (isResourceFromPixabay) {
+        pin.src = uploadPixabayImgToCloudinary(req.session.imgs[pindex]);
+      } else if (magnified === 'true') {
+        pin = req.session.magnifiedPin;
       }
-      Users.updateOne(
-        { email: req.user.email },
+      pin.users.push(req.user.username);
+      delete pin._id;
+      Pins.findOneAndUpdate(
+        { src: pin.src },
         {
-          $push: { pins:
-            {
-              src,
-              tags,
-            }
-          }
+          $set: pin,
+        },
+        {
+          upsert: true,
         }
       )
+        .then(() => res.end())
         .catch(err => console.log(err));
-      res.end();
-
     })
-    .delete((req, res) => { // delete a Pin
+    .delete((req, res) => { // Delete a Pin
       console.log('DELETE pin reached!');
 
-      const pindex = req.query.pindex;
-      console.log(`pindex: ${pindex}`);
+      const { pinId } = req.query;
+      console.log(`pinId: ${pinId}`);
+      // console.log('req.user:',req.user);
+      // let pin = req.user.pins[pindex];
+      // console.log('Pin to delete:', pin);
 
-      Users.updateOne(
-        { email: req.user.email },
+      Pins.updateOne(
+        { _id: new ObjectId(pinId) },
         {
-          $unset: { [`pins.${pindex}`]: 1 }
+          $pullAll: { users: [ req.user.username ] }
         }
       )
-        .then(() => Users.updateOne({ email: req.user.email }, { $pull: {pins: null}}))
+        // .then(() => Users.updateOne({ email: req.user.email }, { $pull: {pins: null}}))
+        .then(() => res.end())
         .catch(err => console.log(err));
-        res.end();
+
     })
-    .post((req, res) => { // share, save a Pin on pin-page or comment on a Pin
+    .post((req, res) => { // This sends back objectId of the Pin magnified
       console.log('POST /pin route reached!!');
       console.log('req.body:', req.body);
-      // let { pin } = req.body;
-      // let src;
-      // const { save, pindex } = req.query;
-      // pin = JSON.parse(pin);
-      // const shouldSave = save === 'true';
       const pin = req.session.imgs[req.body.pindex];
       console.log('pin:', pin);
       const isResourceFromPixabay = pin.src.includes('https://pixabay.com/get/');
 
-      // console.log(`${cloudinaryUploadFolderName}/${resourceName}`);
       if (isResourceFromPixabay) {
-        console.log('rsc from pixabay');
-        const cloudinaryUploadFolderName = 'saved_images';
-        const cloudinaryUploadPath = `https://res.cloudinary.com/fluffycloud/image/upload/${cloudinaryUploadFolderName}/`;
-        const resourceName = pin.src.split('get/')[1];
+        console.log('rsc is from pixabay');
 
-        cloudinary.image(`${cloudinaryUploadFolderName}/${resourceName}`);
-        pin.src = cloudinaryUploadPath + resourceName;
+        pin.src = uploadPixabayImgToCloudinary(pin);
       }
-      // else {
-      //   console.log('rsc NOT from pixabay; using existing src');
-      //   pin.src = pin.src;
-      // }
-      // pin.src = src;
 
-      // req.session.imgs[req.body.pindex] = pin;
-
+      delete pin._id;
       Pins.findOneAndUpdate(
         {
           src: pin.src,
           tags: pin.tags[0],
         },
         {
-          $set: pin
-          // {
-          //   src,
-          //   tags: pin.tags,
-          //   comments: pin.comments ? pin.comments : [],
-          // }
+          $set: pin,
         },
         {
           projection: { _id: 1 },
@@ -203,101 +202,44 @@ module.exports = (app, db) => {
             console.log('pinID:', pinID);
             req.session.magnifiedPin = pin;
             res.send({ pinID });
-          // if (shouldSave) {
-          //   Users.findOneAndUpdate(
-          //     { username: req.user.username },
-          //     {
-          //       $push: {
-          //         pins: pin
-          //       }
-          //     },
-          //     {
-          //       projection: { _id: 1 },
-          //       upsert: false,
-          //     }
-          //   )
-          //     .then(() => {
-          //       console.log('pinID after saving Pin at pin-page:', doc.value._id);
-          //       res.send({ pinID: doc.value._id });
-          //     });
-          // } else {
-          //   console.log('doc:', doc);
-          //   const pinID = doc.value ? doc.value._id : doc.lastErrorObject.upserted;
-          //   console.log('doc.upserted:', doc.upserted);
-          //   console.log('pinID:', pinID);
-          //   res.send({ pinID });
-          // }
         })
         .catch(err => console.log(err));
     })
-    .put(async (req, res) => {
+    .put((req, res) => { // Save or comment on pin-page
       const { comments } = req.body;
       let pin = req.session.magnifiedPin;
       if (comments) {
         pin.comments = comments;
       }
-
-      const p1 = new Promise((resolve, reject) => {
-        Users.findOneAndUpdate(
-          { username: req.user.username },
-          {
-            $push: {
-              pins: pin
-            }
-          },
-          {
-            // projection: { _id: 1 },
-            upsert: false,
-          }
-        )
-          .then(() => resolve())
-          .catch(() => reject());
-      });
-      const p2 = new Promise((resolve, reject) => {
-        Pins.findOneAndUpdate(
-          {
-            src: pin.src,
-            tags: pin.tags[0],
-          },
-          {
-            $set: pin
-          },
-          {
-            // projection: { _id: 1 },
-            upsert: true,
-          }
-        )
-          .then(() => resolve())
-          .catch(() => reject());
-      });
-      Promise.all([p1, p2])
-        .then(() => res.end())
-        .catch(err => console.log(err));
-
-
+      delete pin._id;
+      Pins.findOneAndUpdate(
+        {
+          src: pin.src,
+          tags: pin.tags[0],
+        },
+        {
+          $set: pin
+        },
+        {
+          upsert: true,
+        }
+      )
+      .then(() => res.end())
+      .catch(err => console.log(err));
     });
 
   app.route('/pins')
-    .get((req, res) => { // get all Pins from all users
+    .get((req, res) => { // Get all pins
       console.log('GET /pins reached');
-      Users.find({
-        'pins': {
-          $gte: {
-            $size: 1
-          }
-        }
-      }, {
-        _id: 0,
-        email: 0,
-        password: 0,
-      })
-      .toArray((err, docs) => {
-        if (err) { console.log(err); }
-        // req.session.imgs = docs;
-        console.log('DOCS:', docs);
-        res.send(docs);
-
-      });
+      Pins.find({})
+        .toArray((err, docs) => {
+          if (err) { console.log(err); }
+          // req.session.imgs = docs;
+          req.session.pins = docs;
+          // req.user.pins = req.session.pins.filter(pin => pin.users.includes(req.user.username));
+          console.log('DOCS:', docs);
+          res.send(docs);
+        });
     });
 
   app.route('/pin/:id')
@@ -310,15 +252,9 @@ module.exports = (app, db) => {
         }
       )
         .then(pin => {
-          req.session.sharedImg = pin;
+          req.session.magnifiedPin = pin;
           next();
         })
         .catch(err => console.log(err));
     });
-
-  // app.route('/shared-pin')
-  //   .get((req, res) => {
-  //     console.log('/shared-pin reached! req.session.img:', req.session.img);
-  //     res.send(req.session.img);
-  //   });
 };

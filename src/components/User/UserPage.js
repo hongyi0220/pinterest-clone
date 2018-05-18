@@ -4,7 +4,8 @@ import PropTypes from 'prop-types';
 class UserPage extends React.Component {
   state = {
     pindex: null,
-    isCreatePinButtonHiglighted: false
+    pinId: null,
+    isCreatePinButtonHiglighted: false,
   };
   static propTypes = {
     account: PropTypes.shape({
@@ -23,23 +24,29 @@ class UserPage extends React.Component {
 
   handlePinOnMouseOver = e => {
     console.log('pindex:', e ? e.target.dataset.pindex : '');
+    console.log('pinId:', e ? e.target.dataset.pinId : '');
     const eTarget = e ? e.target : null;
     if (e === null) {
-      return this.setState({ pindex: null });
-    }
-    if (this.state.pindex !== Number(eTarget.dataset.pindex)) {
-      this.setState({
-          pindex: Number(eTarget.dataset.pindex)
+      return this.setState({
+        pindex: null,
+        pinId: null,
       });
+    }
+    if (this.state.pinId !== eTarget.dataset.pinId) {
+      this.setState({
+          pinId: eTarget.dataset.pinId,
+          pindex: Number(eTarget.dataset.pindex),
+      }, () => console.log(this.state));
     }
   }
 
   highlightCreatePinButton = () => this.setState(prevState => ({ isCreatePinButtonHiglighted: !prevState.isCreatePinButtonHiglighted }));
 
-  deletePin = () => {
+  deletePin = e => {
     // const { pindex } = this.state;
-    console.log(`delete /pin? ${this.state.pindex}`);
-    fetch(`/pin?pindex=${this.state.pindex}`, {
+    e.stopPropagation();
+    console.log(`Delete /pin?pinId=${this.state.pinId}`);
+    fetch(`/pin?pinId=${this.state.pinId}`, {
       method: 'DELETE',
       credentials: 'include'
     })
@@ -51,7 +58,7 @@ class UserPage extends React.Component {
     // const { pindex } = this.state;
     console.log(`saving pin/${this.state.pindex}`);
     fetch(`/pin?pindex=${this.state.pindex}&fromotheruser=true`, {
-      method: 'PUT',
+      method: 'GET',
       credentials: 'include',
     })
       .catch(err => console.log(err));
@@ -94,17 +101,17 @@ class UserPage extends React.Component {
               <div className='wall-img'></div>
             </div>}
 
-            {pins.map((pin, i) =>
-              <div data-pindex={i} key={i} className='img-container' onMouseEnter={e=>{console.log('entering'); this.handlePinOnMouseOver(e);}} onMouseLeave={()=>{console.log('leaving'); this.handlePinOnMouseOver(null);}}>
+            {pins ? pins.map((pin, i) =>
+              <div data-pin-id={pin._id} data-pindex={i} key={i} className='img-container' onMouseEnter={e=>{console.log('entering'); this.handlePinOnMouseOver(e);}} onMouseLeave={()=>{console.log('leaving'); this.handlePinOnMouseOver(null);}}>
 
-                <div data-pindex={i} className={this.state.pindex === i ? 'img-overlay on': 'img-overlay'} onClick={() => {this.handleMagnifyPinClick(); this.props.history.push(`/pin/${i}`); }}>
+                <div data-pin-id={pin._id} data-pindex={i} className={this.state.pindex === i ? 'img-overlay on': 'img-overlay'} onClick={() => {this.handleMagnifyPinClick(); this.props.history.push(`/pin/${this.state.pinId}`); }}>
                   {account.otherUser ?
                     <div className="action-button" onMouseOver={e => e.stopPropagation()}>
-                      <img src="/images/pin.png" alt="action button" className="pin"/>
+                      <img src="/images/pin.png" alt="save button" className="pin"/>
                     <div className='action-button-text' onClick={this.savePin}>Save</div>
                     </div> :
                     <div className="action-button">
-                      <img src="/images/pin.png" alt="" className="pin"/>
+                      <img src="/images/pin.png" alt="delete button" className="pin"/>
                       <div className='action-button-text' onClick={this.deletePin}>Delete</div>
                     </div>
                   }
@@ -112,7 +119,7 @@ class UserPage extends React.Component {
                   <div className="share-button"></div>
                 </div>
                 <img className='wall-img' src={pin.src} onError={e => e.target.src = '/images/default-no-img.jpg'}/>
-              </div>)
+              </div>) : ''
             }
           </div>
         </div>

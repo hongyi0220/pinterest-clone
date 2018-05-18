@@ -6,7 +6,6 @@ class WallPage extends React.Component {
     pindex: null,
     clientHeight: null,
     clientWidth: null,
-
   };
   static propTypes = {
     storeImgs: PropTypes.func.isRequired,
@@ -19,6 +18,24 @@ class WallPage extends React.Component {
     storeMagnifiedPinInfo: PropTypes.func.isRequired,
     similarPicsKeyword: PropTypes.string,
   };
+
+  componentWillMount() {
+    console.log('WallPage will mount');
+    this.setState({ clientWidth: window.innerWidth, clientHeight: window.innerHeight });
+    if (this.props.similarPicsKeyword) {
+      const q = this.props.similarPicsKeyword;
+      const page = 1;
+      fetch(`/pics?q=${q}&page=${page}`, {
+        method: 'GET',
+        credentials: 'include',
+      })
+        .then(res => res.json())
+        .then(imgs => {
+          this.props.storeImgs(imgs);
+        })
+        .catch(err => console.log(err));
+    }
+  }
 
   handlePinOnMouseOver = e => {
     console.log('pindex:', e ? e.target.dataset.pindex : '');
@@ -42,7 +59,7 @@ class WallPage extends React.Component {
   savePin = e => {
     e.stopPropagation();
     // const { pindex } = this.state;
-    console.log(`saving pin/${this.state.pindex}`);
+    console.log(`saving pin/${this.state.pindex}?fromotheruser=false`);
     fetch(`/pin?pindex=${this.state.pindex}`, {
       method: 'GET',
       credentials: 'include',
@@ -50,39 +67,36 @@ class WallPage extends React.Component {
       .catch(err => console.log(err));
   }
 
-  handleUserProfileImgClick = e => {
-    e.stopPropagation();
-    console.log('handle User Profile Img Clicked:',e.target.dataset.username);
-    const username = e.target.dataset.username;
+  // handleUserProfileImgClick = e => {
+  //   e.stopPropagation();
+  //   console.log('handle User Profile Img Clicked:',e.target.dataset.username);
+  //   const username = e.target.dataset.username;
+  //
+  //   fetch(`/user/${username}?externalapi=false`, {
+  //     method: 'GET',
+  //     credentials: 'include',
+  //   })
+  //     // .then(() => {
+  //     //   this.setState({ username });
+  //     //   this.props.history.push(`/user/${username}`);
+  //     // })
+  //     .then(res => res.json())
+  //     .then(otherUser => {
+  //       console.log('res from /user:', otherUser);
+  //
+  //       this.props.storeOtherUserInfo(otherUser);
+  //       this.props.history.push(`/user/${otherUser.username}`);
+  //     })
+  //     .catch(err => console.log(err));
+  // }
 
-    fetch(`/user/${username}?externalapi=false`, {
-      method: 'GET',
-      credentials: 'include',
-    })
-      // .then(() => {
-      //   this.setState({ username });
-      //   this.props.history.push(`/user/${username}`);
-      // })
-
-      .then(res => res.json())
-      .then(otherUser => {
-        console.log('res from /user:', otherUser);
-        // this.props.logInUser(user);
-        this.props.storeOtherUserInfo(otherUser);
-        this.props.history.push(`/user/${otherUser.username}`);
-      })
-      .catch(err => console.log(err));
-  }
-
-  handleMagnifyPinClick = (e) => {
+  handleMagnifyPinClick = e => {
     console.log('handleMagnifyPinClick triggered');
     console.log('this.state:', this.state);
     console.log('who triggered handleMagnifyPinClick?', e.target);
-    // this.props.storeMagnifiedPinInfo(this.props.imgs.search[this.state.pindex]);
     console.log('magnifiedPin:',this.props.imgs.magnifiedPin);
-    // setTimeout(()=> {console.log('magnifiedPin:',this.props.imgs.magnifiedPin);}, 5000);
 
-    fetch(`/pin?save=false&pindex=${this.state.pindex}`, {
+    fetch(`/pin?&pindex=${this.state.pindex}`, {
       method: 'POST',
       credentials: 'include',
       headers: {
@@ -98,33 +112,12 @@ class WallPage extends React.Component {
           top: 0,
           behavior: 'instant'
         });
-        // this.setState({ pinID: resJson.pinID });
       })
       .catch(err => console.log(err));
-
-
   }
 
   handleShareButtonClick = () => {
 
-  }
-
-  componentWillMount() {
-    console.log('WallPage will mount');
-    this.setState({ clientWidth: window.innerWidth, clientHeight: window.innerHeight });
-    if (this.props.similarPicsKeyword) {
-      const q = this.props.similarPicsKeyword;
-      const page = 1;
-      fetch(`/pics?q=${q}&page=${page}`, {
-        method: 'GET',
-        credentials: 'include',
-      })
-        .then(res => res.json())
-        .then(imgs => {
-          this.props.storeImgs(imgs);
-        })
-        .catch(err => console.log(err));
-    }
   }
 
   render() {
@@ -148,9 +141,9 @@ class WallPage extends React.Component {
                 <img src="/images/tweet.png" alt="tweet"/>
               </div>
 
-              <div className="userProfileImgWrapper" onMouseOver={e => e.stopPropagation()} onClick={this.handleUserProfileImgClick}>
+              {/* <div className="userProfileImgWrapper" onMouseOver={e => e.stopPropagation()} onClick={this.handleUserProfileImgClick}>
                 <img data-username={img.username ? img.username : ''} src={img.profileImg ? img.profileImg : '/images/default-profile-image.png'} alt="user profile" />
-              </div>
+              </div> */}
 
             </div>
 

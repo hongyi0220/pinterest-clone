@@ -30,7 +30,7 @@ class PinPage extends React.Component {
     this.setState({
       clientWidth: window.innerWidth,
       clientHeight: window.innerHeight,
-      comments: this.props.imgs.magnifiedPin.comments || [],
+      comments: this.props.imgs.magnifiedPin ? this.props.imgs.magnifiedPin.comments : [],
       pinID: this.props.history.location.pathname.split('pin/')[1],
     });
   }
@@ -48,13 +48,9 @@ class PinPage extends React.Component {
   }
 
   handleSaveButtonClick = () => {
-    fetch('/pin', {
-      method: 'PUT',
+    fetch('/pin?magnified=true', {
+      method: 'GET',
       credentials: 'include',
-      // headers: {
-      //   'content-type': 'application/json'
-      // },
-      // body: JSON.stringify({ pinID: this.state.pinID }),
     })
       .catch(err => console.log(err));
   }
@@ -66,9 +62,6 @@ class PinPage extends React.Component {
 
   handleCommentOnKeyDown = e => {
     console.log('handleCommentKeyDown triggered!');
-    // console.log('e:', e);
-    // console.log('magnifiedPin:', this.props.imgs.magnifiedPin);
-    // const body = JSON.stringify(this.props.imgs.magnifiedPin);
 
     if (e.key === 'Enter') {
       this.setState(prevState => ({
@@ -86,7 +79,6 @@ class PinPage extends React.Component {
         })
           .catch(err => console.log(err));
       });
-
     }
   }
 
@@ -135,7 +127,7 @@ class PinPage extends React.Component {
               </div>
               <hr />
               <div className="pin-owner-info-container">
-                <img src={imgs.magnifiedPin.profileImg ? imgs.magnifiedPin.profileImg : '/images/default-profile-image.png'} alt='user profile'/>
+                <img src={imgs.magnifiedPin ? imgs.magnifiedPin.profileImg : '/images/default-profile-image.png'} alt='user profile'/>
                 <span>saved this Pin</span>
               </div>
             </div>

@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  BrowserRouter as Router,
+  // BrowserRouter as Router,
   Route,
   Switch,
 } from 'react-router-dom';
@@ -15,6 +15,7 @@ import {
   ModalBackgroundOverlayContainer,
   PinPageContainer,
 } from './components';
+import randomWords from 'random-words';
 
 class App extends React.Component {
   static propTypes = {
@@ -26,6 +27,8 @@ class App extends React.Component {
     imgs: PropTypes.shape({ topTags: [] }).isRequired,
     storeMagnifiedPinInfo: PropTypes.func.isRequired,
     storeOtherUserInfo: PropTypes.func.isRequired,
+    history: PropTypes.shape({ location: PropTypes.shape({ pathname: PropTypes.string })}),
+    concatImgsToStore: PropTypes.func.isRequired,
   };
 
   componentWillMount() {
@@ -40,40 +43,62 @@ class App extends React.Component {
           this.props.storeOtherUserInfo(sessionData.otherUser);
         }
         if (sessionData.magnifiedPin) { this.props.storeMagnifiedPinInfo(sessionData.magnifiedPin); }
-        // console.log('sessionData:', sessionData.user);
-        // const topTags = this.getTopTags(sessionData.user);
-        // console.log('topTags:', topTags);
-        // this.props.storeTopTags(topTags);
       })
       .catch(err => console.log(err));
+
     this.getAllPins()
       .then(pins => {
         const myPins = pins.filter(pin => {
           // console.log('this:', this);
           return pin.users.includes(this.props.account.user.username);
         });
-        const topTags = this.getTopTags(myPins);
+        let topTags = this.getTopTags(myPins);
+        if (topTags.length < 3) {
+          topTags = [
+            ...topTags,
+            // ...randomWords({
+            //   exactly: 3 - topTags.length,
+            //   formatter: word => [word, 2],
+            // }).map(word => word.split(',')),
+            ...randomWords({ exactly: 3 - topTags.length, }),
+          ];
+        }
         console.log('topTags:', topTags);
         this.props.storeTopTags(topTags);
         console.log('All Pins:', pins);
         return pins;
       })
-      // .then(pins => {
-      //   const topTags = this.getTopTags(pins);
-      //   console.log('topTags:', topTags);
-      //   this.props.storeTopTags(topTags);
-      //   return pins;
-      // })
       .then(pins => this.filterPinsMatchingTopTags(pins))
-      .then(topPins => {
+      .then(async topPins => {
         console.log('topPins:', topPins);
-        // if (topPins.length < 60)
+        // if (topPins.length < 20) {
+        //
+        //   var extraPins = await fetch(`/pics?q=${this.props.imgs.topTags[0]}&page=${2}`, {
+        //     method: 'GET',
+        //     credentials: 'include',
+        //   })
+        //     .then(res => res.json())
+        //     .then(imgs => {
+        //       // if (e.scroll) {
+        //         this.props.concatImgsToStore(imgs);
+        //       // } else {
+        //       //   this.props.storeImgs(imgs);
+        //       // }
+        //       //
+        //       // this.props.toggleFetchingPics();
+        //       // console.log('state after fetchingPics:',this.state);
+        //       return imgs;
+        //     })
+        //     .catch(err => console.log(err));
+        // }
+        // console.log('extraPins:',extraPins);
+        // topPins = [...topPins, ...extraPins,];
         return this.shuffleArr(topPins);
       })
       .then(curatedPins => {
         // this.props.storeImgs(imgs);
         this.props.storeImgs(curatedPins);
-        // Save curatedPins in session
+        // Save curatedPins to session
         fetch('/session', {
           method: 'POST',
           credentials: 'include',
@@ -122,28 +147,35 @@ class App extends React.Component {
     };
 
     // This will count how many times a tag is saved
-    //     so top tags can be analyzed
+    //   so top tags can be selected
     const getTopThreeTags = tags => {
-      let _tags = [];
+      let result = [];
       tags.forEach((tag, i) => {
-        // console.log('current tag:', tags[i], ' next tag:', tags[i + 1]);
+        // console.log('current tag:', tag, ' next tag:', tags[i + 1]);
+        // console.log('[tag, 1]:',[tag, 1]);
         if (tag === tags[i + 1]) {
           if(!i) {
-            _tags.push({tag, score: 1});
+            // console.log('result:',result);
+            // result.push({tag, score: 1});
+            result.push([tag, 1]);
+            // console.log('result after pushing:',result);
           }
-
-          _tags[_tags.length - 1].score++;
-          // console.log('after adding to score:', _tags);
+          // result[result.length - 1].score++;
+          result[result.length - 1][1]++;
+          // console.log('after adding to score:', result);
+          // console.log('[tag, 1]:',[tag, 1]);
         } else {
-          _tags.push({ tag: tags[i + 1], score: 1});
+          // result.push({ tag: tags[i + 1], score: 1});
+          result.push([tags[i + 1], 1]);
+          // console.log('result after pushing:',result);
         }
       });
-      const result =
-      _tags
-      .filter(tag => typeof tag === 'object' && typeof tag.tag === 'string')
-      .sort((a, b) => b.score - a.score);
-      // console.log('result from analyzing tags:', result);
-      return result;
+      return result
+        // .filter(tag => typeof tag === 'object' && typeof tag.tag === 'string' && tag.score > 1)
+        .filter(tag => typeof tag === 'object' && typeof tag[0] === 'string' && tag[1] > 1)
+        // .sort((a, b) => b.score - a.score).slice(0, 3);
+        .sort((a, b) => b[1] - a[1]).map(tag => tag[0]).slice(0, 3);
+
     };
     const result = getTopThreeTags(beautifyTags(aggregateTags(pins)));
     console.log('processing complete; result:', result);
@@ -165,25 +197,28 @@ class App extends React.Component {
   };
 
   filterPinsMatchingTopTags = pins => pins.filter(pin => {
-    console.log('pin.tags:', pin.tags);
+    // console.log('pin.tags:', pin.tags);
     return this.props.imgs.topTags.some(topTag => {
-      console.log('pin.tags:',pin.tags);
-      console.log('topTag:', topTag.tag);
-      console.log('tags include topTag?', pin.tags.includes(topTag.tag));
-      return pin.tags.includes(topTag.tag);
+      // console.log('pin.tags:',pin.tags);
+      // console.log('topTag:', topTag);
+      // console.log('tags include topTag?', pin.tags.includes(topTag));
+      // return pin.tags.includes(topTag.tag);
+      return pin.tags.includes(topTag);
     });
 
   });
 
   render() {
-    const { account, ui } = this.props;
+    const { account, ui, imgs } = this.props;
     return (
-      <Router>
+      // <Router>
         <div className="app-container">
           <Switch>
             <Route path='/pin/*' component={PinPageContainer}/>
             {account.user ?
-              <Route component={HeaderContainer} /> :
+              (imgs.topTags ?
+              <Route component={HeaderContainer} /> : '') :
+              // <Route render={() => <HeaderContainer input={this.props.history.location.pathname === '/home' ? this.props.imgs.topTags : null} />} /> :
               <Route exact path='/' component={AuthPageContainer} />}
           </Switch>
 
@@ -200,8 +235,8 @@ class App extends React.Component {
 
           <Route exact path='/settings' component={SettingsPageContainer}/>
           <Route exact path='/(|home|search|find)' component={WallPageContainer} />
+          {/* <Route exact path='/(|home|search|find)' render={() => <WallPageContainer similarPicsKeyword={this.props.imgs.topTags} />} /> */}
         </div>
-      </Router>
     );
   }
 }

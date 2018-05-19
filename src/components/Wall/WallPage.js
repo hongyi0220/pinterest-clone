@@ -17,12 +17,27 @@ class WallPage extends React.Component {
     storeOtherUserInfo: PropTypes.func.isRequired,
     storeMagnifiedPinInfo: PropTypes.func.isRequired,
     similarPicsKeyword: PropTypes.string,
+    concatImgsToStore: PropTypes.func.isRequired,
   };
 
   componentWillMount() {
     console.log('WallPage will mount');
     this.setState({ clientWidth: window.innerWidth, clientHeight: window.innerHeight });
     if (this.props.similarPicsKeyword) {
+      // let q, page;
+      // this.props.similarPicsKeyword.forEach((keyword, i) => {
+      //   // q = keyword, page = i + 2;
+      //   console.log(`fetching /pics?q=${keyword}&page=${i + 2}`);
+      //   fetch(`/pics?q=${keyword}&page=${i + 2}`, {
+      //     method: 'GET',
+      //     credentials: 'include',
+      //   })
+      //     .then(res => res.json())
+      //     .then(imgs => {
+      //       this.props.concatImgsToStore(imgs);
+      //     })
+      //     .catch(err => console.log(err));
+      // });
       const q = this.props.similarPicsKeyword;
       const page = 1;
       fetch(`/pics?q=${q}&page=${page}`, {

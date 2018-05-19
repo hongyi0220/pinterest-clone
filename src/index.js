@@ -10,7 +10,12 @@ import {
     storeTopTags,
     storeMagnifiedPinInfo,
     storeOtherUserInfo,
+    concatImgsToStore,
 } from './actions';
+import {
+  BrowserRouter as Router,
+  Route,
+} from 'react-router-dom';
 
 let store = createStore(reducer);
 
@@ -24,12 +29,15 @@ const AppContainer = connect(
         storeTopTags,
         storeMagnifiedPinInfo,
         storeOtherUserInfo,
+        concatImgsToStore,
     }
 )(App);
 
 ReactDOM.render(
     <Provider store={store}>
-        <AppContainer />
+      <Router>
+        <Route component={AppContainer} />
+      </Router>
     </Provider>
     ,
     document.getElementById('root')

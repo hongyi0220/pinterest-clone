@@ -21,7 +21,7 @@ module.exports = (app, db) => {
 
   const beautifyTags = tags => {
     const result = tags.map(tag => tag.toString().trim().toLowerCase().replace(',', '').replace(/[-_]/g, ' ')).sort();
-    console.log('result from beautifying tags:', result);
+    // console.log('result from beautifying tags:', result);
     return result;
   };
 
@@ -46,7 +46,6 @@ module.exports = (app, db) => {
       return items;
     };
 
-
     fetch(url)
       .then(res => res.json())
       .then(resJson =>
@@ -60,15 +59,17 @@ module.exports = (app, db) => {
         })
       ))
       .then(imgs => {
-        console.log('req.session:', req.session);
+        // console.log('req.session:', req.session);
+
         if (page === 1) {
           req.session.page = page;
           req.session.imgs = imgs;
         } else {
+          console.log('page > 1, concating imgs');
           req.session.page ? req.session.page++ : req.session.page = page;
           req.session.imgs = [...req.session.imgs, ...imgs];
         }
-        console.log('req.session2:', req.session);
+        // console.log('req.session2:', req.session);
         res.send(imgs);
       })
       .catch(err => console.log(err));

@@ -43,7 +43,7 @@ class UserPage extends React.Component {
   highlightCreatePinButton = () => this.setState(prevState => ({
     isCreatePinButtonHiglighted: !prevState.isCreatePinButtonHiglighted }));
 
-  deletePin = e => {
+  handleDeleteButtonClick = e => {
     // const { pindex } = this.state;
     e.stopPropagation();
     console.log(`Delete /pin?pinId=${this.state.pinId}`);
@@ -117,7 +117,7 @@ class UserPage extends React.Component {
                     </div> :
                     <div className="action-button">
                       <img src="/images/pin.png" alt="delete button" className="pin"/>
-                      <div className='action-button-text' onClick={this.deletePin}>Delete</div>
+                      <div className='action-button-text' onClick={this.handleDeleteButtonClick}>Delete</div>
                     </div>
                   }
 

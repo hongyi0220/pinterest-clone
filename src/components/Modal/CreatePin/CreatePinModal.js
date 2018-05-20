@@ -9,8 +9,9 @@ class CreatePinModal extends React.Component {
     isTagInputDisabled: false,
     previewImg: null,
     imgFile: null,
+    imgFileHeight: null,
     isSaveFromSiteClicked: true,
-    siteUrl: ''
+    siteUrl: '',
   };
   static propTypes = {
     history: PropTypes.object.isRequired,
@@ -22,10 +23,24 @@ class CreatePinModal extends React.Component {
   inputTypeFile = null;
 
   handleImageUpload = e => {
-
     const imgFile = e.target.files[0];
+    console.log('imgFile:', imgFile);
+    let image = new Image();
     const previewImg = URL.createObjectURL(imgFile);
-    this.setState({ previewImg, imgFile });
+    image.src = previewImg;
+    const setState = state => this.setState(state);
+    image.onload = function() {
+      console.log(this.width + ' ' + this.height);
+      // image.height = this.height;
+      setState({
+        previewImg,
+        imgFile,
+        imgFileHeight: this.height,
+      });
+    };
+    // console.log('imgFileHeight:', image.height);
+    // console.log('URL.createObjectURL(imgFile):',previewImg);
+
   }
 
   formatURL = url => {
@@ -51,112 +66,134 @@ class CreatePinModal extends React.Component {
   }
 
   handleCreatePinClick = () => {
-    const { tags, imgFile, siteUrl } = this.state;
+    const { tags, imgFile, imgFileHeight, siteUrl, } = this.state;
 
     if (siteUrl) {
       console.log('siteUrl:',siteUrl);
-      // const isValidDomain = /\.{1}(\w{2,})/i;
       const isValidImgFile = /\.{1}(jpg|jpeg|png|gif)$/i;
-
       if (isValidImgFile.test(siteUrl)) {
-        console.log('isValidImgFile');
-        fetch('/pic', {
-          method: 'PUT',
-          headers: {
-            'content-type': 'application/json'
-          },
-          credentials: 'include',
-          body: JSON.stringify({ pic:
-            {
-              src: siteUrl,
-              tags: [],
-              comments: [],
-              users: [this.props.account.user.username]
-            }
-          }),
-        })
-          .then(res => {
-            console.log('res after save pin:', res);
-            return res.json();
-          })
-          .then(resJson => {
-            if (!resJson.matchedCount) {
-              this.props.openMsgModal('Error!', 'Something went wrong on our side');
-            } else if (resJson.matchedCount && resJson.modifiedCount) {
-              this.props.openMsgModal('Pin saved!', 'Your Pin has been saved successfully.');
-            }
-          })
-          .catch(err => console.log(err));
+        this.uploadImgFromSiteUrl(siteUrl);
 
       } else if (isValidDomain(siteUrl)) {
-        console.log('isValidDomain fetching html...');
-
-        const url = this.formatURL(siteUrl);
-        const proxyurl = 'https://cors-anywhere.herokuapp.com/';
-        fetch(proxyurl + url)
-        .then(res => res.text())
-        .then(resTxt => {
-          console.log('res after fetching from vaildDomain:',resTxt);
-          const htmlDoc = this.parseHTML(resTxt);
-          const imgs = this.getAllImgSrcs(htmlDoc).map(img => {
-
-            if (img.src) {
-              return {
-                src: this.formatImgSrc(url, img.src),
-                tags: img.tags
-              };
-            }
-          });
-          // Display imgs scraped from the URL on wall @ route: /find
-          console.log('imgsArr:', imgs);
-          console.log('storeImgs triggered');
-          this.props.storeImgs(imgs);
-          fetch('/session', {
-            method: 'POST',
-            credentials: 'include',
-            headers: {
-              'content-type': 'application/json'
-            },
-            body: JSON.stringify({ imgs })
-          });
-
-          console.log('this :', this);
-          console.log('navigating to /find');
-          this.props.history.push('/find');
-          this.props.toggleModal(false);
-          console.log('toggling modal..');
-          // this.props.openMsgModal('Pin saved!', 'Your Pin has been saved successfully.');
-        })
-        .catch(err => {
-          console.log(err);
-          // console.log('this :', this)
-          this.props.openMsgModal('Error!', 'Something went wrong on our side');
-        });
+        this.scrapeImgsFromWebSite(siteUrl);
       }
     } else { // Upload img with drag & drop
-      let formData = new FormData();
-      formData.append('imgFile', imgFile);
-      formData.append('tags', tags);
+      console.log('imgFileHeight:',imgFileHeight);
+      this.uploadImgFile(imgFile, tags, imgFileHeight);
+    }
+  }
 
+  uploadImgFromSiteUrl = siteUrl => {
+    console.log('isValidImgFile');
+    const username = this.props.account.user.username;
+    const component = this;
+    const image = new Image();
 
+    image.src = siteUrl;
+    image.onload = function() {
+      console.log(this.width + ' ' + this.height);
       fetch('/pic', {
-        method: 'POST',
+        method: 'PUT',
+        headers: {
+          'content-type': 'application/json'
+        },
         credentials: 'include',
-        body: formData
+        body: JSON.stringify({ pic:
+          {
+            src: siteUrl,
+            tags: [],
+            comments: [],
+            users: [username],
+            height: this.height,
+          }
+        }),
       })
         .then(res => {
-          console.log('res after save pin from dragg & drop:', res);
+          console.log('res after save pin:', res);
           return res.json();
         })
         .then(resJson => {
-          if (!resJson.insertedId) {
-            this.props.openMsgModal('Error!', 'Something went wrong on our side');
-          } else {
-            this.props.openMsgModal('Pin saved!', 'Your Pin has been saved successfully.');
+          if (!resJson.matchedCount) {
+            component.props.openMsgModal('Error!', 'Something went wrong on our side');
+          } else if (resJson.matchedCount && resJson.modifiedCount) {
+            component.props.openMsgModal('Pin saved!', 'Your Pin has been saved successfully.');
           }
         })
         .catch(err => console.log(err));
-    }
+    };
+    // console.log('uploading Img from site; image.height:', image.height);
+
+  }
+
+  scrapeImgsFromWebSite = siteUrl => {
+    console.log('isValidDomain fetching html...');
+
+    const url = this.formatURL(siteUrl);
+    const proxyurl = 'https://cors-anywhere.herokuapp.com/';
+    fetch(proxyurl + url)
+    .then(res => res.text())
+    .then(resTxt => {
+      console.log('res after fetching from vaildDomain:',resTxt);
+      const htmlDoc = this.parseHTML(resTxt);
+      const imgs = this.getAllImgSrcs(htmlDoc).map(img => {
+
+        if (img.src) {
+          return {
+            src: this.formatImgSrc(url, img.src),
+            tags: img.tags
+          };
+        }
+      });
+      // Display imgs scraped from the URL on wall @ route: /find
+      console.log('imgsArr:', imgs);
+      console.log('storeImgs triggered');
+      this.props.storeImgs(imgs);
+      fetch('/session', {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'content-type': 'application/json'
+        },
+        body: JSON.stringify({ imgs })
+      });
+
+      console.log('this :', this);
+      console.log('navigating to /find');
+      this.props.history.push('/find');
+      this.props.toggleModal(false);
+      console.log('toggling modal..');
+      // this.props.openMsgModal('Pin saved!', 'Your Pin has been saved successfully.');
+    })
+    .catch(err => {
+      console.log(err);
+      // console.log('this :', this)
+      this.props.openMsgModal('Error!', 'Something went wrong on our side');
+    });
+  }
+
+  uploadImgFile = (imgFile, tags, imgFileHeight) => {
+    let formData = new FormData();
+    formData.append('imgFile', imgFile);
+    formData.append('tags', tags);
+    formData.append('height', imgFileHeight);
+    console.log('formData:', formData);
+    fetch('/pic', {
+      method: 'POST',
+      credentials: 'include',
+      body: formData,
+    })
+      .then(res => {
+        console.log('res after save pin from dragg & drop:', res);
+        return res.json();
+      })
+      .then(resJson => {
+        if (!resJson.insertedId) {
+          this.props.openMsgModal('Error!', 'Something went wrong on our side');
+        } else {
+          this.props.openMsgModal('Pin saved!', 'Your Pin has been saved successfully.');
+        }
+      })
+      .catch(err => console.log(err));
   }
 
   parseHTML = html => {
@@ -262,10 +299,6 @@ class CreatePinModal extends React.Component {
   componentDidMount() {
     console.log('CreatePinModal mounted');
   }
-  // componentWillUnmount() {
-  //     console.log('CreatePinModal will UNmount');
-  //     this.closeModal();
-  // }
 
   render() {
     console.log('CreatePinModal rendered');
@@ -273,56 +306,62 @@ class CreatePinModal extends React.Component {
     return (
       <div className="create-pin-modal-container">
 
-      <h2>Create Pin</h2>
-      {isSaveFromSiteClicked ?
-        <div className="create-pin-from-local-container">
-        <div className="drag-target-area-wrapper" onClick={this.openInputTypeFile}>
-        <div className="drag-target-area" onDrop={this.handleImgFileDrop} onDragOver={this.handleDragOver}>
+        <h2>Create Pin</h2>
+        {isSaveFromSiteClicked ?
+          <div className="create-pin-from-local-container">
+            <div className="drag-target-area-wrapper" onClick={this.openInputTypeFile}>
+              <div className="drag-target-area" onDrop={this.handleImgFileDrop} onDragOver={this.handleDragOver}>
 
-        {previewImg ? <img className='preview-img' src={previewImg}/> : <div className="imgFileInputAreaDefaultImgTxt">
-        <div className="img-wrapper">
-        <img src="/images/camera-icon.png"/>
-        </div>
-        <div className="text-wrapper">
-        Drag and drop <span>OR</span> click to upload
-        </div>
-        </div>}
+                {previewImg ?
+                  <img className='preview-img' src={previewImg}/> :
+                  <div className="imgFileInputAreaDefaultImgTxt">
+                    <div className="img-wrapper">
+                      <img src="/images/camera-icon.png"/>
+                    </div>
+                    <div className="text-wrapper">
+                    Drag and drop <span>OR</span> click to upload
+                    </div>
+                  </div>
+                }
 
-        <input ref={el => this.inputTypeFile = el} type="file" accept='image/*' onChange={this.handleImageUpload}/>
-        </div>
-        </div>
-        <div className="input-field-container tags">
+              <input ref={el => this.inputTypeFile = el} type="file" accept='image/*' onChange={this.handleImageUpload}/>
+              </div>
+            </div>
 
-        <label htmlFor="tags">Tags</label>
-        <input type="text" id='tags' className={isTagInputDisabled ? 'enough-tags' : ''} placeholder="Tab to create a new tag" onChange={this.handleTagInputChange} onKeyDown={this.createTag} value={tempTagInput} disabled={isTagInputDisabled} />
-        <div className="tags-overlay-container">
-        {tags.map((t, i) => <div key={i} className="tag">
-        {t} <div id={`tag#${i}`} className="remove-tag-button" onClick={this.removeTag}><img id={`tag#${i}`} src="/images/create-pin.png"/></div>
-        </div>)}
-        </div>
+            <div className="input-field-container tags">
+              <label htmlFor="tags">Tags</label>
+              <input type="text" id='tags' className={isTagInputDisabled ? 'enough-tags' : ''} placeholder="Tab to create a new tag" onChange={this.handleTagInputChange} onKeyDown={this.createTag} value={tempTagInput} disabled={isTagInputDisabled} />
+              <div className="tags-overlay-container">
+                {tags.map((tag, i) =>
+                  <div key={i} className="tag">
+                    {tag}
+                    <div id={`tag#${i}`} className="remove-tag-button" onClick={this.removeTag}>
+                      <img id={`tag#${i}`} src="/images/create-pin.png"/>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div> :
+          <div className="create-pin-from-url-container">
+            <div className="input-field upload-from-url">
+              <label htmlFor="'upload-from-url">Add a URL</label>
+              <input type="text" id='upload-from-url' placeholder='https://' onChange={this.handleURLInputChange}/>
+            </div>
+          </div>
+        }
+        <div className="modal-controls-container">
+          <div className="all-buttons-container">
+            <div className="toggle-buttons-container">
+              <div className={isSaveFromSiteClicked ? 'button upload-from-local clicked' : 'button upload-from-local'} onClick={this.handleUploadFromLocalClick}>Upload Pin</div>
+              <div className={isSaveFromSiteClicked ? 'button upload-from-url' : 'button upload-from-url clicked'} onClick={() => {this.handleSaveFromSiteClick(); this.clearImgFileInState();}}>Save from site</div>
+            </div>
+            <div className={imgFile || siteUrl ? 'button done' : 'button done disabled'} onClick={this.handleCreatePinClick}>Done</div>
+          </div>
 
         </div>
-        </div> :
-        <div className="create-pin-from-url-container">
-        <div className="input-field upload-from-url">
-        <label htmlFor="'upload-from-url">Add a URL</label>
-        <input type="text" id='upload-from-url' placeholder='https://' onChange={this.handleURLInputChange}/>
-        </div>
-        </div>
-      }
-      <div className="modal-controls-container">
-      <div className="all-buttons-container">
-      <div className="toggle-buttons-container">
-      <div className={isSaveFromSiteClicked ? 'button upload-from-local clicked' : 'button upload-from-local'} onClick={this.handleUploadFromLocalClick}>Upload Pin</div>
-      <div className={isSaveFromSiteClicked ? 'button upload-from-url' : 'button upload-from-url clicked'} onClick={() => {this.handleSaveFromSiteClick(); this.clearImgFileInState();}}>Save from site</div>
-      </div>
-      <div className={imgFile || siteUrl ? 'button done' : 'button done disabled'} onClick={this.handleCreatePinClick}>Done</div>
-      </div>
-
-      </div>
       </div>
     );
   }
 }
-
 export default CreatePinModal;

@@ -55,6 +55,8 @@ module.exports = (app, db) => {
           tags: beautifyTags(removeDuplicates(hit.tags.split(' '))),
           comments: [],
           users: [],
+          height: hit.webformatHeight,
+          // width: hit.webformatWidth,
         })
       ))
       .then(imgs => {
@@ -72,19 +74,21 @@ module.exports = (app, db) => {
       .catch(err => console.log(err));
   });
 
-  app.route('/pic') // from drag & drop pic
+  app.route('/pic') // From drag & drop pic
     .post(upload.single('imgFile'), (req, res) => {
-      console.log('POST /pic reached; processing drag & drop pic');
+      console.log('POST /pic reached; processing dragged & dropped pic');
       // console.log('req.session.user:',req.session.user );
-      let { tags } = req.body;
+      let { tags, height } = req.body;
       tags = beautifyTags(tags.split(','));
       cloudinary.v2.uploader.upload_stream({ resource_type: 'raw'}, (err, result) => {
+        console.log('upload pic to cloudinary result:', result);
         if (err) { console.log(err); }
         const pic = {
           src: result.secure_url,
           tags,
           comments: [],
           users: [req.user.username],
+          height,
         };
         Pins.insertOne(
          pic,

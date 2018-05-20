@@ -107,9 +107,6 @@ class WallPage extends React.Component {
 
   handleMagnifyPinClick = (goToPinPage = true) => {
     console.log('handleMagnifyPinClick triggered');
-    // console.log('this.state:', this.state);
-    // console.log('who triggered handleMagnifyPinClick?', e.target);
-    // console.log('magnifiedPin:',this.props.imgs.magnifiedPin);
 
     return fetch(`/pin?&pindex=${this.state.pindex}`, {
       method: 'POST',

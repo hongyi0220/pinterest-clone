@@ -62,17 +62,22 @@ module.exports = (app, db) => {
         // console.log('req.session:', req.session);
 
         if (page === 1) {
-          req.session.page = page;
+          // req.session.page = page;
           req.session.imgs = imgs;
         } else {
           console.log('page > 1, concating imgs');
-          req.session.page ? req.session.page++ : req.session.page = page;
+          // req.session.page = page;
           req.session.imgs = [...req.session.imgs, ...imgs];
         }
-        // console.log('req.session2:', req.session);
+        req.session.page = page;
+        console.log('req.session.imgs after concating imgs:', req.session.imgs);
         res.send(imgs);
+        // res.send(req.session.imgs);
       })
-      .catch(err => console.log(err));
+      .catch(err => {
+        console.log(err);
+        res.end();
+      });
   });
 
   app.route('/pic') // From drag & drop pic

@@ -46,6 +46,10 @@ MongoClient.connect(dbUrl, (err, database) => {
       console.log('req.user:',req.user);
       // console.log('req.isAuthenticated():',req.isAuthenticated());
       console.log('req.session:', req.session);
+      if (!req.session.pins) {
+        console.log('NO PINS YET! IN REQ.SESSION.PINS!!', req.session.pins);
+      }
+
       req.user.pins = req.session.pins.filter(pin => pin.users.includes(req.user.username));
       res.send(
         {

@@ -34,19 +34,32 @@ class App extends React.Component {
   componentWillMount() {
     console.log('App will mount');
     // const username = this.props.account.user.username;
+    const pathname = this.props.history.location.pathname;
     this.getSessionData()
       .then(sessionData => {
         if (sessionData.user) { this.props.logInUser(sessionData.user); }
-        if (sessionData.imgs) { this.props.storeImgs(sessionData.imgs); }
+        if (sessionData.imgs && pathname !== '/' && pathname !== '/home') {
+          // console.log('storeImgs called');
+          this.props.storeImgs(sessionData.imgs);
+        } else {
+          this.curateWall();
+        }
         if (sessionData.otherUser) {
-          console.log('otherUser from session:', sessionData.otherUser);
+          // console.log('otherUser from session:', sessionData.otherUser);
           this.props.storeOtherUserInfo(sessionData.otherUser);
         }
         if (sessionData.magnifiedPin) { this.props.storeMagnifiedPinInfo(sessionData.magnifiedPin); }
       })
       .catch(err => console.log(err));
+    // if (pathname === '/' || '/home') {
+    //   console.log('this.props.history.location.pathname:',this.props.history.location.pathname);
+    //   // this.props.storeImgs(null);
+    //   this.curateWall();
+    // }
+  }
 
-    this.getAllPins()
+  curateWall = () => {
+    return this.getAllPins()
       .then(pins => {
         const myPins = pins.filter(pin => {
           // console.log('this:', this);
@@ -56,10 +69,6 @@ class App extends React.Component {
         if (topTags.length < 3) {
           topTags = [
             ...topTags,
-            // ...randomWords({
-            //   exactly: 3 - topTags.length,
-            //   formatter: word => [word, 2],
-            // }).map(word => word.split(',')),
             ...randomWords({ exactly: 3 - topTags.length, }),
           ];
         }
@@ -69,30 +78,8 @@ class App extends React.Component {
         return pins;
       })
       .then(pins => this.filterPinsMatchingTopTags(pins))
-      .then(async topPins => {
+      .then(topPins => {
         console.log('topPins:', topPins);
-        // if (topPins.length < 20) {
-        //
-        //   var extraPins = await fetch(`/pics?q=${this.props.imgs.topTags[0]}&page=${2}`, {
-        //     method: 'GET',
-        //     credentials: 'include',
-        //   })
-        //     .then(res => res.json())
-        //     .then(imgs => {
-        //       // if (e.scroll) {
-        //         this.props.concatImgsToStore(imgs);
-        //       // } else {
-        //       //   this.props.storeImgs(imgs);
-        //       // }
-        //       //
-        //       // this.props.toggleFetchingPics();
-        //       // console.log('state after fetchingPics:',this.state);
-        //       return imgs;
-        //     })
-        //     .catch(err => console.log(err));
-        // }
-        // console.log('extraPins:',extraPins);
-        // topPins = [...topPins, ...extraPins,];
         return this.shuffleArr(topPins);
       })
       .then(curatedPins => {
@@ -107,8 +94,12 @@ class App extends React.Component {
           },
           body: JSON.stringify({ imgs: curatedPins }),
         });
+        return true;
       })
-      .catch(err => console.log(err));
+      .catch(err => {
+        console.log(err);
+        // return false;
+      });
   }
 
   getSessionData = () => {
@@ -123,11 +114,15 @@ class App extends React.Component {
   }
 
   getAllPins = () => {
+    console.log('getAllPins CALLED');
     return fetch('/pins',{
       method: 'GET',
       credentials: 'include',
     })
-      .then(res => res.json())
+      .then(res => {
+        console.log('getAllPins got a response!');
+        return res.json();
+      })
       .then(resJson => resJson)
       .catch(err => console.log(err));
   }
@@ -216,9 +211,9 @@ class App extends React.Component {
           <Switch>
             <Route path='/pin/*' component={PinPageContainer}/>
             {account.user ?
-              (imgs.topTags ?
-              <Route component={HeaderContainer} /> : '') :
-              // <Route render={() => <HeaderContainer input={this.props.history.location.pathname === '/home' ? this.props.imgs.topTags : null} />} /> :
+              (imgs.topTags && imgs.search ?
+              <Route render={props => <HeaderContainer {...props} curateWall={this.curateWall} />} />
+              : '') :
               <Route exact path='/' component={AuthPageContainer} />}
           </Switch>
 

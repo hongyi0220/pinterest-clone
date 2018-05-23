@@ -62,7 +62,7 @@ class WallPage extends React.Component {
     if (this.state.pindex !== Number(eTarget.dataset.pindex)) {
       this.setState({
           pindex: Number(eTarget.dataset.pindex)
-      }, () => this.props.storeMagnifiedPinInfo(this.props.imgs.search[this.state.pindex]));
+      }/*, () => this.props.storeMagnifiedPinInfo(this.props.imgs.search[this.state.pindex])*/);
     }
     // this.setState(prevState =>
     //   ({
@@ -107,6 +107,7 @@ class WallPage extends React.Component {
 
   handleMagnifyPinClick = (goToPinPage = true) => {
     console.log('handleMagnifyPinClick triggered');
+    this.props.storeMagnifiedPinInfo(this.props.imgs.search[this.state.pindex]);
 
     return fetch(`/pin?&pindex=${this.state.pindex}`, {
       method: 'POST',
@@ -120,11 +121,11 @@ class WallPage extends React.Component {
       .then(resJson => {
         console.log('pinId from res:', resJson.pinId);
         if (goToPinPage) {
-          this.props.history.push(`/pin/${resJson.pinId}`);
           window.scroll({
             top: 0,
             behavior: 'instant'
           });
+          this.props.history.push(`/pin/${resJson.pinId}`);
         }
         return resJson.pinId;
       })

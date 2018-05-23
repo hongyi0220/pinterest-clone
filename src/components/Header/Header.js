@@ -63,27 +63,72 @@ class Header extends React.Component {
         this.setState({ input: e.queries });
       }
 
-      this.state.input.forEach(word => {
-        fetch(`/pics?q=${word}&page=${this.state.input.length === 1 ? this.state.page : this.state.page + 1}`, {
-          method: 'GET',
-          credentials: 'include',
+      fetch(`/pics?q=${this.state.input.join('&&')}&page=${this.state.input.length === 1 ? this.state.page : this.state.page + 1}`, {
+        method: 'GET',
+        credentials: 'include',
+      })
+        .then(res => res.json())
+        .then(imgs => {
+          // if (e.scroll || this.state.input.length > 1) {
+          //   console.log('CONCATING IMGS TO STORE');
+          //   this.props.concatImgsToStore(imgs);
+          //
+          // } else {
+          //   console.log('REPLACING IMGS IN STORE');
+          //   this.props.storeImgs(imgs);
+          // }
+          this.props.storeImgs(imgs);
+          this.props.toggleFetchingPics();
+          console.log('state after fetchingPics:',this.state);
         })
-          .then(res => res.json())
-          .then(imgs => {
-            if (e.scroll || this.state.input.length > 1) {
-              console.log('CONCATING IMGS TO STORE');
-              this.props.concatImgsToStore(imgs);
-            } else {
-              console.log('REPLACING IMGS IN STORE');
-              this.props.storeImgs(imgs);
-            }
-            // this.props.storeImgs(imgs);
-            // this.props.concatImgsToStore(imgs);
-            this.props.toggleFetchingPics();
-            console.log('state after fetchingPics:',this.state);
-          })
-          .catch(err => console.log(err));
-      });
+        .catch(err => console.log(err));
+
+      // const stack = [];
+      // this.state.input.forEach(word => {
+      //   stack.push(new Promise((resolve, reject) => {
+      //     fetch(`/pics?q=${word}&page=${this.state.input.length === 1 ? this.state.page : this.state.page + 1}`, {
+      //       method: 'GET',
+      //       credentials: 'include',
+      //     })
+      //       .then(res => {
+      //         resolve(res.json());
+      //       })
+      //       .catch(err => reject(err));
+      //   }));
+
+        // fetch(`/pics?q=${word}&page=${this.state.input.length === 1 ? this.state.page : this.state.page + 1}`, {
+        //   method: 'GET',
+        //   credentials: 'include',
+        // })
+        //   .then(res => res.json())
+          // .then(imgs => {
+          //   if (e.scroll || this.state.input.length > 1) {
+          //     console.log('CONCATING IMGS TO STORE');
+          //     this.props.concatImgsToStore(imgs);
+          //   } else {
+          //     console.log('REPLACING IMGS IN STORE');
+          //     this.props.storeImgs(imgs);
+          //   }
+          //
+          //   this.props.toggleFetchingPics();
+          //   console.log('state after fetchingPics:',this.state);
+          // })
+          // .catch(err => console.log(err));
+      // });
+      // Promise.all(stack)
+      //   .then(values => {
+      //     if (e.scroll || this.state.input.length > 1) {
+      //       console.log('CONCATING IMGS TO STORE');
+      //       this.props.concatImgsToStore(values.reduce((curr, next) => [...curr, ...next], []));
+      //       console.log('Concat imgs result:', this.props.imgs.search);
+      //     } else {
+      //       console.log('REPLACING IMGS IN STORE');
+      //       this.props.storeImgs(values[0]);
+      //     }
+      //
+      //     this.props.toggleFetchingPics();
+      //   })
+      //   .catch(err => console.log(err));
     }
   }
 

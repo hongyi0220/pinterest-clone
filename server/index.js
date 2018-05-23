@@ -45,7 +45,7 @@ MongoClient.connect(dbUrl, (err, database) => {
       // console.log('req._passport.session:',req._passport.session);
       console.log('req.user:',req.user);
       // console.log('req.isAuthenticated():',req.isAuthenticated());
-      console.log('req.session:', req.session);
+      // console.log('req.session:', req.session);
       if (!req.session.pins) {
         console.log('NO PINS YET! IN REQ.SESSION.PINS!!', req.session.pins);
       }
@@ -61,8 +61,9 @@ MongoClient.connect(dbUrl, (err, database) => {
       );
     })
     .post((req, res) => {
-      console.log('POST /session reached; req.body.imgs:', req.body.imgs);
+      console.log('POST /session reached; req.body.imgs:', '');
       req.session.imgs = req.body.imgs;
+      console.log('session.imgs after POST /session:', req.session.imgs);
       res.end();
     });
 

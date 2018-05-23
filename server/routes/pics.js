@@ -25,13 +25,13 @@ module.exports = (app, db) => {
     return result;
   };
 
-  app.get('/pics', (req, res) => { // search pics
+  app.get('/pics', async (req, res) => { // search pics
     console.log('GET /pics route reached!');
-    console.log('session.id:', req.session.id);
+    console.log('session.imgs:', req.session.imgs);
     let { page, q } = req.query;
+    q = q.split('&&');
     page = +page;
-    const url = `https://pixabay.com/api?key=${apiKey}&q=${q}&safesearch=true&page=${page}`;
-    console.log(url);
+
 
     const removeDuplicates = items => {
       let len = items.length; // eslint-disable-line no-unused-vars
@@ -46,38 +46,89 @@ module.exports = (app, db) => {
       return items;
     };
 
-    fetch(url)
-      .then(res => res.json())
-      .then(resJson =>
-        resJson.hits.map(hit => ({
-          src: hit.webformatURL,
-          tags: beautifyTags(removeDuplicates(hit.tags.split(' '))),
-          comments: [],
-          users: [],
-          height: hit.webformatHeight,
-          // width: hit.webformatWidth,
-        })
-      ))
-      .then(imgs => {
-        // console.log('req.session:', req.session);
+    const stack = [];
+    q.forEach(query => {
+      const url = `https://pixabay.com/api?key=${apiKey}&q=${query}&safesearch=true&page=${page}`;
+      console.log(url);
+      stack.push(new Promise((resolve, reject) => {
+        fetch(url)
+          .then(res => res.json())
+          .then(resJson =>
+            resolve(resJson.hits.map(hit => ({
+              src: hit.webformatURL,
+              tags: beautifyTags(removeDuplicates(hit.tags.split(' '))),
+              comments: [],
+              users: [],
+              height: hit.webformatHeight,
+            }))
+          ))
+          .catch(err => reject(err));
+      }));
+    });
 
+    Promise.all(stack)
+      .then(values => {
+        const imgs = values.reduce((curr, next) => [...curr, ...next], []);
         if (page === 1) {
           // req.session.page = page;
           req.session.imgs = imgs;
         } else {
-          console.log('page > 1, concating imgs');
+          console.log('page:',page,' concating imgs');
+          console.log('session.imgs B4 concating:');
           // req.session.page = page;
-          req.session.imgs = [...req.session.imgs, ...imgs];
+
+          req.session.imgs = req.session.imgs ? [...req.session.imgs, ...imgs] : imgs;
         }
         req.session.page = page;
-        console.log('req.session.imgs after concating imgs:', req.session.imgs);
-        res.send(imgs);
-        // res.send(req.session.imgs);
+        console.log('BABABA:', req.session.imgs);
+        res.send(req.session.imgs);
       })
-      .catch(err => {
-        console.log(err);
-        res.end();
-      });
+      .catch(err => console.log(err));
+
+    // const imgs = await fetch(url)
+    //   .then(res => res.json())
+    //   .then(resJson =>
+    //     resJson.hits.map(hit => ({
+    //       src: hit.webformatURL,
+    //       tags: beautifyTags(removeDuplicates(hit.tags.split(' '))),
+    //       comments: [],
+    //       users: [],
+    //     })
+    //   ))
+    //   .then(imgs => {
+        // console.log('req.session:', req.session);
+        // return imgs;
+        // if (page === 1) {
+        //   // req.session.page = page;
+        //   req.session.imgs = imgs;
+        // } else {
+        //   console.log('page:',page,' concating imgs');
+        //   console.log('session.imgs B4 concating:');
+        //   // req.session.page = page;
+        //
+        //   req.session.imgs = req.session.imgs ? [...req.session.imgs, ...imgs] : imgs;
+        // }
+        // req.session.page = page;
+        // console.log('BABABA:', req.session.imgs);
+        // res.send(imgs);
+      // })
+      // .catch(err => {
+      //   console.log(err);
+      //   res.end();
+      // });
+      // if (page === 1) {
+      //   // req.session.page = page;
+      //   req.session.imgs = imgs;
+      // } else {
+      //   console.log('page:',page,' concating imgs');
+      //   console.log('session.imgs B4 concating:');
+      //   // req.session.page = page;
+      //
+      //   req.session.imgs = req.session.imgs ? [...req.session.imgs, ...imgs] : imgs;
+      // }
+      // req.session.page = page;
+      // console.log('BABABA:', req.session.imgs);
+      // res.send(imgs);
   });
 
   app.route('/pic') // From drag & drop pic
@@ -249,7 +300,7 @@ module.exports = (app, db) => {
           // req.session.imgs = docs;
           req.session.pins = docs;
           // req.user.pins = req.session.pins.filter(pin => pin.users.includes(req.user.username));
-          console.log('DOCS:', docs);
+          // console.log('DOCS:', docs);
           res.send(docs);
         });
     });

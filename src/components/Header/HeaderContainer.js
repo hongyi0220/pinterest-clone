@@ -6,6 +6,7 @@ import {
     concatImgsToStore,
     toggleFetchingPics,
     storeOtherUserInfo,
+    storeSearchKeywords,
 } from '../../actions';
 
 const mapStateToProps = state => state;
@@ -18,6 +19,7 @@ const HeaderContainer = connect(
         concatImgsToStore,
         toggleFetchingPics,
         storeOtherUserInfo,
+        storeSearchKeywords,
     }
 )(Header);
 

@@ -46,3 +46,8 @@ export const storeMagnifiedPinInfo = magnifiedPin => ({
   type: 'STORE_MAGNIFIED_PIN_INFO',
   magnifiedPin,
 });
+
+export const storeSearchKeywords = keywords => ({
+  type: 'STORE_SEARCH_KEYWORDS',
+  keywords,
+});

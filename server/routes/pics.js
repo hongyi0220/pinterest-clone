@@ -80,7 +80,7 @@ module.exports = (app, db) => {
           req.session.imgs = req.session.imgs ? [...req.session.imgs, ...imgs] : imgs;
         }
         req.session.page = page;
-        console.log('BABABA:', req.session.imgs);
+        // console.log('BABABA:', req.session.imgs);
         res.send(req.session.imgs);
       })
       .catch(err => console.log(err));

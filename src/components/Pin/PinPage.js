@@ -1,4 +1,7 @@
 import React from 'react';
+import {
+  Route,
+} from 'react-router';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import {
@@ -111,7 +114,7 @@ class PinPage extends React.Component {
           </div>
           <div className="pin-container">
             <div className="img-wrapper">
-              <img src={imgs.magnifiedPin ? imgs.magnifiedPin.src : ''} alt={`a pic of ${imgs.magnifiedPin ? imgs.magnifiedPin.tags : ''}.join(',')`}/>
+              <img src={imgs.magnifiedPin ? imgs.magnifiedPin.src : ''} alt={`a pic of ${imgs.magnifiedPin ? imgs.magnifiedPin.tags[0] : ''}`}/>
             </div>
             <div className='comments-container'>
 
@@ -142,8 +145,8 @@ class PinPage extends React.Component {
           <h3>More Like this</h3>
         </div>
         <div className="more-like-this-container">
+        <Route component={WallPageContainer} />
 
-          <WallPageContainer similarPicsKeyword={imgs.magnifiedPin ? imgs.magnifiedPin.tags[0] : ''} />
         </div>
 
       </div>

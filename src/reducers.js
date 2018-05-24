@@ -9,12 +9,15 @@ const STORE_TOP_TAGS = 'STORE_TOP_TAGS';
 const TOGGLE_FETCHING_PICS = 'TOGGLE_FETCHING_PICS';
 const STORE_OTHER_USER_INFO = 'STORE_OTHER_USER_INFO';
 const STORE_MAGNIFIED_PIN_INFO = 'STORE_MAGNIFIED_PIN_INFO';
+const STORE_SEARCH_KEYWORDS = 'STORE_SEARCH_KEYWORDS';
+
 const initState = {
   account: {
     user: null,
     otherUser: null,
   },
   imgs: {
+    searchKeywords: [],
     search: null,
     topTags: null,
     magnifiedPin: null,
@@ -70,6 +73,11 @@ const imgs = (state = initState.imgs, action) => {
       return {
         ...state,
         magnifiedPin: action.magnifiedPin,
+      };
+    case STORE_SEARCH_KEYWORDS:
+      return {
+        ...state,
+        searchKeywords: action.keywords,
       };
     default:
       return state;

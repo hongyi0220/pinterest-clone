@@ -24,7 +24,10 @@ class App extends React.Component {
     ui: PropTypes.object.isRequired,
     storeImgs: PropTypes.func.isRequired,
     storeTopTags: PropTypes.func.isRequired,
-    imgs: PropTypes.shape({ topTags: [] }).isRequired,
+    imgs: PropTypes.shape({
+      topTags: PropTypes.array,
+      input: PropTypes.array,
+     }).isRequired,
     storeMagnifiedPinInfo: PropTypes.func.isRequired,
     storeOtherUserInfo: PropTypes.func.isRequired,
     history: PropTypes.shape({ location: PropTypes.shape({ pathname: PropTypes.string })}),
@@ -76,14 +79,6 @@ class App extends React.Component {
           // console.log('storeImgs called');
           this.props.storeImgs(sessionData.imgs);
         } else {
-          // fetch('/session', {
-          //   method: 'POST',
-          //   credentials: 'include',
-          //   headers: {
-          //     'content-type': 'application/json'
-          //   },
-          //   body: JSON.stringify({ imgs: [] }),
-          // });
           this.curateWall(allPins);
         }
         if (sessionData.otherUser) {
@@ -92,30 +87,8 @@ class App extends React.Component {
         }
         if (sessionData.magnifiedPin) { this.props.storeMagnifiedPinInfo(sessionData.magnifiedPin); }
 
-        // this.curateWall(allPins);
       })
       .catch(err => console.log(err));
-    // this.getSessionData()
-    //   .then(sessionData => {
-    //     if (sessionData.user) { this.props.logInUser(sessionData.user); }
-    //     if (sessionData.imgs && pathname !== '/' && pathname !== '/home') {
-    //       // console.log('storeImgs called');
-    //       this.props.storeImgs(sessionData.imgs);
-    //     } else {
-    //       this.curateWall();
-    //     }
-    //     if (sessionData.otherUser) {
-    //       // console.log('otherUser from session:', sessionData.otherUser);
-    //       this.props.storeOtherUserInfo(sessionData.otherUser);
-    //     }
-    //     if (sessionData.magnifiedPin) { this.props.storeMagnifiedPinInfo(sessionData.magnifiedPin); }
-    //   })
-    //   .catch(err => console.log(err));
-    // if (pathname === '/' || '/home') {
-    //   console.log('this.props.history.location.pathname:',this.props.history.location.pathname);
-    //   // this.props.storeImgs(null);
-    //   this.curateWall();
-    // }
   }
 
   curateWall = allPins => {
@@ -143,49 +116,6 @@ class App extends React.Component {
     })
       .then(() => this.setState({ isOkToPadWall: true }))
       .catch(err => console.log(err));
-
-
-    // return this.getAllPins()
-      // .then(pins => {
-      //   const myPins = pins.filter(pin => {
-      //     // console.log('this:', this);
-      //     return pin.users.includes(this.props.account.user.username);
-      //   });
-      //   let topTags = this.getTopTags(myPins);
-      //   if (topTags.length < 3) {
-      //     topTags = [
-      //       ...topTags,
-      //       ...randomWords({ exactly: 3 - topTags.length, }),
-      //     ];
-      //   }
-      //   console.log('topTags:', topTags);
-      //   this.props.storeTopTags(topTags);
-      //   console.log('All Pins:', pins);
-      //   return pins;
-      // })
-      // .then(pins => this.filterPinsMatchingTopTags(pins))
-      // .then(topPins => {
-      //   console.log('topPins:', topPins);
-      //   return this.shuffleArr(topPins);
-      // })
-      // .then(curatedPins => {
-      //   // this.props.storeImgs(imgs);
-      //   this.props.storeImgs(curatedPins);
-      //   // Save curatedPins to session
-      //   fetch('/session', {
-      //     method: 'POST',
-      //     credentials: 'include',
-      //     headers: {
-      //       'content-type': 'application/json'
-      //     },
-      //     body: JSON.stringify({ imgs: curatedPins }),
-      //   });
-      //   return true;
-      // })
-      // .catch(err => {
-      //   console.log(err);
-        // return false;
-      // });
   }
 
   getSessionData = () => {
@@ -298,9 +228,10 @@ class App extends React.Component {
             <Route path='/pin/*' component={PinPageContainer}/>
             {account.user ?
               (this.state.isOkToPadWall ?
-              <Route render={props => <HeaderContainer {...props} curateWall={this.curateWall} />} />
-              : '') :
-              <Route exact path='/' component={AuthPageContainer} />}
+              <Route render={props => <HeaderContainer {...props} curateWall={this.curateWall} input={this.props.imgs.input}/>} />
+              : '')
+              : <Route exact path='/' component={AuthPageContainer} />
+            }
           </Switch>
 
 

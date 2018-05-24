@@ -11,36 +11,33 @@ class WallPage extends React.Component {
     storeImgs: PropTypes.func.isRequired,
     account: PropTypes.object.isRequired,
     ui: PropTypes.object.isRequired,
-    imgs: PropTypes.shape({ topTags: [], search: [], magnifiedPin: {} }).isRequired,
+    imgs: PropTypes.shape({
+      topTags: PropTypes.array,
+      search: PropTypes.shape({ }),
+      magnifiedPin: PropTypes.shape({ tags: PropTypes.array, }),
+      searchKeywords: PropTypes.array,
+     }).isRequired,
     logInUser: PropTypes.func.isRequired,
-    history: PropTypes.shape({ push: history.push }),
+    history: PropTypes.shape({
+      push: PropTypes.func,
+      location: PropTypes.shape({
+        pathname: PropTypes.string,
+      }),
+    }),
     storeOtherUserInfo: PropTypes.func.isRequired,
     storeMagnifiedPinInfo: PropTypes.func.isRequired,
     similarPicsKeyword: PropTypes.string,
     concatImgsToStore: PropTypes.func.isRequired,
+    storeSearchKeywords: PropTypes.func.isRequired,
   };
 
   componentWillMount() {
     console.log('WallPage will mount');
     this.setState({ clientWidth: window.innerWidth, clientHeight: window.innerHeight });
-    if (this.props.similarPicsKeyword) {
-      // let q, page;
-      // this.props.similarPicsKeyword.forEach((keyword, i) => {
-      //   // q = keyword, page = i + 2;
-      //   console.log(`fetching /pics?q=${keyword}&page=${i + 2}`);
-      //   fetch(`/pics?q=${keyword}&page=${i + 2}`, {
-      //     method: 'GET',
-      //     credentials: 'include',
-      //   })
-      //     .then(res => res.json())
-      //     .then(imgs => {
-      //       this.props.concatImgsToStore(imgs);
-      //     })
-      //     .catch(err => console.log(err));
-      // });
-      const q = this.props.similarPicsKeyword;
-      const page = 1;
-      fetch(`/pics?q=${q}&page=${page}`, {
+    if (this.props.history.location.pathname.includes('/pin')) {
+      const q = this.props.imgs.searchKeywords[0];
+      // const page = 1;
+      fetch(`/pics?q=${q}&page=${1}`, {
         method: 'GET',
         credentials: 'include',
       })
@@ -64,11 +61,6 @@ class WallPage extends React.Component {
           pindex: Number(eTarget.dataset.pindex)
       }/*, () => this.props.storeMagnifiedPinInfo(this.props.imgs.search[this.state.pindex])*/);
     }
-    // this.setState(prevState =>
-    //   ({
-    //     pindex: (e && prevState.pindex !== Number(eTarget.dataset.pindex)) ? Number(eTarget.dataset.pindex) : prevState.pindex
-    //   })
-    // );
   }
 
   handleSaveButtonClick = e => {
@@ -81,29 +73,6 @@ class WallPage extends React.Component {
     })
       .catch(err => console.log(err));
   }
-
-  // handleUserProfileImgClick = e => {
-  //   e.stopPropagation();
-  //   console.log('handle User Profile Img Clicked:',e.target.dataset.username);
-  //   const username = e.target.dataset.username;
-  //
-  //   fetch(`/user/${username}?externalapi=false`, {
-  //     method: 'GET',
-  //     credentials: 'include',
-  //   })
-  //     // .then(() => {
-  //     //   this.setState({ username });
-  //     //   this.props.history.push(`/user/${username}`);
-  //     // })
-  //     .then(res => res.json())
-  //     .then(otherUser => {
-  //       console.log('res from /user:', otherUser);
-  //
-  //       this.props.storeOtherUserInfo(otherUser);
-  //       this.props.history.push(`/user/${otherUser.username}`);
-  //     })
-  //     .catch(err => console.log(err));
-  // }
 
   handleMagnifyPinClick = (goToPinPage = true) => {
     console.log('handleMagnifyPinClick triggered');
@@ -125,6 +94,7 @@ class WallPage extends React.Component {
             top: 0,
             behavior: 'instant'
           });
+          this.props.storeSearchKeywords([this.props.imgs.magnifiedPin.tags[0]]);
           this.props.history.push(`/pin/${resJson.pinId}`);
         }
         return resJson.pinId;

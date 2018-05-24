@@ -7,27 +7,48 @@ class Header extends React.Component {
     toggleFetchingPics: PropTypes.func.isRequired,
     storeImgs: PropTypes.func.isRequired,
     concatImgsToStore: PropTypes.func.isRequired,
-    history: PropTypes.shape({ push: history.push }).isRequired,
-    imgs: PropTypes.shape({ search: PropTypes.array, topTags: PropTypes.array }).isRequired,
+    history: PropTypes.shape({
+      push: PropTypes.func,
+      location: PropTypes.shape({
+        pathname: PropTypes.string
+      })
+    }).isRequired,
+    imgs: PropTypes.shape({
+      searchKeywords: PropTypes.array,
+      search: PropTypes.array,
+      topTags: PropTypes.array,
+      magnifiedPin: PropTypes.shape({
+        tags: PropTypes.array,
+      }),
+    }).isRequired,
     ui: PropTypes.shape({ fetchingPics: PropTypes.bool }).isRequired,
     account: PropTypes.shape({ }).isRequired,
     toggleHeaderMenu: PropTypes.func.isRequired,
     storeOtherUserInfo: PropTypes.func.isRequired,
-    input: PropTypes.bool,
+    storeSearchKeywords: PropTypes.func.isRequired,
     curateWall: PropTypes.func.isRequired,
   };
 
   state = {
-    input: this.props.imgs.topTags || '',
     page: 1,
     pageYOffset: 0,
-    // queries: this.props.imgs.topTags,
   };
 
   componentWillMount() {
     console.log('Header will mount');
-    console.log('this.state:',this.state);
-    this.padCuratedWall();
+    console.log('Header component state at compWllMnt:', this.state);
+
+    const pathname = this.props.history.location.pathname;
+    if (pathname === '/' || pathname === '/home') {
+
+      this.props.storeSearchKeywords(this.props.imgs.topTags);
+      if (this.props.imgs.search.length < 20) {
+        console.log('this.props.imgs.search.length < 20:', this.props.imgs.search.length < 20,'getting more pics to append to wall');
+
+        this.searchImg({ key: 'Enter', scroll: true, /*queries: this.props.imgs.topTags */});
+      }
+    }
+
   }
 
   componentDidMount() {
@@ -35,16 +56,11 @@ class Header extends React.Component {
     this.lazyLoadPics();
   }
 
-  padCuratedWall = () => {
-    if (this.props.imgs.search.length < 20) {
-      console.log('this.props.imgs.search.length < 20:', this.props.imgs.search.length < 20,'getting more pics to append to wall');
-      this.searchImg({ key: 'Enter', scroll: true, queries: this.props.imgs.topTags });
-    }
-  }
-
   searchImg = e => {
     console.log('page:', this.state.page);
     console.log('keyDown:',e.key);
+    console.log('searchKeywords:', this.props.imgs.searchKeywords);
+    const pathname = this.props.history.location.pathname;
     if (e.key === 'Enter') {
       this.props.toggleFetchingPics();
       if (!e.scroll) {
@@ -55,84 +71,25 @@ class Header extends React.Component {
         });
       }
 
-      if (this.state.input.length === 1) {
-        this.props.history.push(`/search?q=${this.state.input[0]}&page=${this.state.page}`);
-      }
-      if (e.queries) {
-        console.log('e.queries:',e.queries);
-        this.setState({ input: e.queries });
+      if (this.props.imgs.searchKeywords.length === 1 && !pathname.includes('/pin')) {
+        this.props.history.push(`/search?q=${this.props.imgs.searchKeywords[0]}&page=${this.state.page}`);
       }
 
-      fetch(`/pics?q=${this.state.input.join('&&')}&page=${this.state.input.length === 1 ? this.state.page : this.state.page + 1}`, {
+      fetch(`/pics?q=${this.props.imgs.searchKeywords.join('&&')}&page=${this.props.imgs.searchKeywords.length === 1 ? this.state.page : this.state.page + 1}`, {
         method: 'GET',
         credentials: 'include',
       })
         .then(res => res.json())
         .then(imgs => {
-          // if (e.scroll || this.state.input.length > 1) {
-          //   console.log('CONCATING IMGS TO STORE');
-          //   this.props.concatImgsToStore(imgs);
-          //
-          // } else {
-          //   console.log('REPLACING IMGS IN STORE');
-          //   this.props.storeImgs(imgs);
-          // }
           this.props.storeImgs(imgs);
           this.props.toggleFetchingPics();
           console.log('state after fetchingPics:',this.state);
         })
         .catch(err => console.log(err));
-
-      // const stack = [];
-      // this.state.input.forEach(word => {
-      //   stack.push(new Promise((resolve, reject) => {
-      //     fetch(`/pics?q=${word}&page=${this.state.input.length === 1 ? this.state.page : this.state.page + 1}`, {
-      //       method: 'GET',
-      //       credentials: 'include',
-      //     })
-      //       .then(res => {
-      //         resolve(res.json());
-      //       })
-      //       .catch(err => reject(err));
-      //   }));
-
-        // fetch(`/pics?q=${word}&page=${this.state.input.length === 1 ? this.state.page : this.state.page + 1}`, {
-        //   method: 'GET',
-        //   credentials: 'include',
-        // })
-        //   .then(res => res.json())
-          // .then(imgs => {
-          //   if (e.scroll || this.state.input.length > 1) {
-          //     console.log('CONCATING IMGS TO STORE');
-          //     this.props.concatImgsToStore(imgs);
-          //   } else {
-          //     console.log('REPLACING IMGS IN STORE');
-          //     this.props.storeImgs(imgs);
-          //   }
-          //
-          //   this.props.toggleFetchingPics();
-          //   console.log('state after fetchingPics:',this.state);
-          // })
-          // .catch(err => console.log(err));
-      // });
-      // Promise.all(stack)
-      //   .then(values => {
-      //     if (e.scroll || this.state.input.length > 1) {
-      //       console.log('CONCATING IMGS TO STORE');
-      //       this.props.concatImgsToStore(values.reduce((curr, next) => [...curr, ...next], []));
-      //       console.log('Concat imgs result:', this.props.imgs.search);
-      //     } else {
-      //       console.log('REPLACING IMGS IN STORE');
-      //       this.props.storeImgs(values[0]);
-      //     }
-      //
-      //     this.props.toggleFetchingPics();
-      //   })
-      //   .catch(err => console.log(err));
     }
   }
 
-  handleInput = e => this.setState({ input: [e.target.value] });
+  handleInputChange = e => this.props.storeSearchKeywords([e.target.value]);
 
   lazyLoadPics = () => {
     let pageYOffset = 0;
@@ -147,7 +104,7 @@ class Header extends React.Component {
 
       console.log('document scrollHeight - 100:',document.documentElement.scrollHeight - 100);
 
-      if (window.pageYOffset + window.innerHeight >= document.documentElement.scrollHeight - 100 && this.state.input && window.pageYOffset >= pageYOffset && !this.props.ui.fetchingPics) {
+      if (window.pageYOffset + window.innerHeight >= document.documentElement.scrollHeight - 100 && this.props.imgs.searchKeywords && window.pageYOffset >= pageYOffset && !this.props.ui.fetchingPics) {
         // this.setState({ fetchingPics: true });
         console.log('lazy-loading triggered');
         this.setState(prevState => ({ page: prevState.page += 1 }));
@@ -158,21 +115,22 @@ class Header extends React.Component {
   }
 
   render() {
-    const { input } = this.state;
-    const { account, toggleHeaderMenu } = this.props;
+    console.log('Header component state at render:', this.state);
+    // const { input } = this.state;
+    const { account, toggleHeaderMenu, imgs } = this.props;
     return (
       <div className="header">
         <Link className="link" to='/' onClick={() => {this.props.curateWall().then(() => this.padCuratedWall()).catch(err => console.log(err)); }}>
           <img src="/images/pinterest_logo.png"/>
         </Link>
 
-        <input type="text" placeholder='Search' onKeyDown={this.searchImg} onChange={this.handleInput} value={input.length > 1 ? '' : input[0]}/>
+        <input type="text" placeholder='Search' onKeyDown={this.searchImg} onChange={this.handleInputChange} value={imgs.searchKeywords.length > 1 ? '' : imgs.searchKeywords[0]}/>
 
         <Link className="link" to='/home' onClick={() => {this.props.curateWall().then(() => this.padCuratedWall()).catch(err => console.log(err)); }}>
           <div className="home">Home</div>
         </Link>
 
-        <Link className='link' to={`/user/${account.user.username}`} onClick={() => {this.setState({ input: '' }); this.props.storeOtherUserInfo(null);} }>
+        <Link className='link' to={`/user/${account.user.username}`} onClick={() => {this.props.storeSearchKeywords([]); this.props.storeOtherUserInfo(null);} }>
           <div className="user">
             {account.user.username}
           </div>

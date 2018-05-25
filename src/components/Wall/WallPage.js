@@ -13,7 +13,7 @@ class WallPage extends React.Component {
     ui: PropTypes.object.isRequired,
     imgs: PropTypes.shape({
       topTags: PropTypes.array,
-      search: PropTypes.shape({ }),
+      search: PropTypes.array,
       magnifiedPin: PropTypes.shape({ tags: PropTypes.array, }),
       searchKeywords: PropTypes.array,
      }).isRequired,
@@ -26,7 +26,7 @@ class WallPage extends React.Component {
     }),
     storeOtherUserInfo: PropTypes.func.isRequired,
     storeMagnifiedPinInfo: PropTypes.func.isRequired,
-    similarPicsKeyword: PropTypes.string,
+    // similarPicsKeyword: PropTypes.string,
     concatImgsToStore: PropTypes.func.isRequired,
     storeSearchKeywords: PropTypes.func.isRequired,
   };
@@ -36,6 +36,7 @@ class WallPage extends React.Component {
     this.setState({ clientWidth: window.innerWidth, clientHeight: window.innerHeight });
     if (this.props.history.location.pathname.includes('/pin')) {
       const q = this.props.imgs.searchKeywords[0];
+      console.log('searchKeywords:', q);
       // const page = 1;
       fetch(`/pics?q=${q}&page=${1}`, {
         method: 'GET',
@@ -141,7 +142,7 @@ class WallPage extends React.Component {
         }
         </div>
         <div className="loading-icon-wrapper">
-          <div className={ui.fetchingPics ? 'loading-icon on' : 'loading-icon'} >
+          <div className={ui.loadingSpinner ? 'loading-icon on' : 'loading-icon'} >
             <svg>
               <circle cx='35%' cy='35%'/>
               <circle cx='65%' cy='35%'/>

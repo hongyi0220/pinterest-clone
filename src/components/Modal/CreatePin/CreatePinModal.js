@@ -3,6 +3,13 @@ import PropTypes from 'prop-types';
 import isValidDomain from 'is-valid-domain';
 
 class CreatePinModal extends React.Component {
+  static propTypes = {
+    history: PropTypes.object.isRequired,
+    toggleModal: PropTypes.func.isRequired,
+    openMsgModal: PropTypes.func.isRequired,
+    storeImgs: PropTypes.func.isRequired,
+    account: PropTypes.shape({ user: PropTypes.shape({ username: PropTypes.string }) }),
+  };
   state = {
     tempTagInput: '',
     tags: [],
@@ -13,13 +20,7 @@ class CreatePinModal extends React.Component {
     isSaveFromSiteClicked: true,
     siteUrl: '',
   };
-  static propTypes = {
-    history: PropTypes.object.isRequired,
-    toggleModal: PropTypes.func.isRequired,
-    openMsgModal: PropTypes.func.isRequired,
-    storeImgs: PropTypes.func.isRequired,
-    account: PropTypes.shape({ user: PropTypes.shape({ username: PropTypes.string }) }),
-  };
+
   inputTypeFile = null;
 
   handleImageUpload = e => {

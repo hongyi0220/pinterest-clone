@@ -1,8 +1,7 @@
 import React from 'react';
 import {
-  // BrowserRouter as Router,
   Route,
-  Switch,
+  // Switch,
 } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import {
@@ -35,7 +34,7 @@ class App extends React.Component {
   };
 
   state = {
-    isOkToPadWall: false,
+    curatedPinsStoredInSession: false,
   };
 
   componentWillMount() {
@@ -114,7 +113,7 @@ class App extends React.Component {
       },
       body: JSON.stringify({ imgs: curatedPins }),
     })
-      .then(() => this.setState({ isOkToPadWall: true }))
+      .then(() => this.setState({ curatedPinsStoredInSession: true }))
       .catch(err => console.log(err));
   }
 
@@ -224,15 +223,13 @@ class App extends React.Component {
     return (
       // <Router>
         <div className="app-container">
-          <Switch>
-            <Route path='/pin/*' component={PinPageContainer}/>
-            {account.user ?
-              (this.state.isOkToPadWall ?
-              <Route render={props => <HeaderContainer {...props} curateWall={this.curateWall} input={this.props.imgs.input}/>} />
-              : '')
-              : <Route exact path='/' component={AuthPageContainer} />
-            }
-          </Switch>
+          <Route path='/pin/*' component={PinPageContainer}/>
+          {account.user ?
+            (this.state.curatedPinsStoredInSession ?
+            <Route render={props => <HeaderContainer {...props} input={this.props.imgs.input} atPinPage={this.props.history.location.pathname.includes('/pin')}/>} />
+            : '')
+            : <Route exact path='/' component={AuthPageContainer} />
+          }
 
 
           {ui.headerMenu ?

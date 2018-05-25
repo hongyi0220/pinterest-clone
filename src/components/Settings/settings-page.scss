@@ -171,12 +171,22 @@ html {
         }
         .settings-footer-button.save {
             @include pinterest-gray-button(15%);
-            background-color: rgb(187,15,36);
+            background-color: $pin-red;
             color: white;
             min-width: 100px;
             &:hover {
-                background-color: rgb(171,14,33);
+                background-color: $pin-red-hover;
                 cursor: pointer;
+            }
+        }
+        .settings-footer-button.save.disabled {
+            @include pinterest-gray-button(15%);
+            background-color: $pin-red-disabled;
+            color: white;
+            min-width: 100px;
+            &:hover {
+                // background-color: rgb(171,14,33);
+                cursor: not-allowed;
             }
         }
         .settings-footer-button.cancel {

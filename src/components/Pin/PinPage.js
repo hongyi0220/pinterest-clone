@@ -6,19 +6,31 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import {
   storeMagnifiedPinInfo,
+  storeImgs,
+  storeSearchKeywords,
 } from '../../actions';
 import WallPageContainer from '../Wall/WallPageContainer';
 
 class PinPage extends React.Component {
   static propTypes = {
-    imgs: PropTypes.shape({ magnifiedPin: {} }).isRequired,
-    account: PropTypes.shape({ user: PropTypes.shape({ username: PropTypes.string }) }).isRequired,
+    imgs: PropTypes.shape({
+      magnifiedPin: PropTypes.shape({
+        comments: PropTypes.array,
+        tags: PropTypes.array,
+      }),
+      curatedPins: PropTypes.array,
+    }).isRequired,
+    account: PropTypes.shape({
+      user: PropTypes.shape({ username: PropTypes.string, })
+    }).isRequired,
     history: PropTypes.shape({
       location: PropTypes.shape({
         pathname: PropTypes.string
       }),
       push: PropTypes.func,
     }).isRequired,
+    storeImgs: PropTypes.func.isRequired,
+    storeSearchKeywords: PropTypes.func.isRequired,
   };
 
   state = {
@@ -31,6 +43,7 @@ class PinPage extends React.Component {
 
   componentWillMount() {
     console.log('PinPage will mount!');
+    // this.props.storeSearchKeywords([this.props.imgs.magnifiedPin.tags[0]]);
     this.setState({
       clientWidth: window.innerWidth,
       clientHeight: window.innerHeight,
@@ -40,15 +53,8 @@ class PinPage extends React.Component {
   }
 
   handleCommentInputChange = e => {
-    // const { comments } = this.state;
-    // comments.push(e.target.value);
     const eTarget = e.target;
     this.setState({ comment: eTarget.value });
-
-    // const eTarget = e.target.value;
-    // this.setState(prevState =>
-    //   ({ comments: [...prevState.comments, eTarget.value] })
-    // );
   }
 
   handleSaveButtonClick = () => {
@@ -86,11 +92,15 @@ class PinPage extends React.Component {
     }
   }
 
-  handleHomeButtonClick = () => this.props.history.push('/home');
+  handleHomeButtonClick = () => {
+    this.props.history.push('/home');
+    this.props.storeImgs(this.props.imgs.curatedPins);
+  }
 
   render() {
     const { imgs, } = this.props;
     const { comments, } = this.state;
+  
     console.log('similarPicsKeyword:',imgs.magnifiedPin ? imgs.magnifiedPin.tags[0] : '');
     return (
       <div className="pin-page-background">
@@ -133,8 +143,8 @@ class PinPage extends React.Component {
               </div>
               <hr />
               <div className="pin-owner-info-container">
-                <img src={imgs.magnifiedPin ? imgs.magnifiedPin.profileImg : '/images/default-profile-image.png'} alt='user profile'/>
-                <span>saved this Pin</span>
+                {imgs.magnifiedPin ? (imgs.magnifiedPin.users.length ? `${imgs.magnifiedPin.users[0]} and ${imgs.magnifiedPin.users.length - 1} others saved this Pin` : 'No owner info to display') : ''}
+                {/* {imgs.magnifiedPin.users.length ? `${imgs.magnifiedPin.users[0]} and ${imgs.magnifiedPin.users.length - 1} others saved this Pin` : 'No owner info to display'} */}
               </div>
             </div>
 
@@ -145,7 +155,7 @@ class PinPage extends React.Component {
           <h3>More Like this</h3>
         </div>
         <div className="more-like-this-container">
-        <Route component={WallPageContainer} />
+          <Route component={WallPageContainer} />
 
         </div>
 
@@ -159,6 +169,8 @@ class PinPage extends React.Component {
   state => ({ imgs: state.imgs, account: state.account }),
   {
     storeMagnifiedPinInfo,
+    storeImgs,
+    storeSearchKeywords,
   }
 )(PinPage);
 export default PinPageContainer;

@@ -31,7 +31,9 @@
 //         font-weight: 600;
 //     }
 // }
-
+.header.invisible {
+  display: none;
+}
 .header {
     display: flex;
     flex-direction: row;
@@ -47,6 +49,9 @@
         text-decoration: none;
 
     }
+    // .button.home-button-container {
+    //   text-decoration: none;
+    // }
     img {
         height: 40px;
         margin: .5em;
@@ -54,7 +59,13 @@
     input {
         @include input-pinterest-style;
     }
-    .home {
+    // .home {
+    //     line-height: 40px;
+    //     border-radius: 20px;
+    //     padding: 0 1em;
+    //     @include header-item;
+    // }
+    .home-button-text-wrapper {
         line-height: 40px;
         border-radius: 20px;
         padding: 0 1em;

@@ -11,6 +11,7 @@ class SettingsPage extends React.Component {
     previewImg: '',
     email: '',
     username: '',
+    postingFormData: false,
   };
 
   formSubmitButton = null;
@@ -25,19 +26,19 @@ class SettingsPage extends React.Component {
     username: '',
   })
 
-  handleImageUpload = e => {
+  handleImageFileUpload = e => {
     console.log('handling ImageUplaod');
     console.log('e.target.files[0]:', e.target.files[0]);
     const imgFile = e.target.files[0];
     const previewImg = URL.createObjectURL(imgFile);
-    this.setState({ previewImg });
+    this.setState({ previewImg, postingFormData: true, });
 
     let formData = new FormData();
     formData.append('imgFile', imgFile);
 
     console.log('formData after appending data:', formData);
     fetch('/profile-img', {
-      method: 'post',
+      method: 'POST',
       credentials: 'include',
       body: formData
     })
@@ -47,10 +48,11 @@ class SettingsPage extends React.Component {
       })
       .then(resJson => {
         console.log('resJson from /profile-img:',resJson);
-        this.setState({ previewImg: resJson.url });
+        this.setState({ previewImg: resJson.url, postingFormData: false });
       })
       .catch(err => console.log(err));
   }
+
   submitForm = () => {
     console.log('submitForm clicked');
 
@@ -85,8 +87,10 @@ class SettingsPage extends React.Component {
             <a href="">Profile</a>
           </div>
         </div>
+
         <div className="settings-form-wrapper">
           <form method='post' action="/profile">
+
             <div className="list-title-wrapper">Account Basics</div>
             <div className="account-settings-container">
               <div className="input-field-container email">
@@ -98,12 +102,14 @@ class SettingsPage extends React.Component {
                 Change your password
               </div>
             </div>
+
             <div className="list-title-wrapper">Profile</div>
             <div className="profile-settings-container">
               <div className="input-field-container username">
                 <label htmlFor="username" className='label'>Username</label>
                 <input type="username" id='username' name='username' value={username} placeholder={account.user ? account.user.username : ''} onChange={this.handleUsernameInputChange}/>
               </div>
+
               <label className='label'>Picture</label>
               <div className="picture-container">
                 <div className="profile-img-wrapper">
@@ -111,15 +117,16 @@ class SettingsPage extends React.Component {
                 </div>
                 <div className='input-field-container file'>
                   <label htmlFor="profile-img" className='change-picture-button'>Change picture</label>
-                  <input type="file" id='profile-img' accept='image/*' name='profileImg' onChange={this.handleImageUpload}/>
+                  <input type="file" id='profile-img' accept='image/*' name='profileImg' onChange={this.handleImageFileUpload}/>
                 </div>
               </div>
             </div>
             <button className='invisible' ref={el => this.formSubmitButton = el} type='submit'></button>
           </form>
         </div>
+
         <div className="settings-footer">
-          <div className="settings-footer-button save" onClick={this.submitForm}>Save settings</div>
+          <div className={this.state.postingFormData ? 'settings-footer-button save disabled' : 'settings-footer-button save'} onClick={this.submitForm}>Save settings</div>
           <div className="settings-footer-button cancel" onClick={this.handleCancelButtonClick}>Cancel</div>
         </div>
       </div>

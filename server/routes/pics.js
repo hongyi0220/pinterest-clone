@@ -52,7 +52,14 @@ module.exports = (app, db) => {
       console.log(url);
       stack.push(new Promise((resolve, reject) => {
         fetch(url)
-          .then(res => res.json())
+          .then(res => {
+            console.log('ABBA:', res);
+            if (res.status <= 300) {
+              return res.json();
+            } else {
+              resolve([]);
+            }
+          })
           .then(resJson =>
             resolve(resJson.hits.map(hit => ({
               src: hit.webformatURL,

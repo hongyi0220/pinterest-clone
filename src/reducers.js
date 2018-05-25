@@ -6,10 +6,11 @@ const TOGGLE_MODAL = 'TOGGLE_MODAL';
 const OPEN_MSG_MODAL = 'OPEN_MSG_MODAL';
 const CONCAT_IMGS_TO_STORE = 'CONCAT_IMGS_TO_STORE';
 const STORE_TOP_TAGS = 'STORE_TOP_TAGS';
-const TOGGLE_FETCHING_PICS = 'TOGGLE_FETCHING_PICS';
+const TOGGLE_LOADING_SPINNER = 'TOGGLE_LOADING_SPINNER';
 const STORE_OTHER_USER_INFO = 'STORE_OTHER_USER_INFO';
 const STORE_MAGNIFIED_PIN_INFO = 'STORE_MAGNIFIED_PIN_INFO';
 const STORE_SEARCH_KEYWORDS = 'STORE_SEARCH_KEYWORDS';
+const STORE_CURATED_PINS = 'STORE_CURATED_PINS';
 
 const initState = {
   account: {
@@ -21,13 +22,14 @@ const initState = {
     search: null,
     topTags: null,
     magnifiedPin: null,
+    curatedPins: null,
   },
   ui: {
     headerMenu: false,
     modalBackgroundOverlay: false,
     msgModal: false,
     createPinModal: false,
-    fetchingPics: false,
+    loadingSpinner: false,
   },
 };
 console.log('initState:',initState);
@@ -79,6 +81,11 @@ const imgs = (state = initState.imgs, action) => {
         ...state,
         searchKeywords: action.keywords,
       };
+    case STORE_CURATED_PINS:
+      return {
+        ...state,
+        curatedPins: action.pins,
+      };
     default:
       return state;
   }
@@ -105,10 +112,10 @@ const ui = (state = initState.ui, action) => {
         msgModal: action.content
       };
 
-    case TOGGLE_FETCHING_PICS:
+    case TOGGLE_LOADING_SPINNER:
       return {
         ...state,
-        fetchingPics: !state.fetchingPics
+        loadingSpinner: !state.loadingSpinner
       };
 
     default:

@@ -4,9 +4,10 @@ import {
     storeImgs,
     toggleHeaderMenu,
     concatImgsToStore,
-    toggleFetchingPics,
+    toggleLoadingSpinner,
     storeOtherUserInfo,
     storeSearchKeywords,
+    storeCuratedPins,
 } from '../../actions';
 
 const mapStateToProps = state => state;
@@ -17,9 +18,10 @@ const HeaderContainer = connect(
         storeImgs,
         toggleHeaderMenu,
         concatImgsToStore,
-        toggleFetchingPics,
+        toggleLoadingSpinner,
         storeOtherUserInfo,
         storeSearchKeywords,
+        storeCuratedPins,
     }
 )(Header);
 

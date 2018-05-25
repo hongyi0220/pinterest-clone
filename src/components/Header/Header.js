@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 
 class Header extends React.Component {
   static propTypes = {
-    toggleFetchingPics: PropTypes.func.isRequired,
+    toggleLoadingSpinner: PropTypes.func.isRequired,
     storeImgs: PropTypes.func.isRequired,
     concatImgsToStore: PropTypes.func.isRequired,
     history: PropTypes.shape({
@@ -20,32 +20,39 @@ class Header extends React.Component {
       magnifiedPin: PropTypes.shape({
         tags: PropTypes.array,
       }),
+      curatedPins: PropTypes.array,
     }).isRequired,
-    ui: PropTypes.shape({ fetchingPics: PropTypes.bool }).isRequired,
+    ui: PropTypes.shape({ loadingSpinner: PropTypes.bool }).isRequired,
     account: PropTypes.shape({ }).isRequired,
     toggleHeaderMenu: PropTypes.func.isRequired,
     storeOtherUserInfo: PropTypes.func.isRequired,
     storeSearchKeywords: PropTypes.func.isRequired,
-    curateWall: PropTypes.func.isRequired,
+    // curateWall: PropTypes.func.isRequired,
+    atPinPage: PropTypes.bool,
+    storeCuratedPins: PropTypes.func.isRequired,
   };
 
   state = {
     page: 1,
     pageYOffset: 0,
+    fetching: false,
   };
 
   componentWillMount() {
     console.log('Header will mount');
-    console.log('Header component state at compWllMnt:', this.state);
+    // console.log('Header component state at compWllMnt:', this.state);
 
     const pathname = this.props.history.location.pathname;
+
     if (pathname === '/' || pathname === '/home') {
 
       this.props.storeSearchKeywords(this.props.imgs.topTags);
       if (this.props.imgs.search.length < 20) {
         console.log('this.props.imgs.search.length < 20:', this.props.imgs.search.length < 20,'getting more pics to append to wall');
+        this.searchImg({ key: 'Enter', scroll: true,})
+          .then(curatedPins => this.props.storeCuratedPins(curatedPins));
 
-        this.searchImg({ key: 'Enter', scroll: true, /*queries: this.props.imgs.topTags */});
+        console.log('imgs.curatedPins:',this.props.imgs.curatedPins);
       }
     }
 
@@ -56,13 +63,15 @@ class Header extends React.Component {
     this.lazyLoadPics();
   }
 
-  searchImg = e => {
-    console.log('page:', this.state.page);
-    console.log('keyDown:',e.key);
-    console.log('searchKeywords:', this.props.imgs.searchKeywords);
+   searchImg = e => {
+    console.log('searchImg triggered!');
+    // console.log('page:', this.state.page);
+    // console.log('keyDown:',e.key);
+    // console.log('searchKeywords:', this.props.imgs.searchKeywords);
     const pathname = this.props.history.location.pathname;
     if (e.key === 'Enter') {
-      this.props.toggleFetchingPics();
+      this.props.toggleLoadingSpinner();
+      this.setState({ fetching: true });
       if (!e.scroll) {
         this.setState({ page: 1, pageYOffset: 0 });
         window.scroll({
@@ -75,21 +84,26 @@ class Header extends React.Component {
         this.props.history.push(`/search?q=${this.props.imgs.searchKeywords[0]}&page=${this.state.page}`);
       }
 
-      fetch(`/pics?q=${this.props.imgs.searchKeywords.join('&&')}&page=${this.props.imgs.searchKeywords.length === 1 ? this.state.page : this.state.page + 1}`, {
+      return fetch(`/pics?q=${this.props.imgs.searchKeywords.join('&&')}&page=${this.props.imgs.searchKeywords.length === 1 ? this.state.page : this.state.page + 1}`, {
         method: 'GET',
         credentials: 'include',
       })
         .then(res => res.json())
         .then(imgs => {
           this.props.storeImgs(imgs);
-          this.props.toggleFetchingPics();
-          console.log('state after fetchingPics:',this.state);
+          this.props.toggleLoadingSpinner();
+          this.setState({ fetching: false });
+          console.log('got response from fetch');
+          return imgs;
         })
         .catch(err => console.log(err));
     }
   }
 
   handleInputChange = e => this.props.storeSearchKeywords([e.target.value]);
+
+  handleHomeButtonClick = () => this.props.storeImgs(this.props.imgs.curatedPins);
+
 
   lazyLoadPics = () => {
     let pageYOffset = 0;
@@ -98,36 +112,33 @@ class Header extends React.Component {
         this.setState({ pageYOffset: window.pageYOffset });
         // pageYOffset = window.pageYOffset;
       }
-      console.log('pageYOffset:', pageYOffset);
+      console.log('pageYOffset:', this.state.pageYOffset);
       console.log('pageYOffset:',window.pageYOffset, '+ ','window.innerHeight:',window.innerHeight, '=',window.pageYOffset + window.innerHeight);
-      // console.log('window.innerHeight:', window.innerHeight);
 
       console.log('document scrollHeight - 100:',document.documentElement.scrollHeight - 100);
 
-      if (window.pageYOffset + window.innerHeight >= document.documentElement.scrollHeight - 100 && this.props.imgs.searchKeywords && window.pageYOffset >= pageYOffset && !this.props.ui.fetchingPics) {
-        // this.setState({ fetchingPics: true });
+      if (window.pageYOffset + window.innerHeight >= document.documentElement.scrollHeight - 100 && this.props.imgs.searchKeywords && (window.pageYOffset >= pageYOffset) && !this.props.ui.loadingSpinner && !this.state.fetching) {
         console.log('lazy-loading triggered');
         this.setState(prevState => ({ page: prevState.page += 1 }));
-        // this.setState({ fetchingPics: true });
         this.searchImg({ key: 'Enter', scroll: true });
       }
     });
   }
 
   render() {
-    console.log('Header component state at render:', this.state);
+    // console.log('Header component state at render:', this.state);
     // const { input } = this.state;
-    const { account, toggleHeaderMenu, imgs } = this.props;
+    const { account, toggleHeaderMenu, imgs, atPinPage } = this.props;
     return (
-      <div className="header">
-        <Link className="link" to='/' onClick={() => {this.props.curateWall().then(() => this.padCuratedWall()).catch(err => console.log(err)); }}>
+      <div className={atPinPage ? 'header invisible' : 'header'}>
+        <Link className="link" to='/' onClick={() => {this.props.storeSearchKeywords([]); this.handleHomeButtonClick();}}>
           <img src="/images/pinterest_logo.png"/>
         </Link>
 
         <input type="text" placeholder='Search' onKeyDown={this.searchImg} onChange={this.handleInputChange} value={imgs.searchKeywords.length > 1 ? '' : imgs.searchKeywords[0]}/>
 
-        <Link className="link" to='/home' onClick={() => {this.props.curateWall().then(() => this.padCuratedWall()).catch(err => console.log(err)); }}>
-          <div className="home">Home</div>
+        <Link className="link" to='/home' onClick={() => {this.props.storeSearchKeywords([]); this.handleHomeButtonClick();}}>
+          <div className="home-button-text-wrapper">Home</div>
         </Link>
 
         <Link className='link' to={`/user/${account.user.username}`} onClick={() => {this.props.storeSearchKeywords([]); this.props.storeOtherUserInfo(null);} }>

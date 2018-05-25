@@ -33,8 +33,8 @@ export const storeTopTags = tags => ({
     tags
 });
 
-export const toggleFetchingPics = () => ({
-    type: 'TOGGLE_FETCHING_PICS'
+export const toggleLoadingSpinner = () => ({
+    type: 'TOGGLE_LOADING_SPINNER'
 });
 
 export const storeOtherUserInfo = otherUser => ({
@@ -50,4 +50,9 @@ export const storeMagnifiedPinInfo = magnifiedPin => ({
 export const storeSearchKeywords = keywords => ({
   type: 'STORE_SEARCH_KEYWORDS',
   keywords,
+});
+
+export const storeCuratedPins = pins => ({
+  type: 'STORE_CURATED_PINS',
+  pins,
 });

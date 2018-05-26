@@ -2,11 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 class WallPage extends React.Component {
-  state = {
-    pindex: null,
-    clientHeight: null,
-    clientWidth: null,
-  };
   static propTypes = {
     storeImgs: PropTypes.func.isRequired,
     account: PropTypes.object.isRequired,
@@ -29,6 +24,11 @@ class WallPage extends React.Component {
     concatImgsToStore: PropTypes.func.isRequired,
     storeSearchKeywords: PropTypes.func.isRequired,
     toggleMsgModal: PropTypes.func.isRequired,
+  };
+  state = {
+    pindex: null,
+    clientHeight: null,
+    clientWidth: null,
   };
 
   componentWillMount() {

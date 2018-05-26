@@ -17,6 +17,7 @@ class PinPage extends React.Component {
       magnifiedPin: PropTypes.shape({
         comments: PropTypes.array,
         tags: PropTypes.array,
+        users: PropTypes.array,
       }),
       curatedPins: PropTypes.array,
     }).isRequired,
@@ -41,6 +42,8 @@ class PinPage extends React.Component {
     clientWidth: null,
   };
 
+  pinUserProfileImg = null;
+
   componentWillMount() {
     console.log('PinPage will mount!');
 
@@ -50,6 +53,18 @@ class PinPage extends React.Component {
       comments: this.props.imgs.magnifiedPin ? this.props.imgs.magnifiedPin.comments : [],
       pinId: this.props.history.location.pathname.split('pin/')[1],
     });
+  }
+
+  componentDidMount() {
+    console.log('PinPage DID mount!');
+    this.getUserProfileImg(this.props.imgs.magnifiedPin.users[0])
+      .then(profileImg => {
+        console.log('this.pinUserProfileImg:',this.pinUserProfileImg);
+        console.log('profileImg:',profileImg);
+        this.pinUserProfileImg.src = profileImg;
+        console.log('pinUserProfileImg after setting src:',this.pinUserProfileImg);
+      })
+      .catch(err => console.log(err));
   }
 
   handleCommentInputChange = e => {
@@ -96,7 +111,24 @@ class PinPage extends React.Component {
     // this.props.storeSearchKeywords([]);
     this.props.history.push('/home');
     this.props.storeImgs(this.props.imgs.curatedPins);
+  }
 
+  getUserProfileImg = username => {
+    // const username = e.target.dataset.username;
+    console.log('username at getUserProfileImg:',username);
+    return fetch(`/user/${username}?externalapi=false`, {
+      method: 'GET',
+      credentials: 'include',
+    })
+      .then(res => {
+        console.log('res:',res);
+        return res.json();
+      })
+      .then(otherUser => {
+        console.log('otherUser:', otherUser);
+        return otherUser.profileImg;
+      })
+      .catch(err => console.log(err));
   }
 
   render() {
@@ -132,21 +164,36 @@ class PinPage extends React.Component {
 
               <div className="comment-form-title-wrapper"><h2>Comments</h2></div>
               <div className='comment-form-container'>
-                {comments.length ? comments.map((cmt, i) =>
+                {comments.length ?
+                  comments.map((cmt, i) =>
                     <div key={i} className='comment-wrapper'>
-                        {`${cmt[0]}: ${cmt[1]}`}
+                      {`${cmt[0]}: ${cmt[1]}`}
                     </div>
-                ) : <label htmlFor='comment'>
-                  Share feedback, ask a question or give a high five
-                </label>}
+                  ) :
+                  <label htmlFor='comment'>
+                    Share feedback, ask a question or give a high five
+                  </label>
+                }
 
                   <textarea name='comment' onChange={this.handleCommentInputChange} value={this.state.comment} placeholder='add comment' onKeyDown={this.handleCommentOnKeyDown}>
                   </textarea>
               </div>
               <hr />
               <div className="pin-owner-info-container">
-                {imgs.magnifiedPin ? (imgs.magnifiedPin.users.length ? `${imgs.magnifiedPin.users[0]} and ${imgs.magnifiedPin.users.length - 1} others saved this Pin` : 'No owner info to display') : ''}
-                {/* {imgs.magnifiedPin.users.length ? `${imgs.magnifiedPin.users[0]} and ${imgs.magnifiedPin.users.length - 1} others saved this Pin` : 'No owner info to display'} */}
+                {imgs.magnifiedPin ?
+                  (imgs.magnifiedPin.users.length ?
+                    (<div className="username-container">
+                      {/* <img data-username={imgs.magnifiedPin.users[0]} src={e => this.getUserProfileImg(e)} alt='pin user' onError={e => e.target.src = '/image/default-profile-image.png'}/> */}
+                      <img data-username={imgs.magnifiedPin.users[0]} src='' alt='pin user' onError={e => e.target.src = '/image/default-profile-image.png'} ref={el => this.pinUserProfileImg = el} />
+                      <div className="username-wrapper">
+                        {imgs.magnifiedPin.users[0]}
+                      </div>
+                      {` and ${imgs.magnifiedPin.users.length - 1} others saved this Pin`}
+                    </div>
+                    ) : 'No user info to display'
+                  ) : ''
+                }
+
               </div>
             </div>
 

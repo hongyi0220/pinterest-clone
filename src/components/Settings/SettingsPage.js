@@ -59,12 +59,12 @@ class SettingsPage extends React.Component {
     const body = JSON.stringify(this.state);
     console.log('JSON.stringify(this.state):',body );
     fetch('/profile', {
-      method: 'put',
+      method: 'PUT',
       headers: {
         'content-type': 'application/json'
       },
       credentials: 'include',
-      body
+      body,
     })
       .catch(err => console.log(err));
   }

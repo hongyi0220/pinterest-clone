@@ -2,11 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 class UserPage extends React.Component {
-  state = {
-    pindex: null,
-    pinId: null,
-    isCreatePinButtonHiglighted: false,
-  };
   static propTypes = {
     account: PropTypes.shape({
       otherUser: PropTypes.shape({
@@ -16,6 +11,11 @@ class UserPage extends React.Component {
     toggleModal: PropTypes.func.isRequired,
     history: PropTypes.shape({ push: PropTypes.func }).isRequired,
     storeMagnifiedPinInfo: PropTypes.func.isRequired,
+  };
+  state = {
+    pindex: null,
+    pinId: null,
+    isCreatePinButtonHiglighted: false,
   };
 
   componentWillMount() {

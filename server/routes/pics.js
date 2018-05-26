@@ -7,7 +7,7 @@ const cloudinary = require('cloudinary');
 const ObjectId = require('mongodb').ObjectId;
 
 module.exports = (app, db) => {
-  // const Users = db.collection('users');
+
   const Pins = db.collection('pins');
   const uploadPixabayImgToCloudinary = img => {
       console.log('rsc from pixabay');
@@ -288,11 +288,5 @@ module.exports = (app, db) => {
     console.log('q:',q,' page:',page);
 
     next();
-    // fetch(`/pics?q=${[q]}&page=${page}`, {
-    //   method: 'GET',
-    //   credentials: 'include',
-    // })
-    //   .then(() => next());
-
   });
 };

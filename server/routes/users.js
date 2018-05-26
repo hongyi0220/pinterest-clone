@@ -84,21 +84,18 @@ module.exports = (app, db) => {
   app.use(passport.session());
 
   // Redirect the user to Twitter for authentication.  When complete, Twitter
-  // will redirect the user back to the application at
-  //   /auth/twitter/callback
+  // will redirect the user back to the application at '/auth/twitter/callback'
   app.get('/auth/twitter', passport.authenticate('twitter'));
-
 
   // Twitter will redirect the user to this URL after approval.  Finish the
   // authentication process by attempting to obtain an access token.      If
   // access was granted, the user will be logged in.  Oth    erwise,
   // authentication has failed.
-  app.get('/auth/twitter/callback',
-  passport.authenticate('twitter', {
-    successRedirect: '/home',
-    failureRedirect: '/'
-  }
-  ));
+  app.get('/auth/twitter/callback', passport.authenticate('twitter', {
+      successRedirect: '/home',
+      failureRedirect: '/'
+    })
+  );
 
   app.post('/auth', (req, res) => {
     const { email, password } = req.body;
@@ -230,11 +227,10 @@ module.exports = (app, db) => {
         .then(otherUser => {
           console.log('user @ /user/:username:', otherUser);
           otherUser.pins = pins;
-          if (externalapi === 'false') {
-            req.session.otherUser = otherUser;
+          req.session.otherUser = otherUser;
+          if (externalapi === 'false') {    
             res.send(otherUser);
           } else {
-            req.session.otherUser = otherUser;
             next();
           }
         })

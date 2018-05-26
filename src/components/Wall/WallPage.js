@@ -50,7 +50,7 @@ class WallPage extends React.Component {
     }
   }
 
-  handlePinOnMouseOver = e => {
+  handlePinOnMouseOver = (e = null) => {
     console.log('pindex:', e ? e.target.dataset.pindex : '');
 
     const eTarget = e ? e.target : null;
@@ -112,25 +112,6 @@ class WallPage extends React.Component {
     window.open(`https://twitter.com/intent/tweet?via=pinterest-clone&text=${pinId}`, '', `top=${(this.state.clientHeight / 2) - (200 / 2)},left=${(this.state.clientWidth / 2) - (300 / 2)},height=200,width=300`);
   }
 
-  // handleUserProfileImgClick = e => {
-  //   e.stopPropagation();
-  //   console.log('handle User Profile Img Clicked:',e.target.dataset.username);
-  //   const username = e.target.dataset.username;
-  //
-  //   fetch(`/user/${username}?externalapi=false`, {
-  //     method: 'GET',
-  //     credentials: 'include',
-  //   })
-  //     .then(res => res.json())
-  //     .then(otherUser => {
-  //       console.log('res from /user:', otherUser);
-  //
-  //       this.props.storeOtherUserInfo(otherUser);
-  //       this.props.history.push(`/user/${otherUser.username}`);
-  //     })
-  //     .catch(err => console.log(err));
-  // }
-
   render() {
     const { imgs, ui } = this.props;
 
@@ -139,7 +120,7 @@ class WallPage extends React.Component {
         <div className="wall">
         {imgs.search ?
           imgs.search.map((img, i) =>
-          <div data-pindex={i} key={i} className={`img-container ${img.height > 480 ? 'tall' : ''}`} onMouseEnter={e=>{console.log('entering'); this.handlePinOnMouseOver(e);}} onMouseLeave={()=>{console.log('leaving'); this.handlePinOnMouseOver(null);}} onMouseOver={e => this.handlePinOnMouseOver(e)}>
+          <div data-pindex={i} key={i} className={`img-container ${img.height > 480 ? 'tall' : ''}`} onMouseEnter={this.handlePinOnMouseOver} onMouseLeave={ this.handlePinOnMouseOver} onMouseOver={this.handlePinOnMouseOver}>
 
             <div data-pindex={i} className={this.state.pindex === i ? 'img-overlay on': 'img-overlay'} onClick={e => {e.stopPropagation(); this.handleMagnifyPinClick(e);}}>
 
@@ -152,15 +133,11 @@ class WallPage extends React.Component {
                 <img src="/images/tweet.png" alt="tweet"/>
               </div>
 
-              {/* <div className="userProfileImgWrapper" onMouseOver={e => e.stopPropagation()} onClick={this.handleUserProfileImgClick}>
-                <img data-username={img.username ? img.username : ''} src={img.profileImg ? img.profileImg : '/images/default-profile-image.png'} alt="user profile" />
-              </div> */}
-
             </div>
 
             <img className='wall-img' src={img.src} onError={e => e.target.src = '/images/default-no-img.jpg'}/>
           </div>)
-          : ''
+          : [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,].map((_, i) => <div key={i} className={i % 4 === 0 ? 'img-container tall placeholder' : 'img-container placeholder'}></div>)
         }
         </div>
         <div className="loading-icon-wrapper">

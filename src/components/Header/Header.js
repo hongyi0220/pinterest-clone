@@ -44,14 +44,15 @@ class Header extends React.Component {
     const pathname = this.props.history.location.pathname;
 
     if (pathname === '/' || pathname === '/home') {
-
       this.props.storeSearchKeywords(this.props.imgs.topTags);
-      if (this.props.imgs.search.length < 20) {
-        console.log('this.props.imgs.search.length < 20:', this.props.imgs.search.length < 20,'getting more pics to append to wall');
-        this.searchImg({ key: 'Enter', scroll: true,})
-          .then(curatedPins => this.props.storeCuratedPins(curatedPins));
+      if (this.props.imgs.search) {
+        if (this.props.imgs.search.length < 20) {
+          console.log('this.props.imgs.search.length < 20:', this.props.imgs.search.length < 20,'getting more pics to append to wall');
+          this.searchImg({ key: 'Enter', scroll: true,})
+            .then(curatedPins => this.props.storeCuratedPins(curatedPins));
 
-        console.log('imgs.curatedPins:',this.props.imgs.curatedPins);
+          console.log('imgs.curatedPins:',this.props.imgs.curatedPins);
+        }
       }
     }
 

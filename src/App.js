@@ -42,7 +42,7 @@ class App extends React.Component {
     // const username = this.props.account.user.username;
     const pathname = this.props.history.location.pathname;
 
-    const p1 = new Promise((resolve, reject) => {
+    const getSessionDataPromise = new Promise((resolve, reject) => {
       this.getSessionData()
         .then(result => {
           resolve(result);
@@ -53,7 +53,7 @@ class App extends React.Component {
           console.log(err);
         });
     });
-    const p2 = new Promise((resolve, reject) => {
+    const getAllPinsPromise = new Promise((resolve, reject) => {
       this.getAllPins()
         .then(result => {
           resolve(result);
@@ -65,7 +65,7 @@ class App extends React.Component {
         });
     });
 
-    Promise.all([p1, p2])
+    Promise.all([getSessionDataPromise, getAllPinsPromise])
       .then(values => {
         console.log('values:',values);
         const sessionData = values[0];
@@ -110,6 +110,7 @@ class App extends React.Component {
     console.log('topTags:', topTags);
     this.props.storeTopTags(topTags);
     const curatedPins = this.shuffleArr(this.filterPinsMatchingTopTags(allPins));
+    // setTimeout(() => this.props.storeImgs(curatedPins), 5000);
     this.props.storeImgs(curatedPins);
     fetch('/session', {
       method: 'POST',

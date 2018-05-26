@@ -88,9 +88,16 @@
         img {
           width: 50px;
           border-radius: 100%;
+          &:hover {
+            cursor: pointer;
+          }
         }
-        span {
-
+        .username-wrapper {
+          font-weight: 600;
+          display: inline-block;
+          &:hover {
+            cursor: pointer;
+          }
         }
       }
     }

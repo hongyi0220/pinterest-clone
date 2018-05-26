@@ -282,11 +282,17 @@ module.exports = (app, db) => {
         })
         .catch(err => console.log(err));
     });
+
   app.get('/search', (req, res, next) => {
     console.log('/search route reached!');
     const { q, page } = req.query;
     console.log('q:',q,' page:',page);
 
+    next();
+  });
+
+  app.get('/find', (req, res, next) => {
+    console.log('/find route reached!');
     next();
   });
 };

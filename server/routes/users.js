@@ -17,6 +17,7 @@ cloudinary.config({
 
 module.exports = (app, db) => {
   const Users = db.collection('users');
+  // const Pins = db.collection('pins');
 
   passport.use(new TwitterStrategy({
     consumerKey,
@@ -202,6 +203,7 @@ module.exports = (app, db) => {
         });
       })
       .catch(err => console.log(err));
+
   });
 
   // app.get('/user', (req, res) => {
@@ -220,21 +222,56 @@ module.exports = (app, db) => {
     if (username) {
       console.log('req.params at /user/:username :', username);
       const pins = req.session.pins.filter(pin => pin.users.includes(username));
+
       Users.findOne(
         { username },
         { _id: 0, password: 0, email: 0, }
       )
         .then(otherUser => {
-          console.log('user @ /user/:username:', otherUser);
+          console.log('otherUser @ /user/:username:', otherUser);
           otherUser.pins = pins;
           req.session.otherUser = otherUser;
-          if (externalapi === 'false') {    
+          if (externalapi === 'false') {
             res.send(otherUser);
           } else {
             next();
           }
         })
-        .catch(err => console.log(err));
+        .catch(err => {
+          console.log(err);
+        });
+      // const getOtherUserInfoPromise =
+      // new Promise((resolve, reject) => {
+      //   Users.findOne(
+      //     { username },
+      //     { _id: 0, password: 0, email: 0, }
+      //   )
+      //     .then(otherUser => {
+      //       resolve(otherusr);
+      //       console.log('otherUser @ /user/:username:', otherUser);
+      //       // otherUser.pins = pins;
+      //     //   req.session.otherUser = otherUser;
+      //     //   if (externalapi === 'false') {
+      //     //     res.send(otherUser);
+      //     //   } else {
+      //     //     next();
+      //     //   }
+      //     })
+      //     .catch(err => {
+      //       console.log(err);
+      //       reject(err);
+      //     });
+      // });
+      // const getOtherUsersPinsPromise =
+      //   new Promise((resolve, reject) => {
+      //     Pins.find({ users: username })
+      //     .then(pins => resolve(pins))
+      //     .catch(err => {
+      //       reject(err);
+      //       console.log(err);
+      //     });
+      //   });
+
     } else {
       console.log('!username; next()');
       next();

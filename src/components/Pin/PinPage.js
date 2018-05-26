@@ -8,6 +8,7 @@ import {
   storeMagnifiedPinInfo,
   storeImgs,
   storeSearchKeywords,
+  storeOtherUserInfo,
 } from '../../actions';
 import WallPageContainer from '../Wall/WallPageContainer';
 
@@ -32,6 +33,7 @@ class PinPage extends React.Component {
     }).isRequired,
     storeImgs: PropTypes.func.isRequired,
     storeSearchKeywords: PropTypes.func.isRequired,
+    storeOtherUserInfo: PropTypes.func.isRequired,
   };
 
   state = {
@@ -131,6 +133,24 @@ class PinPage extends React.Component {
       .catch(err => console.log(err));
   }
 
+  handlePinUserImgClick = e => {
+    e.stopPropagation();
+    console.log('handle User Profile Img Clicked:',e.target.dataset.username);
+    const username = this.props.imgs.magnifiedPin.users[0];
+    fetch(`/user/${username}?externalapi=false`, {
+      method: 'GET',
+      credentials: 'include',
+    })
+      .then(res => res.json())
+      .then(otherUser => {
+        console.log('res from /user:', otherUser);
+
+        this.props.storeOtherUserInfo(otherUser);
+        this.props.history.push(`/user/${otherUser.username}`);
+      })
+      .catch(err => console.log(err));
+  }
+
   render() {
     const { imgs, } = this.props;
     const { comments, } = this.state;
@@ -182,13 +202,15 @@ class PinPage extends React.Component {
               <div className="pin-owner-info-container">
                 {imgs.magnifiedPin ?
                   (imgs.magnifiedPin.users.length ?
-                    (<div className="username-container">
+                    (<div className="username-container" onClick={this.handlePinUserImgClick}>
                       {/* <img data-username={imgs.magnifiedPin.users[0]} src={e => this.getUserProfileImg(e)} alt='pin user' onError={e => e.target.src = '/image/default-profile-image.png'}/> */}
-                      <img data-username={imgs.magnifiedPin.users[0]} src='' alt='pin user' onError={e => e.target.src = '/image/default-profile-image.png'} ref={el => this.pinUserProfileImg = el} />
+                      <img /*data-username={imgs.magnifiedPin.users[0]}*/ src='' alt='pin user' onError={e => e.target.src = '/image/default-profile-image.png'} ref={el => this.pinUserProfileImg = el} />
                       <div className="username-wrapper">
                         {imgs.magnifiedPin.users[0]}
                       </div>
-                      {` and ${imgs.magnifiedPin.users.length - 1} others saved this Pin`}
+                      <div className="misc-info-wrapper" onClick={e => e.stopPropagation()}>
+                        {` and ${imgs.magnifiedPin.users.length - 1} others saved this Pin`}
+                      </div>
                     </div>
                     ) : 'No user info to display'
                   ) : ''
@@ -220,6 +242,7 @@ class PinPage extends React.Component {
     storeMagnifiedPinInfo,
     storeImgs,
     storeSearchKeywords,
+    storeOtherUserInfo,
   }
 )(PinPage);
 export default PinPageContainer;

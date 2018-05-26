@@ -112,6 +112,25 @@ class WallPage extends React.Component {
     window.open(`https://twitter.com/intent/tweet?via=pinterest-clone&text=${pinId}`, '', `top=${(this.state.clientHeight / 2) - (200 / 2)},left=${(this.state.clientWidth / 2) - (300 / 2)},height=200,width=300`);
   }
 
+  // handleUserProfileImgClick = e => {
+  //   e.stopPropagation();
+  //   console.log('handle User Profile Img Clicked:',e.target.dataset.username);
+  //   const username = e.target.dataset.username;
+  //
+  //   fetch(`/user/${username}?externalapi=false`, {
+  //     method: 'GET',
+  //     credentials: 'include',
+  //   })
+  //     .then(res => res.json())
+  //     .then(otherUser => {
+  //       console.log('res from /user:', otherUser);
+  //
+  //       this.props.storeOtherUserInfo(otherUser);
+  //       this.props.history.push(`/user/${otherUser.username}`);
+  //     })
+  //     .catch(err => console.log(err));
+  // }
+
   render() {
     const { imgs, ui } = this.props;
 

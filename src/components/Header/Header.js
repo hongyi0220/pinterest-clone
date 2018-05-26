@@ -59,9 +59,13 @@ class Header extends React.Component {
 
   componentDidMount() {
     console.log('Header did mount');
-    if (this.props.history.location.pathname !== '/find') {
-      this.lazyLoadPics();
-    }
+    const pathname = this.props.history.location.pathname;
+    console.log('pathname:', pathname);
+
+    // if (pathname !== '/find' && !pathname.includes('/user') && !pathname.includes('/pin')) {
+    //
+    // }
+    this.lazyLoadPics();
   }
 
    searchImg = e => {
@@ -108,7 +112,9 @@ class Header extends React.Component {
 
   lazyLoadPics = () => {
     let pageYOffset = 0;
+
     document.addEventListener('scroll', () => {
+      const pathname = this.props.history.location.pathname;
       if (window.pageYOffset > this.state.pageYOffset) {
         this.setState({ pageYOffset: window.pageYOffset });
         // pageYOffset = window.pageYOffset;
@@ -118,7 +124,7 @@ class Header extends React.Component {
 
       console.log('document scrollHeight - 100:',document.documentElement.scrollHeight - 100);
 
-      if (window.pageYOffset + window.innerHeight >= document.documentElement.scrollHeight - 100 && this.props.imgs.searchKeywords && (window.pageYOffset >= pageYOffset) && !this.props.ui.loadingSpinner && !this.state.fetching) {
+      if (window.pageYOffset + window.innerHeight >= document.documentElement.scrollHeight - 100 && this.props.imgs.searchKeywords && (window.pageYOffset >= pageYOffset) && !this.props.ui.loadingSpinner && !this.state.fetching && !pathname.includes('/user') && !pathname.includes('/find')) {
         console.log('lazy-loading triggered');
         this.setState(prevState => ({ page: prevState.page += 1 }));
         this.searchImg({ key: 'Enter', scroll: true });

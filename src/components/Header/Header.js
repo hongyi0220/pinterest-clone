@@ -27,7 +27,6 @@ class Header extends React.Component {
     toggleHeaderMenu: PropTypes.func.isRequired,
     storeOtherUserInfo: PropTypes.func.isRequired,
     storeSearchKeywords: PropTypes.func.isRequired,
-    // curateWall: PropTypes.func.isRequired,
     atPinPage: PropTypes.bool,
     storeCuratedPins: PropTypes.func.isRequired,
   };
@@ -60,7 +59,9 @@ class Header extends React.Component {
 
   componentDidMount() {
     console.log('Header did mount');
-    this.lazyLoadPics();
+    if (this.props.history.location.pathname !== '/find') {
+      this.lazyLoadPics();
+    }
   }
 
    searchImg = e => {
@@ -137,11 +138,11 @@ class Header extends React.Component {
 
         <input type="text" placeholder='Search' onKeyDown={this.searchImg} onChange={this.handleInputChange} value={imgs.searchKeywords.length > 1 ? '' : imgs.searchKeywords[0]}/>
 
-        <Link className="link" to='/home' onClick={() => {this.props.storeSearchKeywords([]); this.handleHomeButtonClick();}}>
+        <Link className="link" to='/home' onClick={() => {/*this.props.storeSearchKeywords([]);*/ this.handleHomeButtonClick();}}>
           <div className="home-button-text-wrapper">Home</div>
         </Link>
 
-        <Link className='link' to={`/user/${account.user.username}`} onClick={() => {this.props.storeSearchKeywords([]); this.props.storeOtherUserInfo(null);} }>
+        <Link className='link' to={`/user/${account.user.username}`} onClick={() => {/*this.props.storeSearchKeywords([]);*/ this.props.storeOtherUserInfo(null);} }>
           <div className="user">
             {account.user.username}
           </div>

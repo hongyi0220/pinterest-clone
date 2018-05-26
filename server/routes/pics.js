@@ -25,7 +25,7 @@ module.exports = (app, db) => {
     return result;
   };
 
-  app.get('/pics', async (req, res) => { // search pics
+  app.get('/pics', (req, res) => { // search pics
     console.log('GET /pics route reached!');
     console.log('session.imgs:', req.session.imgs);
     let { page, q } = req.query;
@@ -91,51 +91,6 @@ module.exports = (app, db) => {
         res.send(req.session.imgs);
       })
       .catch(err => console.log(err));
-
-    // const imgs = await fetch(url)
-    //   .then(res => res.json())
-    //   .then(resJson =>
-    //     resJson.hits.map(hit => ({
-    //       src: hit.webformatURL,
-    //       tags: beautifyTags(removeDuplicates(hit.tags.split(' '))),
-    //       comments: [],
-    //       users: [],
-    //     })
-    //   ))
-    //   .then(imgs => {
-        // console.log('req.session:', req.session);
-        // return imgs;
-        // if (page === 1) {
-        //   // req.session.page = page;
-        //   req.session.imgs = imgs;
-        // } else {
-        //   console.log('page:',page,' concating imgs');
-        //   console.log('session.imgs B4 concating:');
-        //   // req.session.page = page;
-        //
-        //   req.session.imgs = req.session.imgs ? [...req.session.imgs, ...imgs] : imgs;
-        // }
-        // req.session.page = page;
-        // console.log('BABABA:', req.session.imgs);
-        // res.send(imgs);
-      // })
-      // .catch(err => {
-      //   console.log(err);
-      //   res.end();
-      // });
-      // if (page === 1) {
-      //   // req.session.page = page;
-      //   req.session.imgs = imgs;
-      // } else {
-      //   console.log('page:',page,' concating imgs');
-      //   console.log('session.imgs B4 concating:');
-      //   // req.session.page = page;
-      //
-      //   req.session.imgs = req.session.imgs ? [...req.session.imgs, ...imgs] : imgs;
-      // }
-      // req.session.page = page;
-      // console.log('BABABA:', req.session.imgs);
-      // res.send(imgs);
   });
 
   app.route('/pic') // From drag & drop pic
@@ -327,4 +282,17 @@ module.exports = (app, db) => {
         })
         .catch(err => console.log(err));
     });
+  app.get('/search', (req, res, next) => {
+    console.log('/search route reached!');
+    const { q, page } = req.query;
+    console.log('q:',q,' page:',page);
+
+    next();
+    // fetch(`/pics?q=${[q]}&page=${page}`, {
+    //   method: 'GET',
+    //   credentials: 'include',
+    // })
+    //   .then(() => next());
+
+  });
 };

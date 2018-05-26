@@ -6,7 +6,7 @@ class CreatePinModal extends React.Component {
   static propTypes = {
     history: PropTypes.object.isRequired,
     toggleModal: PropTypes.func.isRequired,
-    openMsgModal: PropTypes.func.isRequired,
+    toggleMsgModal: PropTypes.func.isRequired,
     storeImgs: PropTypes.func.isRequired,
     account: PropTypes.shape({ user: PropTypes.shape({ username: PropTypes.string }) }),
   };
@@ -39,25 +39,26 @@ class CreatePinModal extends React.Component {
         imgFileHeight: this.height,
       });
     };
-    // console.log('imgFileHeight:', image.height);
-    // console.log('URL.createObjectURL(imgFile):',previewImg);
-
   }
 
-  formatURL = url => {
-    let result;
-    if (!/^https?/i.test(url)) {
+  formatUrl = url => {
+    console.log('formatUrl:', url);
+
+    if (!/^https?:\/{2}/i.test(url)) {
       console.log('no http(s), attaching one');
-      result = `http://${url}`;
+      url = `http://${url}`;
     }
-    while (/[/]$/.test(result)) {
-      result = result.slice(0, result.length - 1);
+
+    while (/[/]$/.test(url)) {
+      console.log('removing trailing /s');
+      url = url.slice(0, url.length - 1);
     }
-    return result;
+    console.log('formatted url:',url);
+    return url;
   }
 
-  formatImgSrc = (rootDomain, src) => {
-    if (/(^https?:|^[/]{2})/i.test(src)) {
+  prefixRootDomainToSrc = (rootDomain, src) => {
+    if (/^https?:\/{2}/i.test(src)) {
       return src;
     } else if (/^[/]{1}/.test(src)) {
       return rootDomain + src;
@@ -67,20 +68,36 @@ class CreatePinModal extends React.Component {
   }
 
   handleCreatePinClick = () => {
-    const { tags, imgFile, imgFileHeight, siteUrl, } = this.state;
-
+    let { tags, imgFile, imgFileHeight, siteUrl, } = this.state;
+    console.log('handleCreatePinClick triggered!');
     if (siteUrl) {
       console.log('siteUrl:',siteUrl);
       const isValidImgFile = /\.{1}(jpg|jpeg|png|gif)$/i;
+
+
       if (isValidImgFile.test(siteUrl)) {
+        console.log('siteUrl points to a valid img file');
         this.uploadImgFromSiteUrl(siteUrl);
 
-      } else if (isValidDomain(siteUrl)) {
-        this.scrapeImgsFromWebSite(siteUrl);
+      } else if (isValidDomain(this.removeHttps(siteUrl))) {
+        console.log('siteUrl is a valid domain; scraping imgs from site');
+
+        this.scrapeImgsFromWebsite(siteUrl);
+      } else {
+        this.props.toggleMsgModal({ title: 'Error', msg: 'Something went wrong :(' });
       }
     } else { // Upload img with drag & drop
       console.log('imgFileHeight:',imgFileHeight);
       this.uploadImgFile(imgFile, tags, imgFileHeight);
+    }
+  }
+
+  removeHttps = url => {
+    if (/^https?:\/{2}/i.test(url)) {
+      console.log('siteUrl contains http(s)://, removing https://');
+      return url.replace(/^https?:\/{2}/i, '');
+    } else {
+      return url;
     }
   }
 
@@ -115,9 +132,9 @@ class CreatePinModal extends React.Component {
         })
         .then(resJson => {
           if (!resJson.matchedCount) {
-            component.props.openMsgModal('Error!', 'Something went wrong on our side');
+            component.props.toggleMsgModal({title: 'Error!', msg: 'Something went wrong on our side'});
           } else if (resJson.matchedCount && resJson.modifiedCount) {
-            component.props.openMsgModal('Pin saved!', 'Your Pin has been saved successfully.');
+            component.props.toggleMsgModal({title: 'Pin saved!', msg: 'Your Pin has been saved successfully.'});
           }
         })
         .catch(err => console.log(err));
@@ -126,50 +143,52 @@ class CreatePinModal extends React.Component {
 
   }
 
-  scrapeImgsFromWebSite = siteUrl => {
+  scrapeImgsFromWebsite = siteUrl => {
     console.log('isValidDomain fetching html...');
 
-    const url = this.formatURL(siteUrl);
+    const url = this.formatUrl(siteUrl);
     const proxyurl = 'https://cors-anywhere.herokuapp.com/';
     fetch(proxyurl + url)
-    .then(res => res.text())
-    .then(resTxt => {
-      console.log('res after fetching from vaildDomain:',resTxt);
-      const htmlDoc = this.parseHTML(resTxt);
-      const imgs = this.getAllImgSrcs(htmlDoc).map(img => {
+      .then(res => res.text())
+      .then(resTxt => {
+        console.log('res after fetching from vaildDomain:',resTxt);
+        const htmlDoc = this.parseHTML(resTxt);
+        const imgs = this.extractImgsFromHtmlDoc(htmlDoc).map(img => {
 
-        if (img.src) {
-          return {
-            src: this.formatImgSrc(url, img.src),
-            tags: img.tags
-          };
-        }
-      });
-      // Display imgs scraped from the URL on wall @ route: /find
-      console.log('imgsArr:', imgs);
-      console.log('storeImgs triggered');
-      this.props.storeImgs(imgs);
-      fetch('/session', {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'content-type': 'application/json'
-        },
-        body: JSON.stringify({ imgs })
-      });
+          if (img.src) {
+            return {
+              src: this.prefixRootDomainToSrc(url, img.src),
+              tags: img.tags,
+              comments: [],
+              users: this.props.account.user ? [this.props.account.user.username] : [],
+              height: img.height,
+            };
+          }
+        });
+        // Display imgs scraped from the URL on wall @ route: /find
+        console.log('imgsArr:', imgs);
+        console.log('storeImgs triggered');
+        this.props.storeImgs(imgs);
+        fetch('/session', {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            'content-type': 'application/json'
+          },
+          body: JSON.stringify({ imgs }),
+        });
 
-      console.log('this :', this);
-      console.log('navigating to /find');
-      this.props.history.push('/find');
-      this.props.toggleModal(false);
-      console.log('toggling modal..');
-      // this.props.openMsgModal('Pin saved!', 'Your Pin has been saved successfully.');
-    })
-    .catch(err => {
-      console.log(err);
-      // console.log('this :', this)
-      this.props.openMsgModal('Error!', 'Something went wrong on our side');
-    });
+        console.log('this :', this);
+        console.log('navigating to /find');
+        this.props.history.push('/find');
+        this.props.toggleModal(false);
+        console.log('toggling modal..');
+      })
+      .catch(err => {
+        console.log(err);
+        // console.log('this :', this)
+        this.props.toggleMsgModal({ title: 'Error!', msg: 'Something went wrong on our side' });
+      });
   }
 
   uploadImgFile = (imgFile, tags, imgFileHeight) => {
@@ -189,9 +208,9 @@ class CreatePinModal extends React.Component {
       })
       .then(resJson => {
         if (!resJson.insertedId) {
-          this.props.openMsgModal('Error!', 'Something went wrong on our side');
+          this.props.toggleMsgModal({ title: 'Error!', msg: 'Something went wrong on our side' });
         } else {
-          this.props.openMsgModal('Pin saved!', 'Your Pin has been saved successfully.');
+          this.props.toggleMsgModal({ title: 'Pin saved!', msg: 'Your Pin has been saved successfully.' });
         }
       })
       .catch(err => console.log(err));
@@ -205,8 +224,8 @@ class CreatePinModal extends React.Component {
     return doc;
   }
 
-  getAllImgSrcs = doc => {
-    console.log('getAllImgSrcs triggered');
+  extractImgsFromHtmlDoc = doc => {
+    console.log('extractImgsFromHtmlDoc triggered');
     const imgs = doc.getElementsByTagName('img');
     console.log('imgs:', imgs);
     return Array.prototype.map.call(imgs, img => {
@@ -215,7 +234,8 @@ class CreatePinModal extends React.Component {
       if (img.attributes.src) {
         return {
           src: img.attributes.src.value,
-          tags: img.attributes.alt ? [img.attributes.alt.value] : []
+          tags: img.alt ? [img.alt] : [],
+          height: img.height,
         };
       } else {
         return null;
@@ -230,7 +250,6 @@ class CreatePinModal extends React.Component {
   handleURLInputChange = e => this.setState({ siteUrl: e.target.value });
 
   removeTag = e => {
-
     const tagIndex = +e.target.id.split('#')[1];
 
     const state = { ...this.state };
@@ -241,13 +260,11 @@ class CreatePinModal extends React.Component {
   }
 
   createTag = e => {
-
     if (this.state.tags.length >= 5) {
       this.setState({ isTagInputDisabled: true });
       return;
     }
     if (e.key === 'Tab') {
-
       e.preventDefault();
       const state = { ...this.state };
       state.tags.push(e.target.value);
@@ -274,7 +291,6 @@ class CreatePinModal extends React.Component {
 
       this.removeDragData(e);
     }
-    // this.removeDragData(e);
   }
 
   removeDragData = e => {
@@ -286,10 +302,7 @@ class CreatePinModal extends React.Component {
     }
   }
 
-  handleDragOver = e => {
-
-    e.preventDefault();
-  }
+  handleDragOver = e => e.preventDefault();
 
   handleUploadFromLocalClick = () => this.setState({ isSaveFromSiteClicked: true });
 

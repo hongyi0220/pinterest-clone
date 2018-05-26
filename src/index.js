@@ -11,6 +11,7 @@ import {
     storeMagnifiedPinInfo,
     storeOtherUserInfo,
     concatImgsToStore,
+    storeSearchKeywords,
 } from './actions';
 import {
   BrowserRouter as Router,
@@ -30,6 +31,7 @@ const AppContainer = connect(
         storeMagnifiedPinInfo,
         storeOtherUserInfo,
         concatImgsToStore,
+        storeSearchKeywords,
     }
 )(App);
 

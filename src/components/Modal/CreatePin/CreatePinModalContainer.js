@@ -4,13 +4,13 @@ import CreatePinModal from './CreatePinModal';
 import {
   toggleModal,
   storeImgs,
-  openMsgModal,
+  toggleMsgModal,
 } from '../../../actions';
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
   toggleModal: open => dispatch(toggleModal(open)),
   storeImgs: imgs => dispatch(storeImgs(imgs)),
-  openMsgModal: (title, msg) => dispatch(openMsgModal(title, msg)),
+  toggleMsgModal: content => dispatch(toggleMsgModal(content)),
   history: ownProps.history
 });
 

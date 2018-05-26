@@ -3,7 +3,7 @@ const LOG_IN_USER = 'LOG_IN_USER';
 const STORE_IMGS = 'STORE_IMGS';
 const TOGGLE_HEADER_MENU = 'TOGGLE_HEADER_MENU';
 const TOGGLE_MODAL = 'TOGGLE_MODAL';
-const OPEN_MSG_MODAL = 'OPEN_MSG_MODAL';
+const TOGGLE_MSG_MODAL = 'TOGGLE_MSG_MODAL';
 const CONCAT_IMGS_TO_STORE = 'CONCAT_IMGS_TO_STORE';
 const STORE_TOP_TAGS = 'STORE_TOP_TAGS';
 const TOGGLE_LOADING_SPINNER = 'TOGGLE_LOADING_SPINNER';
@@ -97,25 +97,25 @@ const ui = (state = initState.ui, action) => {
     case TOGGLE_HEADER_MENU:
       return {
         ...state,
-        headerMenu: !state.headerMenu
+        headerMenu: !state.headerMenu,
       };
 
     case TOGGLE_MODAL:
       return {
         ...state,
-        modalBackgroundOverlay: action.open
+        modalBackgroundOverlay: action.open,
       };
 
-    case OPEN_MSG_MODAL:
+    case TOGGLE_MSG_MODAL:
       return {
         ...state,
-        msgModal: action.content
+        msgModal: action.content,
       };
 
     case TOGGLE_LOADING_SPINNER:
       return {
         ...state,
-        loadingSpinner: !state.loadingSpinner
+        loadingSpinner: !state.loadingSpinner,
       };
 
     default:

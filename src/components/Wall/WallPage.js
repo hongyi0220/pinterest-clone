@@ -26,9 +26,9 @@ class WallPage extends React.Component {
     }),
     storeOtherUserInfo: PropTypes.func.isRequired,
     storeMagnifiedPinInfo: PropTypes.func.isRequired,
-    // similarPicsKeyword: PropTypes.string,
     concatImgsToStore: PropTypes.func.isRequired,
     storeSearchKeywords: PropTypes.func.isRequired,
+    toggleMsgModal: PropTypes.func.isRequired,
   };
 
   componentWillMount() {
@@ -37,7 +37,7 @@ class WallPage extends React.Component {
     if (this.props.history.location.pathname.includes('/pin')) {
       const q = this.props.imgs.searchKeywords[0];
       console.log('searchKeywords:', q);
-      // const page = 1;
+
       fetch(`/pics?q=${q}&page=${1}`, {
         method: 'GET',
         credentials: 'include',
@@ -59,20 +59,23 @@ class WallPage extends React.Component {
     }
     if (this.state.pindex !== Number(eTarget.dataset.pindex)) {
       this.setState({
-          pindex: Number(eTarget.dataset.pindex)
-      }/*, () => this.props.storeMagnifiedPinInfo(this.props.imgs.search[this.state.pindex])*/);
+          pindex: Number(eTarget.dataset.pindex),
+      });
     }
   }
 
   handleSaveButtonClick = e => {
     e.stopPropagation();
-    // const { pindex } = this.state;
+
     console.log(`saving pin/${this.state.pindex}?fromotheruser=false`);
     fetch(`/pin?pindex=${this.state.pindex}`, {
       method: 'GET',
       credentials: 'include',
     })
-      .catch(err => console.log(err));
+      .catch(err => {
+        this.props.toggleMsgModal({ title: 'Error', msg: 'Something went wrong :(' });
+        console.log(err);
+      });
   }
 
   handleMagnifyPinClick = (goToPinPage = true) => {
@@ -138,7 +141,7 @@ class WallPage extends React.Component {
 
             <img className='wall-img' src={img.src} onError={e => e.target.src = '/images/default-no-img.jpg'}/>
           </div>)
-          : <div className="no-imgs-msg-wrapper">No images found</div>
+          : ''
         }
         </div>
         <div className="loading-icon-wrapper">

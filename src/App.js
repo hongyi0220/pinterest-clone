@@ -1,7 +1,6 @@
 import React from 'react';
 import {
   Route,
-  // Switch,
 } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import {
@@ -31,10 +30,11 @@ class App extends React.Component {
     storeOtherUserInfo: PropTypes.func.isRequired,
     history: PropTypes.shape({ location: PropTypes.shape({ pathname: PropTypes.string })}),
     concatImgsToStore: PropTypes.func.isRequired,
+    storeSearchKeywords: PropTypes.func.isRequired,
   };
 
   state = {
-    curatedPinsStoredInSession: false,
+    isOkToMountHeader: false,
   };
 
   componentWillMount() {
@@ -77,6 +77,7 @@ class App extends React.Component {
         if (sessionData.imgs && pathname !== '/' && pathname !== '/home') {
           // console.log('storeImgs called');
           this.props.storeImgs(sessionData.imgs);
+          this.setState({ isOkToMountHeader: true });
         } else {
           this.curateWall(allPins);
         }
@@ -84,7 +85,12 @@ class App extends React.Component {
           // console.log('otherUser from session:', sessionData.otherUser);
           this.props.storeOtherUserInfo(sessionData.otherUser);
         }
-        if (sessionData.magnifiedPin) { this.props.storeMagnifiedPinInfo(sessionData.magnifiedPin); }
+        if (sessionData.magnifiedPin) {
+          this.props.storeMagnifiedPinInfo(sessionData.magnifiedPin);
+          if (pathname.includes('/pin')) {
+            this.props.storeSearchKeywords([sessionData.magnifiedPin.tags[0]]);
+          }
+        }
 
       })
       .catch(err => console.log(err));
@@ -113,7 +119,7 @@ class App extends React.Component {
       },
       body: JSON.stringify({ imgs: curatedPins }),
     })
-      .then(() => this.setState({ curatedPinsStoredInSession: true }))
+      .then(() => this.setState({ isOkToMountHeader: true }))
       .catch(err => console.log(err));
   }
 
@@ -219,33 +225,32 @@ class App extends React.Component {
   });
 
   render() {
-    const { account, ui, } = this.props;
+    const { account, ui, imgs, } = this.props; // eslint-disable-line
     return (
-      // <Router>
-        <div className="app-container">
-          <Route path='/pin/*' component={PinPageContainer}/>
-          {account.user ?
-            (this.state.curatedPinsStoredInSession ?
-            <Route render={props => <HeaderContainer {...props} input={this.props.imgs.input} atPinPage={this.props.history.location.pathname.includes('/pin')}/>} />
-            : '')
-            : <Route exact path='/' component={AuthPageContainer} />
-          }
+      <div className="app-container">
 
+        <Route path='/pin/*' component={PinPageContainer}/>
+        {account.user ?
+          (this.state.isOkToMountHeader ?
+          <Route render={props => <HeaderContainer {...props} input={this.props.imgs.input} atPinPage={this.props.history.location.pathname.includes('/pin')}/>} />
+          : '')
+          : <Route exact path='/' component={AuthPageContainer} />}
 
-          {ui.headerMenu ?
-            <Route component={HeaderMenuContainer} /> : ''}
+        {ui.headerMenu ?
+          <Route component={HeaderMenuContainer} /> : ''}
 
-          {account.user ?
-            <Route path='/user' component={UserPageContainer} /> : ''}
+        {account.user ?
+          <Route path='/user' component={UserPageContainer} /> : ''}
 
-          {ui.modalBackgroundOverlay ?
-            <Route component={ModalBackgroundOverlayContainer} /> : ''}
+        {ui.modalBackgroundOverlay ?
+          <Route component={ModalBackgroundOverlayContainer} /> : ''}
 
+        <Route exact path='/settings' component={SettingsPageContainer}/>
+        {/* {imgs.searchKeywords.length ?
+          <Route exact path='/(|home|search|find)' component={WallPageContainer} /> : ''} */}
+        <Route exact path='/(|home|search|find)' component={WallPageContainer} />
 
-          <Route exact path='/settings' component={SettingsPageContainer}/>
-          <Route exact path='/(|home|search|find)' component={WallPageContainer} />
-          {/* <Route exact path='/(|home|search|find)' render={() => <WallPageContainer similarPicsKeyword={this.props.imgs.topTags} />} /> */}
-        </div>
+      </div>
     );
   }
 }

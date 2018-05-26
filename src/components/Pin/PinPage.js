@@ -43,7 +43,7 @@ class PinPage extends React.Component {
 
   componentWillMount() {
     console.log('PinPage will mount!');
-    // this.props.storeSearchKeywords([this.props.imgs.magnifiedPin.tags[0]]);
+
     this.setState({
       clientWidth: window.innerWidth,
       clientHeight: window.innerHeight,
@@ -93,15 +93,17 @@ class PinPage extends React.Component {
   }
 
   handleHomeButtonClick = () => {
+    // this.props.storeSearchKeywords([]);
     this.props.history.push('/home');
     this.props.storeImgs(this.props.imgs.curatedPins);
+
   }
 
   render() {
     const { imgs, } = this.props;
     const { comments, } = this.state;
-  
-    console.log('similarPicsKeyword:',imgs.magnifiedPin ? imgs.magnifiedPin.tags[0] : '');
+
+    console.log('searchKeywords[0]:',imgs.magnifiedPin ? imgs.magnifiedPin.tags[0] : '');
     return (
       <div className="pin-page-background">
         <div className="pin-page-container">

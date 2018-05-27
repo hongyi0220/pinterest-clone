@@ -163,32 +163,21 @@ class App extends React.Component {
       return result;
     };
 
-    // This will count how many times a tag is saved
-    //   so top tags can be selected
+    // This will count how many times a tag appears in user's saved Pins
+    //   so that top tags can be selected
     const getTopThreeTags = tags => {
       let result = [];
       tags.forEach((tag, i) => {
-        // console.log('current tag:', tag, ' next tag:', tags[i + 1]);
-        // console.log('[tag, 1]:',[tag, 1]);
         if (tag === tags[i + 1]) {
           if(!i) {
-            // console.log('result:',result);
-            // result.push({tag, score: 1});
             result.push([tag, 1]);
-            // console.log('result after pushing:',result);
           }
-          // result[result.length - 1].score++;
           result[result.length - 1][1]++;
-          // console.log('after adding to score:', result);
-          // console.log('[tag, 1]:',[tag, 1]);
         } else {
-          // result.push({ tag: tags[i + 1], score: 1});
           result.push([tags[i + 1], 1]);
-          // console.log('result after pushing:',result);
         }
       });
       return result
-        // .filter(tag => typeof tag === 'object' && typeof tag.tag === 'string' && tag.score > 1)
         .filter(tag => typeof tag === 'object' && typeof tag[0] === 'string' && tag[1] > 1)
         // .sort((a, b) => b.score - a.score).slice(0, 3);
         .sort((a, b) => b[1] - a[1]).map(tag => tag[0]).slice(0, 3);
@@ -230,11 +219,10 @@ class App extends React.Component {
     return (
       <div className="app-container">
 
-        <Route path='/pin/*' component={PinPageContainer}/>
+        {imgs.magnifiedPin && <Route path='/pin/*' component={PinPageContainer}/>}
         {account.user ?
-          (this.state.isOkToMountHeader ?
-          <Route render={props => <HeaderContainer {...props} input={this.props.imgs.input} atPinPage={this.props.history.location.pathname.includes('/pin')}/>} />
-          : '')
+          (this.state.isOkToMountHeader &&
+          <Route render={props => <HeaderContainer { ...props } input={this.props.imgs.input} atPinPage={this.props.history.location.pathname.includes('/pin')}/>} />)
           : <Route exact path='/' component={AuthPageContainer} />}
 
         {ui.headerMenu ?

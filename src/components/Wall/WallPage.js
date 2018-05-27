@@ -98,7 +98,7 @@ class WallPage extends React.Component {
             top: 0,
             behavior: 'instant'
           });
-          this.props.storeSearchKeywords([this.props.imgs.magnifiedPin.tags[0]]);
+          // this.props.storeSearchKeywords([this.props.imgs.magnifiedPin.tags[0]]);
           this.props.history.push(`/pin/${resJson.pinId}`);
         }
         return resJson.pinId;

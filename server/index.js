@@ -61,7 +61,7 @@ MongoClient.connect(dbUrl, (err, database) => {
       );
     })
     .post((req, res) => {
-      console.log('POST /session reached; req.body.imgs:', '');
+      console.log('POST /session reached; req.body.imgs:', req.body.imgs);
       req.session.imgs = req.body.imgs;
       console.log('session.imgs after POST /session:', req.session.imgs);
       res.end();

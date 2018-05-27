@@ -48,7 +48,7 @@ class PinPage extends React.Component {
 
   componentWillMount() {
     console.log('PinPage will mount!');
-
+    this.props.storeSearchKeywords([this.props.imgs.magnifiedPin.tags[0]]);
     this.setState({
       clientWidth: window.innerWidth,
       clientHeight: window.innerHeight,
@@ -59,7 +59,7 @@ class PinPage extends React.Component {
 
   componentDidMount() {
     console.log('PinPage DID mount!');
-    this.getUserProfileImg(this.props.imgs.magnifiedPin.users[0])
+    this.getUserProfileImg('/image/default-profile-image.png' && this.props.imgs.magnifiedPin.users[0])
       .then(profileImg => {
         console.log('this.pinUserProfileImg:',this.pinUserProfileImg);
         console.log('profileImg:',profileImg);
@@ -215,21 +215,16 @@ class PinPage extends React.Component {
                     ) : 'No user info to display'
                   ) : ''
                 }
-
               </div>
             </div>
-
           </div>
-
         </div>
         <div className="more-like-this-text-wrapper">
           <h3>More Like this</h3>
         </div>
         <div className="more-like-this-container">
           <Route component={WallPageContainer} />
-
         </div>
-
       </div>
 
     );

@@ -37,6 +37,8 @@ class Header extends React.Component {
     fetching: false,
   };
 
+  headerInput = null;
+
   componentWillMount() {
     console.log('Header will mount');
     // console.log('Header component state at compWllMnt:', this.state);
@@ -46,13 +48,7 @@ class Header extends React.Component {
     if (pathname === '/' || pathname === '/home') {
       this.props.storeSearchKeywords(this.props.imgs.topTags);
       if (this.props.imgs.search) {
-        if (this.props.imgs.search.length < 20) {
-          console.log('this.props.imgs.search.length < 20:', this.props.imgs.search.length < 20,'getting more pics to append to wall');
-          this.searchImg({ key: 'Enter', scroll: true,})
-            .then(curatedPins => this.props.storeCuratedPins(curatedPins));
-
-          console.log('imgs.curatedPins:',this.props.imgs.curatedPins);
-        }
+        this.padCuratedWall();
       }
     }
 
@@ -69,7 +65,17 @@ class Header extends React.Component {
     this.lazyLoadPics();
   }
 
-   searchImg = e => {
+  padCuratedWall = () => {
+    if (this.props.imgs.search.length < 20) {
+      console.log('this.props.imgs.search.length < 20:', this.props.imgs.search.length < 20,'getting more pics to append to wall');
+      this.searchImg({ key: 'Enter', }, true)
+        .then(curatedPins => this.props.storeCuratedPins(curatedPins));
+
+      console.log('imgs.curatedPins:',this.props.imgs.curatedPins);
+    }
+  }
+
+  searchImg = (e, scroll = false) => {
     console.log('searchImg triggered!');
     // console.log('page:', this.state.page);
     // console.log('keyDown:',e.key);
@@ -78,8 +84,11 @@ class Header extends React.Component {
     if (e.key === 'Enter') {
       this.props.toggleLoadingSpinner();
       this.setState({ fetching: true });
-      if (!e.scroll) {
-        this.setState({ page: 1, pageYOffset: 0 });
+      let page = this.props.imgs.searchKeywords.length === 1 ? this.state.page : this.state.page + 1;
+      if (!scroll) {
+        console.log('not scrolling, setState page: 1, instant scroll to top');
+        this.setState({ /*page: 1,*/ pageYOffset: 0 });
+        page = 1;
         window.scroll({
           top: 0,
           behavior: 'instant'
@@ -89,8 +98,9 @@ class Header extends React.Component {
       if (this.props.imgs.searchKeywords.length === 1 && !pathname.includes('/pin')) {
         this.props.history.push(`/search?q=${this.props.imgs.searchKeywords[0]}&page=${this.state.page}`);
       }
+      console.log('page before fetching: ', this.state.page);
 
-      return fetch(`/pics?q=${this.props.imgs.searchKeywords.join('&&')}&page=${this.props.imgs.searchKeywords.length === 1 ? this.state.page : this.state.page + 1}`, {
+      return fetch(`/pics?q=${this.props.imgs.searchKeywords.join('&&')}&page=${page}`, {
         method: 'GET',
         credentials: 'include',
       })
@@ -108,7 +118,25 @@ class Header extends React.Component {
 
   handleInputChange = e => this.props.storeSearchKeywords([e.target.value]);
 
-  handleHomeButtonClick = () => this.props.storeImgs(this.props.imgs.curatedPins);
+  handleHomeButtonClick = () => {
+    this.headerInput.value = '';
+    window.scroll({
+      top: 0,
+      behavior: 'instant',
+    });
+    this.props.storeImgs(this.props.imgs.curatedPins);
+    console.log('this.props.imgs.curatedPins:',this.props.imgs.curatedPins);
+    fetch('/session', {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'content-type': 'application/json'
+      },
+      body: JSON.stringify({ imgs: this.props.imgs.curatedPins }),
+    })
+      .catch(err => console.log(err));
+    this.props.storeSearchKeywords(this.props.imgs.topTags);
+  }
 
 
   lazyLoadPics = () => {
@@ -128,24 +156,22 @@ class Header extends React.Component {
       if (window.pageYOffset + window.innerHeight >= document.documentElement.scrollHeight - 100 && this.props.imgs.searchKeywords && (window.pageYOffset >= pageYOffset) && !this.props.ui.loadingSpinner && !this.state.fetching && !pathname.includes('/user') && !pathname.includes('/find')) {
         console.log('lazy-loading triggered');
         this.setState(prevState => ({ page: prevState.page += 1 }));
-        this.searchImg({ key: 'Enter', scroll: true });
+        this.searchImg({ key: 'Enter', }, true);
       }
     });
   }
 
   render() {
-    // console.log('Header component state at render:', this.state);
-    // const { input } = this.state;
     const { account, toggleHeaderMenu, imgs, atPinPage } = this.props;
     return (
       <div className={atPinPage ? 'header invisible' : 'header'}>
-        <Link className="link" to='/' onClick={() => {this.props.storeSearchKeywords([]); this.handleHomeButtonClick();}}>
+        <Link className="link" to='/' onClick={this.handleHomeButtonClick}>
           <img src="/images/pinterest_logo.png"/>
         </Link>
 
-        <input type="text" placeholder='Search' onKeyDown={this.searchImg} onChange={this.handleInputChange} value={imgs.searchKeywords.length > 1 ? '' : imgs.searchKeywords[0]}/>
+        <input type="text" placeholder='Search' onKeyDown={this.searchImg} onChange={this.handleInputChange} value={imgs.searchkeywords && (imgs.searchKeywords.length > 1 ? '' : imgs.searchKeywords[0])} ref={e => this.headerInput = e}/>
 
-        <Link className="link" to='/home' onClick={() => {/*this.props.storeSearchKeywords([]);*/ this.handleHomeButtonClick();}}>
+        <Link className="link" to='/home' onClick={this.handleHomeButtonClick}>
           <div className="home-button-text-wrapper">Home</div>
         </Link>
 

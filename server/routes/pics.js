@@ -7,7 +7,6 @@ const cloudinary = require('cloudinary');
 const ObjectId = require('mongodb').ObjectId;
 
 module.exports = (app, db) => {
-
   const Pins = db.collection('pins');
   const uploadPixabayImgToCloudinary = img => {
       console.log('rsc from pixabay');
@@ -27,7 +26,7 @@ module.exports = (app, db) => {
 
   app.get('/pics', (req, res) => { // search pics
     console.log('GET /pics route reached!');
-    console.log('session.imgs:', req.session.imgs);
+    console.log(' 5 session.imgs:', req.session.imgs.slice(0, 5));
     let { page, q } = req.query;
     q = q.split('&&');
     page = +page;

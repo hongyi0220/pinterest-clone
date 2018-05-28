@@ -52,15 +52,16 @@ module.exports = (app, db) => {
     usernameField: 'email'
   },
   (username, password, done) => {
-    Users.findOne({ 'email': username })
-    .then(user => {
-      if (!user || user.password !== password) {
-        console.log('!user');
-        return done(null, false);
-      }
-      return done(null, user);
-    })
-    .catch(err => done(err));
+    console.log('passport localStrategy triggered!');
+    Users.findOne({ 'email': username, password })
+      .then(user => {
+        if (!user) {
+          console.log('!user');
+          return done(null, false);
+        }
+        return done(null, user);
+      })
+      .catch(err => done(err));
   }
   ));
 
@@ -98,31 +99,63 @@ module.exports = (app, db) => {
     })
   );
 
-  app.post('/auth', (req, res) => {
+  app.get('/auth/:email', (req, res) => {
+    const { email } = req.params;
+    console.log('email:', email);
+    Users.findOne(
+      { email },
+      { email: 1, },
+    )
+      .then(user => {
+        console.log('user @ /auth/:email:', user);
+        if (user) {
+          res.send({ typeOfSubmitButton: 'login' });
+        } else {
+          res.send({ typeOfSubmitButton: 'signup' });
+        }
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  });
+
+  app.post('/signup', (req, res) => {
+    console.log('/signup route reached!');
     const { email, password } = req.body;
+    let newUser = { // Create new user
+      email,
+      username: email.split('@')[0],
+      password,
+      profileImg: '/images/default-profile-image.png',
+    };
+    Users.insertOne(newUser)
+      .then((result) => { //Sign user in
+        // console.log('result from inserting newUser:', result);
+        if (result.insertedId) {
+          console.log('has insertedId');
+          newUser._id = result.insertedId;
+          req.login(newUser, err => {
+            console.log('logging user in');
+            if (err) {
+              return res.status(500).json({
+                err
+              });
+            }
+            return res.redirect('/home');
+          });
+        }
+      })
+      .catch(err => console.log(err));
+  });
+
+  app.post('/auth', (req, res) => {
+    // const { email, password } = req.body;
+
     passport.authenticate('local', (err, user, info) => {
       if (err) { return console.log(err); }
       if (!user) {
+        res.redirect('/login-error');
 
-        Users.insertOne({ // Create new user
-          email,
-          username: email.split('@')[0],
-          password,
-          profileImg: '/images/default-profile-image.png',
-        })
-        .then(() => { //Sign user in
-          Users.findOne({ email })
-            .then(user => {
-              req.login(user, err => {
-                if (err) {
-                  return res.status(500).json({
-                    error: info
-                  });
-                }
-                return res.redirect('/home');
-              });
-            });
-        }).catch(err => console.log(err));
       } else {
         console.log('recovered session, logging user in');
         req.login(user, err => {
@@ -158,12 +191,12 @@ module.exports = (app, db) => {
       previewImg = req.user.profileImg;
     }
     Users.updateOne(
-      { username: req.user.username },
+      { username: req.user.username, password: req.user.password, },
       { $set: {
         email,
         username,
         profileImg: previewImg,
-      }}
+      }},
     )
       .then(() => res.end())
       .catch(err => console.log(err));
@@ -206,17 +239,11 @@ module.exports = (app, db) => {
 
   });
 
-  // app.get('/user', (req, res) => {
-  //   console.log('/user reached!');
-  //   const { username } = req.query;
-  // })
-
   app.get('/user/:username', (req, res, next) => {
-
     // console.log('/user/* reached! req.url:', req.url);
     // console.log('/user/* reached! req.url.split:', req.url.split('/'));
     // const username = req.url.split('/')[2];
-    const { externalapi } = req.query;
+    const { externalapi, session, } = req.query;
     const username = req.params.username;
     console.log('/user/:username reached!!');
     if (username) {
@@ -228,6 +255,12 @@ module.exports = (app, db) => {
         { _id: 0, password: 0, email: 0, }
       )
         .then(otherUser => {
+          if (!otherUser) {
+            return res.send({ match: 0 });
+          }
+          if (session === 'false') {
+            return res.send({ match: 1 });
+          }
           console.log('otherUser @ /user/:username:', otherUser);
           otherUser.pins = pins;
           req.session.otherUser = otherUser;
@@ -240,38 +273,6 @@ module.exports = (app, db) => {
         .catch(err => {
           console.log(err);
         });
-      // const getOtherUserInfoPromise =
-      // new Promise((resolve, reject) => {
-      //   Users.findOne(
-      //     { username },
-      //     { _id: 0, password: 0, email: 0, }
-      //   )
-      //     .then(otherUser => {
-      //       resolve(otherusr);
-      //       console.log('otherUser @ /user/:username:', otherUser);
-      //       // otherUser.pins = pins;
-      //     //   req.session.otherUser = otherUser;
-      //     //   if (externalapi === 'false') {
-      //     //     res.send(otherUser);
-      //     //   } else {
-      //     //     next();
-      //     //   }
-      //     })
-      //     .catch(err => {
-      //       console.log(err);
-      //       reject(err);
-      //     });
-      // });
-      // const getOtherUsersPinsPromise =
-      //   new Promise((resolve, reject) => {
-      //     Pins.find({ users: username })
-      //     .then(pins => resolve(pins))
-      //     .catch(err => {
-      //       reject(err);
-      //       console.log(err);
-      //     });
-      //   });
-
     } else {
       console.log('!username; next()');
       next();

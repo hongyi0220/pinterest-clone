@@ -103,6 +103,9 @@ html {
             input[type='file'] {
                 opacity: 0;
             }
+            .username-taken-msg {
+              color: red;
+            }
             .picture-container {
                 white-space: nowrap;
                 height: 100px;

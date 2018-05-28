@@ -1,3 +1,5 @@
+@import '../../styles-assets/mixins';
+@import '../../styles-assets/variables';
 .auth-page-container {
     display: grid;
     grid-template-columns: repeat(4, 1fr) repeat(3, minmax(100px, 1fr)) repeat(2, minmax(100px, 1fr)) repeat(2, 1fr);
@@ -27,6 +29,11 @@
         }
         p {
             color: #ccc;
+        }
+        .login-error-msg {
+          p {
+            color: red;
+          }
         }
         .input-container {
             display: flex;
@@ -58,6 +65,15 @@
                 color: white;
                 &:focus {
                     outline: none;
+                }
+                &:hover {
+                  cursor: pointer;
+                }
+            }
+            button.disabled {
+                background-color: $pin-medium-gray;
+                &:hover {
+                  cursor: not-allowed;
                 }
             }
         }

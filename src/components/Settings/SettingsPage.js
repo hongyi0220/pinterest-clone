@@ -12,9 +12,11 @@ class SettingsPage extends React.Component {
     email: '',
     username: '',
     postingFormData: false,
+    isUsernameTaken: false,
   };
 
   formSubmitButton = null;
+  usernameInputTimeout = null;
 
   componentWillMount() {
     console.log('SettingsPage componentWillMount');
@@ -73,6 +75,30 @@ class SettingsPage extends React.Component {
 
   handleUsernameInputChange = e => this.setState({ username: e.target.value });
 
+  handleUsernameInputOnKeyUp = e => {
+    console.log('keyUP');
+    e.stopPropagation();
+    const eTarget = e.target;
+    console.log('eTarget:',eTarget);
+    console.log('e.target.value:', eTarget.value);
+    clearTimeout(this.usernameInputTimeout);
+    this.setState({ isUsernameTaken: false, });
+    this.usernameInputTimeout = setTimeout(() => {
+      fetch(`/user/${eTarget.value}?session=false`, {
+        method: 'GET',
+        credentials: 'include',
+      })
+        .then(res => res.json())
+        .then(resJson => {
+          console.log('resJson:', resJson);
+          this.setState({
+            isUsernameTaken: resJson.match ? true : false,
+          });
+        })
+        .catch(err => console.log(err));
+    }, 500);
+  }
+
   render() {
     const { previewImg, email, username } = this.state;
     const { account } = this.props;
@@ -107,7 +133,8 @@ class SettingsPage extends React.Component {
             <div className="profile-settings-container">
               <div className="input-field-container username">
                 <label htmlFor="username" className='label'>Username</label>
-                <input type="username" id='username' name='username' value={username} placeholder={account.user ? account.user.username : ''} onChange={this.handleUsernameInputChange}/>
+                <input type="username" id='username' name='username' value={username} placeholder={account.user ? account.user.username : ''} onChange={this.handleUsernameInputChange} onKeyUp={this.handleUsernameInputOnKeyUp}/>
+                {this.state.isUsernameTaken && <div className='username-taken-msg'><p>{`The username ${username} is already taken`}</p></div>}
               </div>
 
               <label className='label'>Picture</label>
@@ -126,7 +153,7 @@ class SettingsPage extends React.Component {
         </div>
 
         <div className="settings-footer">
-          <div className={this.state.postingFormData ? 'settings-footer-button save disabled' : 'settings-footer-button save'} onClick={this.submitForm}>Save settings</div>
+          <div className={this.state.postingFormData || this.state.isUsernameTaken ? 'settings-footer-button save disabled' : 'settings-footer-button save'} onClick={this.submitForm}>Save settings</div>
           <div className="settings-footer-button cancel" onClick={this.handleCancelButtonClick}>Cancel</div>
         </div>
       </div>

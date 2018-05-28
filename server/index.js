@@ -49,8 +49,10 @@ MongoClient.connect(dbUrl, (err, database) => {
       if (!req.session.pins) {
         console.log('NO PINS YET! IN REQ.SESSION.PINS!!', req.session.pins);
       }
+      if (req.user) {
+        req.user.pins = req.session.pins.filter(pin => pin.users.includes(req.user.username));
+      }
 
-      req.user.pins = req.session.pins.filter(pin => pin.users.includes(req.user.username));
       res.send(
         {
           user: req.user,

@@ -223,7 +223,7 @@ class App extends React.Component {
         {account.user ?
           (this.state.isOkToMountHeader &&
           <Route render={props => <HeaderContainer { ...props } input={this.props.imgs.input} atPinPage={this.props.history.location.pathname.includes('/pin')}/>} />)
-          : <Route exact path='/' component={AuthPageContainer} />}
+          : <Route path='/' component={AuthPageContainer} />}
 
         {ui.headerMenu ?
           <Route component={HeaderMenuContainer} /> : ''}

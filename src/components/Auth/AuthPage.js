@@ -1,25 +1,52 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Route, } from 'react-router-dom';
-
 class AuthPage extends React.Component {
   static propTypes = {
     logInUser: PropTypes.func.isRequired,
+    history: PropTypes.shape({
+      push: PropTypes.func,
+      location: PropTypes.shape({
+        pathname: PropTypes.string,
+      }),
+    }),
   };
   state = {
     email: '',
     password: '',
     typeOfSubmitButton: 'continue',
     doesEmailExist: false,
+    passwordHasUpperCaseLetter: false,
+    passwordHasLowerCaseLetter: false,
+    passwordIsLongerThanSixLetters: false,
   };
   componentWillMount() {
     console.log('AuthPage component WILL mount');
   }
   emailInputTimeout = null;
 
-  handleEmailInputOnChange = e => this.setState({ email: e.target.value });
+  handleEmailInputOnChange = e => {
+    if (this.props.history.location.pathname !== '/') {
+      this.props.history.push('/');
+    }
+    this.setState({ email: e.target.value });
+  }
 
-  handlePasswordInput = e => this.setState({ password: e.target.value });
+  handlePasswordInputOnChange = e => {
+    if (this.props.history.location.pathname !== '/') {
+      this.props.history.push('/');
+    }
+    const passwordHasUpperCaseLetter = /[A-Z]/g.test(e.target.value);
+    const passwordHasLowerCaseLetter = /[a-z]/g.test(e.target.value);
+    const passwordIsLongerThanSixLetters = e.target.value.length >= 6;
+
+    this.setState({
+      password: e.target.value,
+      passwordHasUpperCaseLetter,
+      passwordHasLowerCaseLetter,
+      passwordIsLongerThanSixLetters,
+    });
+  }
 
   handleEmailInputOnKeyUp = e => {
     console.log('keyUP');
@@ -46,23 +73,48 @@ class AuthPage extends React.Component {
     }, 500);
   }
 
+  canBeSubmitted = () => {
+    const {passwordHasUpperCaseLetter, passwordHasLowerCaseLetter, passwordIsLongerThanSixLetters, password, email, } = this.state;
+    return (passwordHasUpperCaseLetter && passwordHasLowerCaseLetter && passwordIsLongerThanSixLetters && password && email && true);
+  }
+
+  handleFormSubmit = e => {
+    console.log('handle form submit');
+    console.log('can be submitted?:', this.canBeSubmitted());
+    if (!this.canBeSubmitted()) {
+      console.log('e.preventDefault');
+      e.preventDefault();
+      return;
+    }
+  }
+
   render() {
-    const { email, password } = this.state;
+    const { email, password, passwordHasUpperCaseLetter, passwordHasLowerCaseLetter, passwordIsLongerThanSixLetters, } = this.state;
+    const isEnabled = this.canBeSubmitted();
+    console.log('isEnabled:', isEnabled);
     return (
       <div className='auth-page-container'>
-        <form className='auth-form' method='POST' action={this.state.typeOfSubmitButton === 'signup' ? '/signup' : '/auth'}>
+        <form className='auth-form' method='POST' action={this.state.typeOfSubmitButton === 'signup' ? '/signup' : '/auth'} onSubmit={this.handleFormSubmit}>
           <img src='/images/pinterest_logo.png'/>
           <h1>Welcome to Pinterest</h1>
           <p>Find new ideas to try</p>
           <div className='input-container'>
             <input type='email' name='email' placeholder='Email' onChange={this.handleEmailInputOnChange} value={email} onKeyUp={this.handleEmailInputOnKeyUp} />
             {this.state.doesEmailExist && <div className='green-checkmark'>✅</div>}
-            <input type='password' name='password' placeholder='Create a password' onChange={this.handlePasswordInput} value={password}/>
+            <input type='password' name='password' placeholder='Create a password' onChange={this.handlePasswordInputOnChange} value={password}/>
+            {this.state.password.length ? <div className="password-validation-msgs-container">
+                <div className={passwordHasUpperCaseLetter ? 'password-validation-msg-wrapper valid' : 'password-validation-msg-wrapper'}>Password has an upper-case letter</div>
+                <div className={passwordHasLowerCaseLetter ? 'password-validation-msg-wrapper valid' : 'password-validation-msg-wrapper'}>Password has a lower-case letter</div>
+                <div className={passwordIsLongerThanSixLetters ? 'password-validation-msg-wrapper valid' : 'password-validation-msg-wrapper'}>Password is longer than 6 characters</div>
+              </div> : ''
+            }
+
             <Route path='/login-error' render={() => <div className='login-error-msg'><p>Password entered is incorrect</p></div>}/>
+
             {{
-                continue: <button type='submit' className='disabled'>Continue</button>,
-                login: <button type='submit'>Log in</button>,
-                signup: <button type='submit'>Sign up</button>
+                continue: <button type='submit' className='disabled' disabled={isEnabled}>Continue</button>,
+                login: <button type='submit' className={isEnabled ? '' : 'disabled'} disabled={!isEnabled}>Log in</button>,
+                signup: <button type='submit' className={isEnabled ? '' : 'disabled'} disabled={!isEnabled}>Sign up</button>
               }[this.state.typeOfSubmitButton]}
             <span>OR</span>
             <a href="/auth/twitter">Sign in with Twitter</a>

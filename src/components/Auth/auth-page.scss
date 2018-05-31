@@ -55,6 +55,14 @@
                     color: #ccc;
                 }
             }
+            .password-validation-msgs-container {
+              .password-validation-msg-wrapper {
+                color: orange;
+              }
+              .password-validation-msg-wrapper.valid {
+                color: green;
+              }
+            }
             button {
                 flex-grow: 1;
                 border: none;

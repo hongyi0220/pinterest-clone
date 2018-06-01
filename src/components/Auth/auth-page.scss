@@ -1,102 +1,163 @@
 @import '../../styles-assets/mixins';
 @import '../../styles-assets/variables';
 .auth-page-container {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr) repeat(3, minmax(100px, 1fr)) repeat(2, minmax(100px, 1fr)) repeat(2, 1fr);
-    grid-template-rows: repeat(8, 1fr);
-    // grid-template-areas:
-    //     ". . . . . . . . . . ."
-    //     ". . . . f f f . . . ."
-    //     ". . . . f f f . . . ."
-    //     ". . . . f f f . . . ."
-    //     ". . . . f f f . . . ."
-    //     ". . . . f f f b b . ."
-    //     ". . . . f f f b b . ."
-    //     ". . . . . . . . . . .";
-    height: 100vh;
-    border: 1px solid black;
-    .auth-form {
-        padding: 1em;
-        text-align: center;
-        grid-area: 2/5/8/8;
-        border: 1px solid #000;
-        border-radius: 10px;
-        img {
-            height: 50px;
-        }
-        h1 {
-            color: #555;
-        }
-        p {
-            color: #ccc;
-        }
-        .login-error-msg {
-          p {
-            color: red;
-          }
-        }
-        .input-container {
-            display: flex;
-            flex-direction: column;
-            input {
-                flex-grow: 1;
-                margin: .5em 2.5em;
-                border-radius: 5px;
-                height: 40px;
-                border: 1px solid #ccc;
-                padding-left: 1em;
-                outline: none;
-                color: #555;
-                &:focus {
-                    border: 5px solid #8BC3FD;
-                    padding: 12px;
-                }
-                &::placeholder {
-                    color: #ccc;
-                }
-            }
-            .password-validation-msgs-container {
-              .password-validation-msg-wrapper {
-                color: orange;
-              }
-              .password-validation-msg-wrapper.valid {
-                color: green;
-              }
-            }
-            button {
-                flex-grow: 1;
-                border: none;
-                background-color: #D3132A;
-                border-radius: 5px;
-                margin: .5em 2.5em;
-                height: 40px;
-                color: white;
-                &:focus {
-                    outline: none;
-                }
-                &:hover {
-                  cursor: pointer;
-                }
-            }
-            button.disabled {
-                background-color: $pin-medium-gray;
-                &:hover {
-                  cursor: not-allowed;
-                }
-            }
-        }
-
+  height: 100vh;
+  .rolling-background-collage-wrapper {
+    height: 100%;
+    overflow: hidden;
+    img {
+      position: relative;
+      width: 100%;
+      top: 0%;
+      animation: scroll 30s linear infinite;
     }
-    .baloon {
-        grid-area: 6/8/8/10;
-        border-radius: 50% 50% 50% 20px;
+    @keyframes scroll {
+      from {
+        top: 0;
+      }
+      25% {
+        top: -25%;
+      }
+      50% {
+        top: -50%;
+      }
+      75% {
+        top: -75%;
+      }
+      to {
+        top: -100%;
+      }
+    }
+  }
+  .auth-form {
+    padding: .8em;
+    text-align: center;
+    position: absolute;
+    display: inline-block;
+    width: 350px;
+    border-radius: 1em;
+    height: 500px;
+    margin: auto;
+    top: calc(50% - 500px / 2);
+    left: calc(50% - 350px / 2);
+    background-color: white;
+    img.logo {
+      height: 50px;
+      margin-top: .5em;
+    }
+    h1.title {
+      color: #555;
+    }
+    p.sub-title {
+      color: #ccc;
+      margin-bottom: .5em;
+    }
+    .login-error-msg {
+      p {
+        color: red;
+      }
+    }
+    .input-container {
+      display: flex;
+      flex-direction: column;
+      .green-checkmark {
+        color: green;
+        font-size: 0.85em;
+        font-weight: 500;
+      }
+      input {
+        flex-grow: 1;
+        margin: .5em 2.5em;
+        border-radius: 5px;
+        height: 40px;
+        border: 1px solid #ccc;
+        padding-left: 1em;
+        outline: none;
+        color: #555;
+        &:focus {
+          border: 5px solid #8BC3FD;
+          padding: 12px;
+        }
+        &::placeholder {
+          color: #ccc;
+        }
+      }
+      .password-validation-msgs-container {
+        font-size: 0.85em;
+        .password-validation-msg-wrapper {
+          color: orange;
+        }
+        .password-validation-msg-wrapper.valid {
+          color: green;
+        }
+      }
+      button {
+        flex-grow: 1;
+        border: none;
         background-color: #D3132A;
-        margin-left: 1em;
-        p {
-            margin: 2em;
-            margin-top: 2.35em;
-            color: white;
-            font-size: 1.5em;
+        border-radius: 5px;
+        margin: .5em 2.5em;
+        height: 40px;
+        color: white;
+        &:focus {
+          outline: none;
         }
+        &:hover {
+          cursor: pointer;
+        }
+      }
+      button.disabled {
+        background-color: $pin-medium-gray;
+        &:hover {
+          cursor: not-allowed;
+        }
+      }
+      span {
+        font-weight: 600;
+        font-size: .8em;
+        margin-bottom: .5em;
+      }
+      .twitter-signin-button {
+        text-decoration: none;
+        @include pinterest-gray-button(82.5%, #2AA3EF);
+        margin: auto;
+        &:hover {
+          background-color: #219eed;
+        }
+        color: white;
+        font-weight: 500;
+        img {
+          position: relative;
+          float: left;
+          height: 35px;
+          top: calc(50% - 35px / 2);
+          left: .6%;
+          z-index: 3;
+          border-radius: 3px;
+        }
+      }
     }
+  }
+  .baloon-wrapper {
+    display: inline-block;
+    position: absolute;
+    height: 500px;
+    left: calc(50% + 350px / 2);
+    top: calc(50% - 500px / 2);
+    margin-left: 1em;
+    .baloon {
+      border-radius: 50% 50% 50% 20px;
+      background-color: #D3132A;
+      width: 200px;
+      height: 200px;
+      position: relative;
+      top: calc(100% - 200px);
+      p {
+        padding: 1.5em;
+        padding-top: 2.05em;
+        color: white;
+        font-size: 1.5em;
+      }
+    }
+  }
 }

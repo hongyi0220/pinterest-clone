@@ -215,29 +215,27 @@ class App extends React.Component {
   });
 
   render() {
-    const { account, ui, imgs, } = this.props; // eslint-disable-line
+    const { account, ui, imgs, } = this.props;
     return (
       <div className="app-container">
 
         {imgs.magnifiedPin && <Route path='/pin/*' component={PinPageContainer}/>}
         {account.user ?
-          (this.state.isOkToMountHeader &&
-          <Route render={props => <HeaderContainer { ...props } input={this.props.imgs.input} atPinPage={this.props.history.location.pathname.includes('/pin')}/>} />)
+          <div>
+            {this.state.isOkToMountHeader &&
+              <Route render={props => <HeaderContainer { ...props } input={this.props.imgs.input} atPinPage={this.props.history.location.pathname.includes('/pin')} />} />
+            }
+            <Route exact path='/(|home|search|find)' component={WallPageContainer} />
+          </div>
           : <Route path='/' component={AuthPageContainer} />}
 
-        {ui.headerMenu ?
-          <Route component={HeaderMenuContainer} /> : ''}
+        {ui.headerMenu && <Route component={HeaderMenuContainer} />}
 
-        {account.user ?
-          <Route path='/user' component={UserPageContainer} /> : ''}
+        {account.user && <Route path='/user' component={UserPageContainer} />}
 
-        {ui.modalBackgroundOverlay ?
-          <Route component={ModalBackgroundOverlayContainer} /> : ''}
+        {ui.modalBackgroundOverlay && <Route component={ModalBackgroundOverlayContainer} />}
 
-        <Route exact path='/settings' component={SettingsPageContainer}/>
-        {/* {imgs.searchKeywords.length ?
-          <Route exact path='/(|home|search|find)' component={WallPageContainer} /> : ''} */}
-        <Route exact path='/(|home|search|find)' component={WallPageContainer} />
+        <Route exact path='/settings' component={SettingsPageContainer} />
 
       </div>
     );

@@ -120,7 +120,7 @@ class WallPage extends React.Component {
         <div className="wall">
         {imgs.search ?
           imgs.search.map((img, i) =>
-          <div data-pindex={i} key={i} className={`img-container ${img.height > 480 ? 'tall' : ''}`} onMouseEnter={this.handlePinOnMouseOver} onMouseLeave={ this.handlePinOnMouseOver} onMouseOver={this.handlePinOnMouseOver}>
+          <div data-pindex={i} key={i} className={`img-container ${img.height > 480 ? 'tall' : ''}`} onMouseEnter={this.handlePinOnMouseOver} onMouseLeave={() => this.handlePinOnMouseOver()} onMouseOver={this.handlePinOnMouseOver}>
 
             <div data-pindex={i} className={this.state.pindex === i ? 'img-overlay on': 'img-overlay'} onClick={e => {e.stopPropagation(); this.handleMagnifyPinClick(e);}}>
 

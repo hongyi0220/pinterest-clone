@@ -5,13 +5,15 @@ import {
   toggleHeaderMenu,
 } from '../../actions';
 
-const HeaderMenu = ({ history, toggleHeaderMenu }) => {
+const HeaderMenu = ({ history, toggleHeaderMenu, }) => {
   return (
     <div className="header-menu-container">
-      <div className="menu-item-wrapper-settings">
+      <div className='rect'></div>
+      <div className="menu-item-wrapper settings">
         <div className='link' onClick={() => {history.push('/settings'); toggleHeaderMenu();}}>Edit settings</div>
       </div>
-      <div className="menu-item-wrapper-logout">
+      <hr />
+      <div className="menu-item-wrapper logout">
         <a href='/logout'>Log out</a>
       </div>
     </div>

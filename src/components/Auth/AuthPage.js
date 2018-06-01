@@ -94,13 +94,16 @@ class AuthPage extends React.Component {
     console.log('isEnabled:', isEnabled);
     return (
       <div className='auth-page-container'>
+        <div className='rolling-background-collage-wrapper'>
+          <img src='/images/rolling-background-collage.png' />
+        </div>
         <form className='auth-form' method='POST' action={this.state.typeOfSubmitButton === 'signup' ? '/signup' : '/auth'} onSubmit={this.handleFormSubmit}>
-          <img src='/images/pinterest_logo.png'/>
-          <h1>Welcome to Pinterest</h1>
-          <p>Find new ideas to try</p>
+          <img className='logo' src='/images/pinterest_logo.png'/>
+          <h1 className='title'>Welcome to Pinterest</h1>
+          <p className='sub-title'>Find new ideas to try</p>
           <div className='input-container'>
             <input type='email' name='email' placeholder='Email' onChange={this.handleEmailInputOnChange} value={email} onKeyUp={this.handleEmailInputOnKeyUp} />
-            {this.state.doesEmailExist && <div className='green-checkmark'>✅</div>}
+            {this.state.doesEmailExist ? <div className='green-checkmark'>✅ An account with this email exists</div> : <div className='green-checkmark'>🌱 This will be a new account</div>}
             <input type='password' name='password' placeholder='Create a password' onChange={this.handlePasswordInputOnChange} value={password}/>
             {this.state.password.length ? <div className="password-validation-msgs-container">
                 <div className={passwordHasUpperCaseLetter ? 'password-validation-msg-wrapper valid' : 'password-validation-msg-wrapper'}>Password has an upper-case letter</div>
@@ -112,19 +115,24 @@ class AuthPage extends React.Component {
             <Route path='/login-error' render={() => <div className='login-error-msg'><p>Password entered is incorrect</p></div>}/>
 
             {{
-                continue: <button type='submit' className='disabled' disabled={isEnabled}>Continue</button>,
+                continue: <button type='submit' className='disabled' disabled={!isEnabled}>Continue</button>,
                 login: <button type='submit' className={isEnabled ? '' : 'disabled'} disabled={!isEnabled}>Log in</button>,
                 signup: <button type='submit' className={isEnabled ? '' : 'disabled'} disabled={!isEnabled}>Sign up</button>
-              }[this.state.typeOfSubmitButton]}
+              }[this.state.typeOfSubmitButton]
+            }
             <span>OR</span>
-            <a href="/auth/twitter">Sign in with Twitter</a>
+            <a className='twitter-signin-button' href='/auth/twitter'>
+              <img src='/images/twitter-logo.png' alt='sign in with twitter'/>
+              Sign in with Twitter
+            </a>
           </div>
-          {`You typed: Password:${password}`}
         </form>
-        <div className='baloon'>
-          <p>
-            Pinterest helps you find ideas to try.
-          </p>
+        <div className="baloon-wrapper">
+          <div className='baloon'>
+            <p>
+              Pinterest helps you find ideas to try.
+            </p>
+          </div>
         </div>
       </div>
     );

@@ -1,7 +1,39 @@
 .header-menu-container {
-    box-shadow: 1px 0 5px gray;
-    width: 20%;
-    float: right;
-    position: relative;
-    top: 60px;
+  box-shadow: 0 1px 5px gray;
+  width: 20%;
+  right: .15em;
+  position: absolute;
+  top: 75px;
+  border-radius: 8px;
+  background-color: white;
+  color: $pin-font-gray;
+  z-index: 2;
+  font-weight: 600;
+  min-width: 100px;
+  max-width: 200px;
+  .rect {
+    position: absolute;
+    border-left: 1px solid $pin-light-gray;
+    border-top: 1px solid $pin-light-gray;
+    height: 20px;
+    width: 20px;
+    transform: rotate(45deg);
+    background-color: white;
+    right: 1em;
+    top: -.6em;
+    z-index: 4;
+  }
+  hr {
+    height: 1px;
+  }
+  .menu-item-wrapper {
+    margin: 1em 0 1em 1em;
+    cursor: pointer;
+  }
+  .menu-item-wrapper.logout {
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+  }
 }

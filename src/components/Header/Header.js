@@ -164,28 +164,28 @@ class Header extends React.Component {
   render() {
     const { account, toggleHeaderMenu, imgs, atPinPage } = this.props;
     return (
-      <div className={atPinPage ? 'header invisible' : 'header'}>
-        <Link className="link" to='/' onClick={this.handleHomeButtonClick}>
-          <img src="/images/pinterest_logo.png"/>
+      <div className={atPinPage ? 'header-container invisible' : 'header-container'}>
+        <Link className='header-menu-item logo' to='/' onClick={this.handleHomeButtonClick}>
+          <img className='logo' src="/images/pinterest_logo.png"/>
         </Link>
 
-        <input type="text" placeholder='Search' onKeyDown={this.searchImg} onChange={this.handleInputChange} value={imgs.searchkeywords && (imgs.searchKeywords.length > 1 ? '' : imgs.searchKeywords[0])} ref={e => this.headerInput = e}/>
+        <input className='search' type='text' placeholder='Search' onKeyDown={this.searchImg} onChange={this.handleInputChange} value={imgs.searchkeywords && (imgs.searchKeywords.length > 1 ? '' : imgs.searchKeywords[0])} ref={e => this.headerInput = e}/>
 
-        <Link className="link" to='/home' onClick={this.handleHomeButtonClick}>
-          <div className="home-button-text-wrapper">Home</div>
-        </Link>
-
-        <Link className='link' to={`/user/${account.user.username}`} onClick={() => {/*this.props.storeSearchKeywords([]);*/ this.props.storeOtherUserInfo(null);} }>
-          <div className="user">
-            {account.user.username}
-          </div>
-        </Link>
-
-        <div className="options" onClick={toggleHeaderMenu}>
+        <div className='header-menu-item options right' onClick={toggleHeaderMenu}>
           <svg>
             {[...'ccc'].map((c, i) => <circle key={i} cx={12 + (i * 8)}/>)}
           </svg>
         </div>
+
+        <Link className='header-menu-item user right' to={`/user/${account.user.username}`} onClick={() => {this.props.storeOtherUserInfo(null);} }>
+          <div className='username-wrapper'>
+            {account.user.username}
+          </div>
+        </Link>
+
+        <Link className='header-menu-item home right' to='/home' onClick={this.handleHomeButtonClick}>
+          <div className="home-button-text-wrapper">Home</div>
+        </Link>
       </div>
     );
   }

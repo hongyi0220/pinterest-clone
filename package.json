@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "A Pinterest clone",
   "main": "./server/index.js",
+  "engines": {
+    "node": "8.11.1"
+  },
   "scripts": {
     "build": "webpack --config ./webpack/webpack.dev.js",
     "server": "nodemon ./server/index.js localhost 3000",

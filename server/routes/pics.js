@@ -167,7 +167,12 @@ module.exports = (app, db) => {
           upsert: true,
         }
       )
-        .then(() => res.end())
+        // .then(() => res.end())
+        .then(() => {
+          req.session.pins.push(pin);
+          // req.user.pins.push(pin);
+          res.send({ pin });
+        })
         .catch(err => console.log(err));
     })
     .delete((req, res) => { // Delete a Pin

@@ -11,6 +11,7 @@ const STORE_OTHER_USER_INFO = 'STORE_OTHER_USER_INFO';
 const STORE_MAGNIFIED_PIN_INFO = 'STORE_MAGNIFIED_PIN_INFO';
 const STORE_SEARCH_KEYWORDS = 'STORE_SEARCH_KEYWORDS';
 const STORE_CURATED_PINS = 'STORE_CURATED_PINS';
+const CONCAT_TO_USER_PINS = 'CONCAT_TO_USER_PINS';
 
 const initState = {
   account: {
@@ -47,7 +48,14 @@ const account = (state = initState.account, action) => {
         ...state,
         otherUser: action.otherUser
       };
-
+    case CONCAT_TO_USER_PINS:
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          pins: [...state.user.pins, action.pin],
+        },
+      };
     default:
       return state;
   }

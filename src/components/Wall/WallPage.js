@@ -24,6 +24,7 @@ class WallPage extends React.Component {
     concatImgsToStore: PropTypes.func.isRequired,
     storeSearchKeywords: PropTypes.func.isRequired,
     toggleMsgModal: PropTypes.func.isRequired,
+    concatToUserPins: PropTypes.func.isRequired,
   };
   state = {
     pindex: null,
@@ -72,6 +73,11 @@ class WallPage extends React.Component {
       method: 'GET',
       credentials: 'include',
     })
+      .then(res => res.json())
+      .then(resJson => {
+        console.log('PIN after saving:',resJson);
+        this.props.concatToUserPins(resJson.pin);
+      })
       .catch(err => {
         this.props.toggleMsgModal({ title: 'Error', msg: 'Something went wrong :(' });
         console.log(err);

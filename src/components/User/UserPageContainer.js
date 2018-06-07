@@ -3,6 +3,7 @@ import UserPage from './UserPage';
 import {
     toggleModal,
     storeMagnifiedPinInfo,
+    concatToUserPins,
 } from '../../actions';
 
 const UserPageContainer = connect(
@@ -10,6 +11,7 @@ const UserPageContainer = connect(
     {
         toggleModal,
         storeMagnifiedPinInfo,
+        concatToUserPins,
     }
 )(UserPage);
 export default UserPageContainer;

@@ -11,6 +11,7 @@ class UserPage extends React.Component {
     toggleModal: PropTypes.func.isRequired,
     history: PropTypes.shape({ push: PropTypes.func }).isRequired,
     storeMagnifiedPinInfo: PropTypes.func.isRequired,
+    concatToUserPins: PropTypes.func.isRequired,
   };
   state = {
     pindex: null,
@@ -62,6 +63,11 @@ class UserPage extends React.Component {
       method: 'GET',
       credentials: 'include',
     })
+      .then(res => res.json())
+      .then(resJson => {
+        console.log('PIN after saving:',resJson);
+        this.props.concatToUserPins(resJson.pin);
+      })
       .catch(err => console.log(err));
   }
 
@@ -81,7 +87,7 @@ class UserPage extends React.Component {
   render() {
     const { account, toggleModal } = this.props;
     const { isCreatePinButtonHiglighted } = this.state;
-    console.log('account.user:',account.user);
+    console.log('account.user.pins:',account.user.pins);
     const pins = account.otherUser ? account.otherUser.pins : account.user.pins;
     return (
       <div className="user-page-container">

@@ -53,3 +53,8 @@ export const storeCuratedPins = pins => ({
   type: 'STORE_CURATED_PINS',
   pins,
 });
+
+export const concatToUserPins = pin => ({
+  type: 'CONCAT_TO_USER_PINS',
+  pin,
+});

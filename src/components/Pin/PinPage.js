@@ -9,6 +9,7 @@ import {
   storeImgs,
   storeSearchKeywords,
   storeOtherUserInfo,
+  concatToUserPins,
 } from '../../actions';
 import WallPageContainer from '../Wall/WallPageContainer';
 
@@ -34,6 +35,7 @@ class PinPage extends React.Component {
     storeImgs: PropTypes.func.isRequired,
     storeSearchKeywords: PropTypes.func.isRequired,
     storeOtherUserInfo: PropTypes.func.isRequired,
+    concatToUserPins: PropTypes.func.isRequired,
   };
 
   state = {
@@ -79,6 +81,11 @@ class PinPage extends React.Component {
       method: 'GET',
       credentials: 'include',
     })
+      .then(res => res.json())
+      .then(resJson => {
+        console.log('PIN after saving:',resJson);
+        this.props.concatToUserPins(resJson.pin);
+      })
       .catch(err => console.log(err));
   }
 
@@ -238,6 +245,7 @@ class PinPage extends React.Component {
     storeImgs,
     storeSearchKeywords,
     storeOtherUserInfo,
+    concatToUserPins,
   }
 )(PinPage);
 export default PinPageContainer;

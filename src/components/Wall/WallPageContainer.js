@@ -8,6 +8,7 @@ import {
     concatImgsToStore,
     storeSearchKeywords,
     toggleMsgModal,
+    concatToUserPins,
 } from '../../actions';
 
 const mapStateToProps = state => state;
@@ -22,6 +23,7 @@ const WallPageContainer = connect(
         concatImgsToStore,
         storeSearchKeywords,
         toggleMsgModal,
+        concatToUserPins,
     }
 )(WallPage);
 

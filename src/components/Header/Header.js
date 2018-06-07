@@ -161,8 +161,16 @@ class Header extends React.Component {
     });
   }
 
+  toggleHeaderMenu = () => {
+    window.scroll({
+      top: 0,
+      behavior: 'instant',
+    });
+    this.props.toggleHeaderMenu();
+  }
+
   render() {
-    const { account, toggleHeaderMenu, imgs, atPinPage } = this.props;
+    const { account, imgs, atPinPage } = this.props;
     return (
       <div className={atPinPage ? 'header-container invisible' : 'header-container'}>
         <Link className='header-menu-item logo' to='/' onClick={this.handleHomeButtonClick}>
@@ -171,7 +179,7 @@ class Header extends React.Component {
 
         <input className='search' type='text' placeholder='Search' onKeyDown={this.searchImg} onChange={this.handleInputChange} value={imgs.searchkeywords && (imgs.searchKeywords.length > 1 ? '' : imgs.searchKeywords[0])} ref={e => this.headerInput = e}/>
 
-        <div className='header-menu-item options right' onClick={toggleHeaderMenu}>
+        <div className='header-menu-item options right' onClick={this.toggleHeaderMenu}>
           <svg>
             {[...'ccc'].map((c, i) => <circle key={i} cx={12 + (i * 8)}/>)}
           </svg>

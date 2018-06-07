@@ -2,7 +2,7 @@
 
 Pinterest-Clone is a clone of Pinterest's UI and its core functionalities.
 
-Live demo: not yet deployed.
+Live demo: [heroku](https://fierce-anchorage-98806.herokuapp.com/).
 
 ## User stories:
 * As an unauthenticated user, I can login with email and password.

@@ -22,7 +22,7 @@ module.exports = (app, db) => {
   passport.use(new TwitterStrategy({
     consumerKey,
     consumerSecret,
-    callbackURL: 'http://localhost:3000/auth/twitter/callback'
+    callbackURL: 'https://fierce-anchorage-98806.herokuapp.com/auth/twitter/callback', 
   }, (token, tokenSecret, profile, done) => {
     // const strProfile = JSON.stringify(profile);
     // console.log(`profile: ${strProfile}`);

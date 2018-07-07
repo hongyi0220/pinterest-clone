@@ -146,7 +146,7 @@
 
 .wall-page-container {
   display: grid;
-  padding-top: 2.5em; }
+  padding-top: 4.5em; }
   .wall-page-container .wall {
     width: 90%;
     margin: auto;
@@ -207,7 +207,10 @@
             top: 25%; }
         .wall-page-container .wall .img-container .img-overlay.on .share-button {
           display: inline-block;
-          width: 50px; }
+          width: 50px;
+          position: relative;
+          margin-left: .5em;
+          top: .5em; }
           .wall-page-container .wall .img-container .img-overlay.on .share-button img {
             width: 50px; }
           .wall-page-container .wall .img-container .img-overlay.on .share-button:hover {
@@ -304,7 +307,7 @@
     line-height: 40px;
     border-radius: 20px;
     padding: 0 1em;
-    margin: .5em;
+    margin: .5em .5em .5em 0;
     color: #757575;
     height: 40px;
     cursor: pointer;
@@ -315,7 +318,7 @@
     line-height: 40px;
     border-radius: 20px;
     padding: 0 1em;
-    margin: .5em;
+    margin: .5em .5em .5em 0;
     color: #757575;
     height: 40px;
     cursor: pointer;
@@ -323,7 +326,7 @@
     .header-container .username-wrapper:hover {
       background-color: #EFEFEF; }
   .header-container .header-menu-item.options {
-    margin: .5em;
+    margin: .5em .5em .5em 0;
     color: #757575;
     height: 40px;
     cursor: pointer;
@@ -381,7 +384,9 @@
     .user-page-container .user-info-container .profile-image-wrapepr {
       width: 30%; }
       .user-page-container .user-info-container .profile-image-wrapepr img {
-        width: 100%; }
+        width: 100%;
+        border-radius: 50%;
+        border: 5px solid #F2F2F2; }
   .user-page-container .saved-images-container {
     position: relative;
     margin-top: 1.5em;
@@ -1069,12 +1074,10 @@ html {
   background-color: rgba(0, 0, 0, 0.7); }
 
 .pin-page-background {
-  background-color: #EEE;
-  position: absolute; }
+  background-color: #EEE; }
   .pin-page-background .pin-page-container {
     width: 80%;
     margin: auto;
-    margin-top: 2em;
     border-radius: 5px;
     background-color: white; }
     .pin-page-background .pin-page-container .pin-header {

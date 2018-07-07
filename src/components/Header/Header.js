@@ -40,8 +40,6 @@ class Header extends React.Component {
   headerInput = null;
 
   componentWillMount() {
-    console.log('Header will mount');
-    // console.log('Header component state at compWllMnt:', this.state);
 
     const pathname = this.props.history.location.pathname;
 
@@ -55,39 +53,24 @@ class Header extends React.Component {
   }
 
   componentDidMount() {
-    console.log('Header did mount');
-    const pathname = this.props.history.location.pathname;
-    console.log('pathname:', pathname);
-
-    // if (pathname !== '/find' && !pathname.includes('/user') && !pathname.includes('/pin')) {
-    //
-    // }
     this.lazyLoadPics();
   }
 
   padCuratedWall = () => {
     if (this.props.imgs.search.length < 20) {
-      console.log('this.props.imgs.search.length < 20:', this.props.imgs.search.length < 20,'getting more pics to append to wall');
       this.searchImg({ key: 'Enter', }, true)
         .then(curatedPins => this.props.storeCuratedPins(curatedPins));
-
-      console.log('imgs.curatedPins:',this.props.imgs.curatedPins);
     }
   }
 
   searchImg = (e, scroll = false) => {
-    console.log('searchImg triggered!');
-    // console.log('page:', this.state.page);
-    // console.log('keyDown:',e.key);
-    // console.log('searchKeywords:', this.props.imgs.searchKeywords);
     const pathname = this.props.history.location.pathname;
     if (e.key === 'Enter') {
       this.props.toggleLoadingSpinner();
       this.setState({ fetching: true });
       let page = this.props.imgs.searchKeywords.length === 1 ? this.state.page : this.state.page + 1;
       if (!scroll) {
-        console.log('not scrolling, setState page: 1, instant scroll to top');
-        this.setState({ /*page: 1,*/ pageYOffset: 0 });
+        this.setState({ pageYOffset: 0 });
         page = 1;
         window.scroll({
           top: 0,
@@ -98,7 +81,6 @@ class Header extends React.Component {
       if (this.props.imgs.searchKeywords.length === 1 && !pathname.includes('/pin')) {
         this.props.history.push(`/search?q=${this.props.imgs.searchKeywords[0]}&page=${this.state.page}`);
       }
-      console.log('page before fetching: ', this.state.page);
 
       return fetch(`/pics?q=${this.props.imgs.searchKeywords.join('&&')}&page=${page}`, {
         method: 'GET',
@@ -109,7 +91,6 @@ class Header extends React.Component {
           this.props.storeImgs(imgs);
           this.props.toggleLoadingSpinner();
           this.setState({ fetching: false });
-          console.log('got response from fetch');
           return imgs;
         })
         .catch(err => console.log(err));
@@ -125,7 +106,6 @@ class Header extends React.Component {
       behavior: 'instant',
     });
     this.props.storeImgs(this.props.imgs.curatedPins);
-    console.log('this.props.imgs.curatedPins:',this.props.imgs.curatedPins);
     fetch('/session', {
       method: 'POST',
       credentials: 'include',
@@ -148,20 +128,15 @@ class Header extends React.Component {
         this.setState({ pageYOffset: window.pageYOffset });
         // pageYOffset = window.pageYOffset;
       }
-      console.log('pageYOffset:', this.state.pageYOffset);
-      console.log('pageYOffset:',window.pageYOffset, '+ ','window.innerHeight:',window.innerHeight, '=',window.pageYOffset + window.innerHeight);
-
-      console.log('document scrollHeight - 100:',document.documentElement.scrollHeight - 100);
-
       if (window.pageYOffset + window.innerHeight >= document.documentElement.scrollHeight - 100 && this.props.imgs.searchKeywords && (window.pageYOffset >= pageYOffset) && !this.props.ui.loadingSpinner && !this.state.fetching && !pathname.includes('/user') && !pathname.includes('/find')) {
-        console.log('lazy-loading triggered');
         this.setState(prevState => ({ page: prevState.page += 1 }));
         this.searchImg({ key: 'Enter', }, true);
       }
     });
   }
 
-  toggleHeaderMenu = () => {
+  toggleHeaderMenu = e => {
+    e.stopPropagation();
     window.scroll({
       top: 0,
       behavior: 'instant',

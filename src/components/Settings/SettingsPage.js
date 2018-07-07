@@ -19,7 +19,6 @@ class SettingsPage extends React.Component {
   usernameInputTimeout = null;
 
   componentWillMount() {
-    console.log('SettingsPage componentWillMount');
   }
 
   handleCancelButtonClick = () => this.setState({
@@ -29,37 +28,29 @@ class SettingsPage extends React.Component {
   })
 
   handleImageFileUpload = e => {
-    console.log('handling ImageUplaod');
-    console.log('e.target.files[0]:', e.target.files[0]);
     const imgFile = e.target.files[0];
     const previewImg = URL.createObjectURL(imgFile);
     this.setState({ previewImg, postingFormData: true, });
 
     let formData = new FormData();
     formData.append('imgFile', imgFile);
-
-    console.log('formData after appending data:', formData);
     fetch('/profile-img', {
       method: 'POST',
       credentials: 'include',
       body: formData
     })
       .then(res => {
-        console.log('res from /profile-img:', res);
         return res.json();
       })
       .then(resJson => {
-        console.log('resJson from /profile-img:',resJson);
         this.setState({ previewImg: resJson.url, postingFormData: false });
       })
       .catch(err => console.log(err));
   }
 
   submitForm = () => {
-    console.log('submitForm clicked');
 
     const body = JSON.stringify(this.state);
-    console.log('JSON.stringify(this.state):',body );
     fetch('/profile', {
       method: 'PUT',
       headers: {
@@ -76,11 +67,8 @@ class SettingsPage extends React.Component {
   handleUsernameInputChange = e => this.setState({ username: e.target.value });
 
   handleUsernameInputOnKeyUp = e => {
-    console.log('keyUP');
     e.stopPropagation();
     const eTarget = e.target;
-    console.log('eTarget:',eTarget);
-    console.log('e.target.value:', eTarget.value);
     clearTimeout(this.usernameInputTimeout);
     this.setState({ isUsernameTaken: false, });
     this.usernameInputTimeout = setTimeout(() => {
@@ -90,7 +78,6 @@ class SettingsPage extends React.Component {
       })
         .then(res => res.json())
         .then(resJson => {
-          console.log('resJson:', resJson);
           this.setState({
             isUsernameTaken: resJson.match ? true : false,
           });

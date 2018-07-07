@@ -33,9 +33,7 @@ const initState = {
     loadingSpinner: false,
   },
 };
-console.log('initState:',initState);
 const account = (state = initState.account, action) => {
-  console.log(action);
   switch(action.type) {
     case LOG_IN_USER:
       return {
@@ -61,7 +59,6 @@ const account = (state = initState.account, action) => {
   }
 };
 const imgs = (state = initState.imgs, action) => {
-  console.log(action);
   switch(action.type) {
     case STORE_IMGS:
       return {
@@ -100,12 +97,11 @@ const imgs = (state = initState.imgs, action) => {
 };
 
 const ui = (state = initState.ui, action) => {
-  console.log(action);
   switch(action.type) {
     case TOGGLE_HEADER_MENU:
       return {
         ...state,
-        headerMenu: !state.headerMenu,
+        headerMenu: action.open === undefined ? !state.headerMenu : action.open,
       };
 
     case TOGGLE_MODAL:

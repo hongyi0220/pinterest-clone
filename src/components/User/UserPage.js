@@ -20,12 +20,9 @@ class UserPage extends React.Component {
   };
 
   componentWillMount() {
-    console.log('Userpage will mount');
   }
 
   handlePinOnMouseOver = e => {
-    console.log('pindex:', e ? e.target.dataset.pindex : '');
-    console.log('pinId:', e ? e.target.dataset.pinId : '');
     const eTarget = e ? e.target : null;
     if (e === null) {
       return this.setState({
@@ -37,7 +34,7 @@ class UserPage extends React.Component {
       this.setState({
           pinId: eTarget.dataset.pinId,
           pindex: Number(eTarget.dataset.pindex),
-      }, () => console.log(this.state));
+      });
     }
   }
 
@@ -45,9 +42,7 @@ class UserPage extends React.Component {
     isCreatePinButtonHiglighted: !prevState.isCreatePinButtonHiglighted }));
 
   handleDeleteButtonClick = e => {
-    // const { pindex } = this.state;
     e.stopPropagation();
-    console.log(`Delete /pin?pinId=${this.state.pinId}`);
     fetch(`/pin?pinId=${this.state.pinId}`, {
       method: 'DELETE',
       credentials: 'include'
@@ -57,27 +52,22 @@ class UserPage extends React.Component {
 
   handleSaveButtonClick = e => {
     e.stopPropagation();
-    // const { pindex } = this.state;
-    console.log(`saving pin/${this.state.pindex}`);
     fetch(`/pin?pindex=${this.state.pindex}&fromotheruser=true`, {
       method: 'GET',
       credentials: 'include',
     })
       .then(res => res.json())
       .then(resJson => {
-        console.log('PIN after saving:',resJson);
         this.props.concatToUserPins(resJson.pin);
       })
       .catch(err => console.log(err));
   }
 
   handleMagnifyPinClick = () => {
-    console.log('handleMagnifyPinClick triggered');
     const { account } = this.props;
     const { pindex } = this.state;
     this.props.storeMagnifiedPinInfo(account.otherUser ?
       account.otherUser.pins[pindex] : account.user.pins[pindex]);
-    console.log('magnifiedPinInfo after handleMagnifyPinClick @ UserPage:', this.props.imgs.magnifiedPin); // eslint-disable-line react/prop-types
     window.scroll({
       top: 0,
       behavior: 'instant'
@@ -87,7 +77,6 @@ class UserPage extends React.Component {
   render() {
     const { account, toggleModal } = this.props;
     const { isCreatePinButtonHiglighted } = this.state;
-    console.log('account.user.pins:',account.user.pins);
     const pins = account.otherUser ? account.otherUser.pins : account.user.pins;
     return (
       <div className="user-page-container">
@@ -113,7 +102,7 @@ class UserPage extends React.Component {
             </div>}
 
             {pins ? pins.map((pin, i) =>
-              <div data-pin-id={pin._id} data-pindex={i} key={i} className='img-container' onMouseEnter={e=>{console.log('entering'); this.handlePinOnMouseOver(e);}} onMouseLeave={()=>{console.log('leaving'); this.handlePinOnMouseOver(null);}}>
+              <div data-pin-id={pin._id} data-pindex={i} key={i} className='img-container' onMouseEnter={e=>{this.handlePinOnMouseOver(e);}} onMouseLeave={()=>{this.handlePinOnMouseOver(null);}}>
 
                 <div data-pin-id={pin._id} data-pindex={i} className={this.state.pindex === i ? 'img-overlay on': 'img-overlay'} onClick={() => {this.handleMagnifyPinClick(); this.props.history.push(`/pin/${this.state.pinId}`); }}>
                   {account.otherUser ?

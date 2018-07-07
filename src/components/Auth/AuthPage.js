@@ -21,7 +21,6 @@ class AuthPage extends React.Component {
     passwordIsLongerThanSixLetters: false,
   };
   componentWillMount() {
-    console.log('AuthPage component WILL mount');
   }
   emailInputTimeout = null;
 
@@ -49,11 +48,8 @@ class AuthPage extends React.Component {
   }
 
   handleEmailInputOnKeyUp = e => {
-    console.log('keyUP');
     e.stopPropagation();
     const eTarget = e.target;
-    console.log('eTarget:',eTarget);
-    console.log('e.target.value:', eTarget.value);
     clearTimeout(this.emailInputTimeout);
     this.setState({ doesEmailExist: false, });
     this.emailInputTimeout = setTimeout(() => {
@@ -63,7 +59,6 @@ class AuthPage extends React.Component {
       })
         .then(res => res.json())
         .then(resJson => {
-          console.log('typeOfSubmitButton:', resJson.typeOfSubmitButton);
           this.setState({
             typeOfSubmitButton: resJson.typeOfSubmitButton,
             doesEmailExist: resJson.typeOfSubmitButton === 'login'
@@ -79,10 +74,7 @@ class AuthPage extends React.Component {
   }
 
   handleFormSubmit = e => {
-    console.log('handle form submit');
-    console.log('can be submitted?:', this.canBeSubmitted());
     if (!this.canBeSubmitted()) {
-      console.log('e.preventDefault');
       e.preventDefault();
       return;
     }
@@ -91,7 +83,6 @@ class AuthPage extends React.Component {
   render() {
     const { email, password, passwordHasUpperCaseLetter, passwordHasLowerCaseLetter, passwordIsLongerThanSixLetters, } = this.state;
     const isEnabled = this.canBeSubmitted();
-    console.log('isEnabled:', isEnabled);
     return (
       <div className='auth-page-container'>
         <div className='rolling-background-collage-wrapper'>

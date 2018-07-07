@@ -12,6 +12,7 @@ import {
     storeOtherUserInfo,
     concatImgsToStore,
     storeSearchKeywords,
+    toggleHeaderMenu,
 } from './actions';
 import {
   BrowserRouter as Router,
@@ -32,6 +33,7 @@ const AppContainer = connect(
         storeOtherUserInfo,
         concatImgsToStore,
         storeSearchKeywords,
+        toggleHeaderMenu,
     }
 )(App);
 

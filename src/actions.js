@@ -8,7 +8,10 @@ export const storeImgs = imgs => ({
     imgs,
 });
 
-export const toggleHeaderMenu = () => ({ type: 'TOGGLE_HEADER_MENU' });
+export const toggleHeaderMenu = open => ({
+  type: 'TOGGLE_HEADER_MENU',
+  open
+});
 
 export const toggleModal = open => ({
     type: 'TOGGLE_MODAL',

@@ -33,11 +33,9 @@ class WallPage extends React.Component {
   };
 
   componentWillMount() {
-    console.log('WallPage will mount');
     this.setState({ clientWidth: window.innerWidth, clientHeight: window.innerHeight });
     if (this.props.history.location.pathname.includes('/pin')) {
       const q = this.props.imgs.searchKeywords[0];
-      console.log('searchKeywords:', q);
 
       fetch(`/pics?q=${q}&page=${1}`, {
         method: 'GET',
@@ -52,7 +50,6 @@ class WallPage extends React.Component {
   }
 
   handlePinOnMouseOver = (e = null) => {
-    console.log('pindex:', e ? e.target.dataset.pindex : '');
 
     const eTarget = e ? e.target : null;
     if (e === null) {
@@ -67,25 +64,20 @@ class WallPage extends React.Component {
 
   handleSaveButtonClick = e => {
     e.stopPropagation();
-
-    console.log(`saving pin/${this.state.pindex}?fromotheruser=false`);
     fetch(`/pin?pindex=${this.state.pindex}`, {
       method: 'GET',
       credentials: 'include',
     })
       .then(res => res.json())
       .then(resJson => {
-        console.log('PIN after saving:',resJson);
         this.props.concatToUserPins(resJson.pin);
       })
       .catch(err => {
         this.props.toggleMsgModal({ title: 'Error', msg: 'Something went wrong :(' });
-        console.log(err);
       });
   }
 
   handleMagnifyPinClick = (goToPinPage = true) => {
-    console.log('handleMagnifyPinClick triggered');
     this.props.storeMagnifiedPinInfo(this.props.imgs.search[this.state.pindex]);
 
     return fetch(`/pin?&pindex=${this.state.pindex}`, {
@@ -98,7 +90,6 @@ class WallPage extends React.Component {
     })
       .then(res => res.json())
       .then(resJson => {
-        console.log('pinId from res:', resJson.pinId);
         if (goToPinPage) {
           window.scroll({
             top: 0,

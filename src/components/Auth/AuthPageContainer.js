@@ -5,10 +5,7 @@ import {
 } from '../../actions';
 
 const mapStateToProps = state => {
-    console.log(state);
-    return {
-
-    }
+    return state;
 };
 
 const AuthPageContainer = connect(

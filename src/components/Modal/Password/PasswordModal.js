@@ -42,7 +42,6 @@ class PasswordModal extends React.Component {
 
   closePasswordModalFromButton = e => {
     if (e.target.className === 'cancel button') {
-      console.log('-intermediary-CLOSE-FROM-CHILD:PasswordModal');
       this.props.toggleModal(false);
     }
   }

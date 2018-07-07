@@ -18,21 +18,17 @@ class ModalBackgroundOverlay extends React.Component {
 
   closeModalFromBackground = e => {
     if (e.target.className === 'modal-background-overlay') {
-      console.log('close modal from modal-background-overlay');
       this.props.toggleModal(false);
     }
   }
 
   componentDidMount() {
-    console.log('ModalBackgroundOverlay mounted');
   }
   componentWillUnmount() {
-    console.log('ModalBackgroundOverlay will UNmount');
   }
 
   render() {
     const { ui, history } = this.props;
-    console.log('ModalBackgroundOverlay rendered');
 
     return (
       <div className="modal-background-overlay" onClick={this.closeModalFromBackground}>

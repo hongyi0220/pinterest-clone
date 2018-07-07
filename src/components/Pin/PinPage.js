@@ -49,7 +49,6 @@ class PinPage extends React.Component {
   pinUserProfileImg = null;
 
   componentWillMount() {
-    console.log('PinPage will mount!');
     this.props.storeSearchKeywords([this.props.imgs.magnifiedPin.tags[0]]);
     this.setState({
       clientWidth: window.innerWidth,
@@ -60,13 +59,9 @@ class PinPage extends React.Component {
   }
 
   componentDidMount() {
-    console.log('PinPage DID mount!');
     this.getUserProfileImg('/image/default-profile-image.png' && this.props.imgs.magnifiedPin.users[0])
       .then(profileImg => {
-        console.log('this.pinUserProfileImg:',this.pinUserProfileImg);
-        console.log('profileImg:',profileImg);
         this.pinUserProfileImg.src = profileImg;
-        console.log('pinUserProfileImg after setting src:',this.pinUserProfileImg);
       })
       .catch(err => console.log(err));
   }
@@ -83,20 +78,16 @@ class PinPage extends React.Component {
     })
       .then(res => res.json())
       .then(resJson => {
-        console.log('PIN after saving:',resJson);
         this.props.concatToUserPins(resJson.pin);
       })
       .catch(err => console.log(err));
   }
 
   handleShareButtonClick = () => {
-    // console.log(this.props.history);
     window.open(`https://twitter.com/intent/tweet?via=pinterest-clone&text=${`http://localhost:3000${this.props.history.location.pathname}`}`, '', `top=${(this.state.clientHeight / 2) - (200 / 2)},left=${(this.state.clientWidth / 2) - (300 / 2)},height=200,width=300`);
   }
 
   handleCommentOnKeyDown = e => {
-    console.log('handleCommentKeyDown triggered!');
-
     if (e.key === 'Enter') {
       this.setState(prevState => ({
         ...prevState,
@@ -123,18 +114,14 @@ class PinPage extends React.Component {
   }
 
   getUserProfileImg = username => {
-    // const username = e.target.dataset.username;
-    console.log('username at getUserProfileImg:',username);
     return fetch(`/user/${username}?externalapi=false`, {
       method: 'GET',
       credentials: 'include',
     })
       .then(res => {
-        console.log('res:',res);
         return res.json();
       })
       .then(otherUser => {
-        console.log('otherUser:', otherUser);
         return otherUser.profileImg;
       })
       .catch(err => console.log(err));
@@ -142,7 +129,6 @@ class PinPage extends React.Component {
 
   handlePinUserImgClick = e => {
     e.stopPropagation();
-    console.log('handle User Profile Img Clicked:',e.target.dataset.username);
     const username = this.props.imgs.magnifiedPin.users[0];
     fetch(`/user/${username}?externalapi=false`, {
       method: 'GET',
@@ -150,7 +136,6 @@ class PinPage extends React.Component {
     })
       .then(res => res.json())
       .then(otherUser => {
-        console.log('res from /user:', otherUser);
 
         this.props.storeOtherUserInfo(otherUser);
         this.props.history.push(`/user/${otherUser.username}`);
@@ -161,8 +146,6 @@ class PinPage extends React.Component {
   render() {
     const { imgs, } = this.props;
     const { comments, } = this.state;
-
-    console.log('searchKeywords[0]:',imgs.magnifiedPin ? imgs.magnifiedPin.tags[0] : '');
     return (
       <div className="pin-page-background">
         <div className="pin-page-container">
@@ -210,8 +193,8 @@ class PinPage extends React.Component {
                 {imgs.magnifiedPin ?
                   (imgs.magnifiedPin.users.length ?
                     (<div className="username-container" onClick={this.handlePinUserImgClick}>
-                      {/* <img data-username={imgs.magnifiedPin.users[0]} src={e => this.getUserProfileImg(e)} alt='pin user' onError={e => e.target.src = '/image/default-profile-image.png'}/> */}
-                      <img /*data-username={imgs.magnifiedPin.users[0]}*/ src='' alt='pin user' onError={e => e.target.src = '/image/default-profile-image.png'} ref={el => this.pinUserProfileImg = el} />
+
+                      <img src='' alt='pin user' onError={e => e.target.src = '/image/default-profile-image.png'} ref={el => this.pinUserProfileImg = el} />
                       <div className="username-wrapper">
                         {imgs.magnifiedPin.users[0]}
                       </div>

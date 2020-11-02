@@ -24,10 +24,10 @@ Live demo: [heroku](https://fierce-anchorage-98806.herokuapp.com/).
 ## Notable modules used includes but not limited to:
 
 * **Redux**: front-end state management.
-* **multer**: enable temporary storage of formData type.
+* **multer**: enables temporary storage of formData type.
 * Other useful tools: **React Router (v4)**, **passport** and **ESLint**.
 
 ## APIs used:
-* **Cloudinary**: store and manage media data.
-* **Pixabay**: enable image search.
+* **Cloudinary**: stores and manages media data.
+* **Pixabay**: enables image search.
 * **Tiwtter**: authentication and sharing.

@@ -1,6 +1,6 @@
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
-const ObjectId = require('mongo').ObjectId;
+const ObjectId = require('mongodb').ObjectId;
 const TwitterStrategy = require('passport-twitter').Strategy;
 const consumerKey = process.env.TWITTER_CONSUMER_KEY;
 const consumerSecret = process.env.TWITTER_CONSUMER_SECRET;

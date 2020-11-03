@@ -16,7 +16,7 @@ cloudinary.config({
 });
 
 module.exports = (app, db) => {
-  const Users = db('pinterest-clone').collection('users');
+  const Users = db.collection('users');
   passport.use(new TwitterStrategy({
     consumerKey,
     consumerSecret,

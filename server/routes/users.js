@@ -1,6 +1,6 @@
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
-const ObjectId = require('mongodb').ObjectId;
+const ObjectId = require('mongo').ObjectId;
 const TwitterStrategy = require('passport-twitter').Strategy;
 const consumerKey = process.env.TWITTER_CONSUMER_KEY;
 const consumerSecret = process.env.TWITTER_CONSUMER_SECRET;
@@ -16,7 +16,7 @@ cloudinary.config({
 });
 
 module.exports = (app, db) => {
-  const Users = db.collection('users');
+  const Users = db('test').collection('users');
   passport.use(new TwitterStrategy({
     consumerKey,
     consumerSecret,

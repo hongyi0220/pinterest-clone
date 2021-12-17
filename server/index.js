@@ -2,8 +2,10 @@ const path = require('path');
 const express = require('express');
 const app = express();
 const http = require('http').Server(app);
-const mongo = require('mongodb');
-const MongoClient = mongo.MongoClient;
+//const mongo = require('mongodb');
+//const MongoClient = mongo.MongoClient;
+const { MongoClient } = require('mongodb');
+
 require('dotenv').config();
 const dbUrl = process.env.MONGOLAB_URI;
 const port = process.env.PORT || 3000;
@@ -25,7 +27,60 @@ app.use(bodyParser.json());
 
 app.use(express.static('build'));
 
-MongoClient.connect(dbUrl, (err, database) => {
+
+const client = new MongoClient(dbUrl, { useNewUrlParser: true, useUnifiedTopology: true });
+client.connect((err, database) => {
+    if (err) return console.log(err);
+
+    app.use(session({
+        store: new MongoStore({ db: database }),
+        secret: 'old-dudes-walker',
+        resave: false,
+        saveUninitialized: false,
+        unset: 'destroy'
+    }));
+
+    require('./routes')(app, database);
+
+    app.route('/session')
+        .get((req, res) => {
+            console.log('GET /session route reached!');
+            // console.log('session.id:', req.session.id);
+            // console.log('req._passport.session:',req._passport.session);
+            console.log('req.user:',req.user);
+            // console.log('req.isAuthenticated():',req.isAuthenticated());
+            // console.log('req.session:', req.session);
+            if (!req.session.pins) {
+                console.log('NO PINS YET! IN REQ.SESSION.PINS!!', req.session.pins);
+            }
+            if (req.user) {
+                req.user.pins = req.session.pins.filter(pin => pin.users.includes(req.user.username));
+            }
+
+            res.send(
+                {
+                    user: req.user,
+                    imgs: req.session.imgs,
+                    otherUser: req.session.otherUser,
+                    magnifiedPin: req.session.magnifiedPin,
+                }
+            );
+        })
+        .post((req, res) => {
+            console.log('POST /session reached; req.body.imgs:', req.body.imgs);
+            req.session.imgs = req.body.imgs;
+            console.log('session.imgs after POST /session:', req.session.imgs);
+            res.end();
+        });
+
+    app.get('*', (req, res) => {
+        res.sendFile(path.resolve(__dirname, '../build/index.html')); // eslint-disable-line no-undef
+    });
+
+    http.listen(port, () => console.log(`Connected to port ${port}`));
+});
+
+/*MongoClient.connect(dbUrl, (err, database) => {
   if (err) return console.log(err);
 
   app.use(session({
@@ -75,3 +130,4 @@ MongoClient.connect(dbUrl, (err, database) => {
 
   http.listen(port, () => console.log(`Connected to port ${port}`));
 });
+*/

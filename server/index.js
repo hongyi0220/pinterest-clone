@@ -77,7 +77,7 @@ client.connect((err, database) => {
         res.sendFile(path.resolve(__dirname, '../build/index.html')); // eslint-disable-line no-undef
     });
 
-    http.listen(port,'0.0.0.0', () => console.log(`Connected to port ${port}`));
+    http.listen(port, () => console.log(`Connected to port ${port}`));
 });
 
 /*MongoClient.connect(dbUrl, (err, database) => {
